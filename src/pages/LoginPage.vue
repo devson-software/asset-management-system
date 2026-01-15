@@ -72,7 +72,7 @@ export default defineComponent({
         message: 'Login successful',
         icon: 'lock_open'
       })
-      router.push('/')
+      router.push('/dashboard')
     }
 
     return {

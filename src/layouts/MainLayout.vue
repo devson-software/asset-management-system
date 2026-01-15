@@ -150,7 +150,7 @@
 
         <q-separator q-my-lg />
 
-        <q-item clickable to="/" exact class="navigation-item" active-class="navigation-item-active">
+        <q-item clickable to="/dashboard" exact class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
             <q-icon name="dashboard" size="sm" />
           </q-item-section>
