@@ -83,6 +83,17 @@
       :width="280"
     >
       <q-list class="q-gutter-y-xs">
+        <q-item clickable to="/dashboard" exact class="navigation-item" active-class="navigation-item-active">
+          <q-item-section avatar>
+            <q-icon name="dashboard" size="sm" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-weight-bold">Dashboard</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator q-my-md />
+
         <q-item-label header class="text-overline text-weight-bold text-grey-8 q-pt-md q-pb-md">
           ASSETS & CUSTOMERS
         </q-item-label>
@@ -149,15 +160,6 @@
         </q-item>
 
         <q-separator q-my-lg />
-
-        <q-item clickable to="/dashboard" exact class="navigation-item" active-class="navigation-item-active">
-          <q-item-section avatar>
-            <q-icon name="dashboard" size="sm" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label class="text-weight-bold">Dashboard</q-item-label>
-          </q-item-section>
-        </q-item>
 
         <q-item clickable to="/login" class="navigation-item text-grey-7">
           <q-item-section avatar>
