@@ -83,7 +83,7 @@
                         <q-item-section>View Projects</q-item-section>
                       </q-item>
                       <q-separator />
-                      <q-item clickable>
+                      <q-item clickable :to="'/customers/edit/' + props.row.id">
                         <q-item-section avatar>
                           <q-icon name="edit" color="grey-7" size="sm" />
                         </q-item-section>

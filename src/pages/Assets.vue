@@ -67,6 +67,11 @@
                       <q-item-section avatar><q-icon name="visibility" color="primary" size="sm" /></q-item-section>
                       <q-item-section>Quick View</q-item-section>
                     </q-item>
+                    <q-item clickable :to="'/customers/' + props.row.customerId + '/projects/' + props.row.projectId + '/assets/' + props.row.id + '/edit'">
+                      <q-item-section avatar><q-icon name="edit" color="grey-7" size="sm" /></q-item-section>
+                      <q-item-section>Edit Asset</q-item-section>
+                    </q-item>
+                    <q-separator />
                         <q-item clickable @click="printQR(props.row)">
                           <q-item-section avatar><q-icon name="print" color="orange-8" size="sm" /></q-item-section>
                           <q-item-section>Print QR Label</q-item-section>

@@ -78,7 +78,7 @@
                         <q-item-section>View Assets</q-item-section>
                       </q-item>
                       <q-separator />
-                      <q-item clickable>
+                      <q-item clickable :to="'/customers/' + props.row.customerId + '/projects/' + props.row.id + '/edit'">
                         <q-item-section avatar>
                           <q-icon name="edit" color="grey-7" size="sm" />
                         </q-item-section>

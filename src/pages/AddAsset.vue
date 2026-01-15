@@ -3,7 +3,7 @@
     <div class="q-pa-md">
       <q-card flat bordered class="form-card">
         <q-card-section>
-          <div class="text-h5 text-positive">Register New Asset</div>
+          <div class="text-h5 text-positive">{{ isEdit ? 'Update Asset' : 'Register New Asset' }}</div>
           <div class="text-subtitle2 text-grey-7">
             Project: <span class="text-weight-bold">{{ projectName }}</span>
           </div>
@@ -32,7 +32,7 @@
 
             <div class="row q-gutter-sm justify-end q-mt-xl">
               <q-btn label="Cancel" flat @click="$router.back()" />
-              <q-btn label="Complete Registration" color="positive" type="submit" icon="check" />
+              <q-btn :label="isEdit ? 'Update Asset' : 'Complete Registration'" color="positive" type="submit" icon="check" />
             </div>
           </q-form>
         </q-card-section>
@@ -53,7 +53,8 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const $q = useQuasar()
-    const { customerId, projectId } = route.params
+    const { customerId, projectId, assetId } = route.params
+    const isEdit = !!assetId
     
     const customer = store.customers.find(c => c.id === customerId)
     const project = customer ? customer.projects.find(p => p.id === projectId) : null
@@ -67,13 +68,29 @@ export default defineComponent({
       refrigerantKg: '' 
     })
 
+    if (isEdit && project) {
+      const existingAsset = project.assets.find(a => a.id === assetId)
+      if (existingAsset) {
+        Object.assign(asset, existingAsset)
+      }
+    }
+
     const onSubmit = () => {
-      store.addAsset(customerId, projectId, { ...asset })
-      $q.notify({ color: 'positive', message: 'Asset registered successfully' })
+      if (isEdit) {
+        store.updateAsset(customerId, projectId, assetId, { ...asset })
+        $q.notify({ color: 'positive', message: 'Asset updated successfully' })
+      } else {
+        store.addAsset(customerId, projectId, { ...asset })
+        $q.notify({ color: 'positive', message: 'Asset registered successfully' })
+      }
+
+      // Clear form
+      Object.keys(asset).forEach(key => asset[key] = '')
+
       router.push({ path: '/assets', query: { projectId } })
     }
 
-    return { asset, projectName, onSubmit }
+    return { asset, projectName, onSubmit, isEdit }
   }
 })
 </script>

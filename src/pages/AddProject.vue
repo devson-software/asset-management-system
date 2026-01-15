@@ -6,8 +6,8 @@
           <div class="row items-center no-wrap">
             <q-icon name="add_business" size="md" class="q-mr-md" />
             <div>
-              <div class="text-h5">Capture New Project</div>
-              <div class="text-subtitle2">Assigning site to client</div>
+              <div class="text-h5">{{ isEdit ? 'Update Project' : 'Capture New Project' }}</div>
+              <div class="text-subtitle2">{{ isEdit ? 'Editing site details' : 'Assigning site to client' }}</div>
             </div>
           </div>
         </q-card-section>
@@ -69,7 +69,7 @@
 
             <div class="row q-gutter-sm justify-between q-mt-xl">
               <q-btn label="Cancel" flat color="grey-7" @click="$router.back()" />
-              <q-btn label="Confirm & Capture Project" color="secondary" type="submit" icon="check_circle" class="q-px-md" />
+              <q-btn :label="isEdit ? 'Update Project' : 'Confirm & Capture Project'" color="secondary" type="submit" icon="check_circle" class="q-px-md" />
             </div>
           </q-form>
         </q-card-section>
@@ -91,19 +91,37 @@ export default defineComponent({
     const route = useRoute()
     const $q = useQuasar()
     const customerId = route.params.customerId
+    const projectId = route.params.projectId
+    const isEdit = !!projectId
     
     const customer = store.customers.find(c => c.id === customerId)
     const customerName = computed(() => customer ? customer.name : 'Unknown')
 
     const project = reactive({ name: '', siteAddress: '', vendorLocation: '' })
 
+    if (isEdit && customer) {
+      const existingProject = customer.projects.find(p => p.id === projectId)
+      if (existingProject) {
+        Object.assign(project, existingProject)
+      }
+    }
+
     const onSubmit = () => {
-      store.addProject(customerId, { ...project })
-      $q.notify({ color: 'positive', message: 'Project added to ' + customerName.value })
+      if (isEdit) {
+        store.updateProject(customerId, projectId, { ...project })
+        $q.notify({ color: 'positive', message: 'Project updated successfully' })
+      } else {
+        store.addProject(customerId, { ...project })
+        $q.notify({ color: 'positive', message: 'Project added to ' + customerName.value })
+      }
+
+      // Clear form
+      Object.keys(project).forEach(key => project[key] = '')
+
       router.push({ path: '/projects', query: { customerId } })
     }
 
-    return { project, customerName, onSubmit }
+    return { project, customerName, onSubmit, isEdit }
   }
 })
 </script>

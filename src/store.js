@@ -134,6 +134,13 @@ export const store = reactive({
       projects: []
     })
   },
+  // Helper to update a customer
+  updateCustomer(customerId, updatedCustomer) {
+    const index = this.customers.findIndex(c => c.id === customerId)
+    if (index !== -1) {
+      this.customers[index] = { ...this.customers[index], ...updatedCustomer }
+    }
+  },
   // Helper to add a project to a customer
   addProject(customerId, project) {
     const customer = this.customers.find(c => c.id === customerId)
@@ -143,6 +150,16 @@ export const store = reactive({
         ...project,
         assets: []
       })
+    }
+  },
+  // Helper to update a project
+  updateProject(customerId, projectId, updatedProject) {
+    const customer = this.customers.find(c => c.id === customerId)
+    if (customer) {
+      const index = customer.projects.findIndex(p => p.id === projectId)
+      if (index !== -1) {
+        customer.projects[index] = { ...customer.projects[index], ...updatedProject }
+      }
     }
   },
   // Helper to add an asset to a project
@@ -156,6 +173,19 @@ export const store = reactive({
           ...asset,
           status: 'Registered'
         })
+      }
+    }
+  },
+  // Helper to update an asset
+  updateAsset(customerId, projectId, assetId, updatedAsset) {
+    const customer = this.customers.find(c => c.id === customerId)
+    if (customer) {
+      const project = customer.projects.find(p => p.id === projectId)
+      if (project) {
+        const index = project.assets.findIndex(a => a.id === assetId)
+        if (index !== -1) {
+          project.assets[index] = { ...project.assets[index], ...updatedAsset }
+        }
       }
     }
   },
