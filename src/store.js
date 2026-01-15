@@ -116,7 +116,14 @@ export const store = reactive({
     }
   ],
   services: [
-    { id: 1, date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' }
+    { id: 1, date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' },
+    { id: 2, date: '2026/01/15', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Service' },
+    { id: 3, date: '2026/01/15', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Monthly Service' },
+    { id: 4, date: '2026/01/16', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Annual Maintenance' },
+    { id: 5, date: '2026/01/20', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service' },
+    { id: 6, date: '2026/01/22', unitRef: 'CS-01', customer: 'Global Logistics Hub', project: 'Cold Storage', type: 'Breakdown Callout' },
+    { id: 7, date: '2026/01/25', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' },
+    { id: 8, date: '2026/02/01', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' }
   ],
   jobCards: [
     { id: 'JOB-2026-001', date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', tech: 'John Doe', faultFound: false },
