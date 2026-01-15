@@ -35,9 +35,9 @@ module.exports = configure(function (/* ctx */) {
       injectPwaMetaTags: true,
       swFilename: 'sw.js',
       manifest: {
-        name: 'Forgot Password App',
-        short_name: 'Forgot Password App',
-        description: 'A simple forgot password page with affiliate links',
+        name: 'HVAC Asset Pro',
+        short_name: 'HVAC Asset Pro',
+        description: 'Professional Asset Management System for Air Conditioning Business',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
