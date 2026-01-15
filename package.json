@@ -12,11 +12,12 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
+    "qrcode-reader-vue3": "^4.1.0",
     "quasar": "^2.12.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },
-    "devDependencies": {
+  "devDependencies": {
     "@quasar/app-vite": "^1.9.0",
     "@quasar/vite-plugin": "^1.6.0",
     "@vitejs/plugin-vue": "^4.5.0",
@@ -34,5 +35,3 @@
     "yarn": ">= 1.21.1"
   }
 }
-
-

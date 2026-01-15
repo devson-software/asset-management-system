@@ -168,7 +168,7 @@
                     :color="service.timeEnded ? 'positive' : 'primary'" 
                     :label="service.timeEnded ? 'Exit QR Scanned' : 'Scan Exit QR'" 
                     icon="qr_code_scanner"
-                    @click="endService"
+                    @click="showScanner = true"
                     class="q-px-lg"
                     :disable="!!service.timeEnded"
                   />
@@ -184,6 +184,32 @@
                    </div>
                 </div>
               </div>
+
+              <!-- QR Scanner Dialog -->
+              <q-dialog v-model="showScanner">
+                <q-card style="min-width: 350px">
+                  <q-card-section class="row items-center q-pb-none">
+                    <div class="text-h6">Scan Exit QR Code</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup />
+                  </q-card-section>
+
+                  <q-card-section class="q-pa-md">
+                    <div class="scanner-wrapper overflow-hidden rounded-borders border-grey">
+                      <qrcode-stream
+                        v-if="showScanner"
+                        @decode="onDecode"
+                        @error="onError"
+                        @init="onInit"
+                        class="full-width"
+                      />
+                    </div>
+                    <div class="text-caption text-grey-7 q-mt-md text-center">
+                      Align the QR code within the camera frame
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </q-dialog>
             </div>
 
             <div class="row q-gutter-md justify-end q-mt-xl">
@@ -209,14 +235,19 @@ import { defineComponent, reactive, ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { store } from '../store'
+import { QrcodeStream } from 'qrcode-reader-vue3'
 
 export default defineComponent({
   name: 'ServiceForm',
+  components: {
+    QrcodeStream
+  },
   setup () {
     const router = useRouter()
     const route = useRoute()
     const $q = useQuasar()
     const assetId = route.params.assetId
+    const showScanner = ref(false)
 
     const targetAsset = computed(() => {
       if (!assetId) return null
@@ -297,9 +328,45 @@ export default defineComponent({
       service.nextScheduleDate = date.toISOString().substr(0, 10)
     }
 
-    const endService = () => {
-      service.timeEnded = new Date().toLocaleTimeString()
-      $q.notify({ color: 'info', message: 'Work completed. Time logged.', icon: 'timer' })
+    const onDecode = (text) => {
+      if (text) {
+        showScanner.value = false
+        service.timeEnded = new Date().toLocaleTimeString()
+        $q.notify({ 
+          color: 'positive', 
+          message: 'Exit QR Scanned Successfully! Work completed.', 
+          icon: 'check_circle' 
+        })
+      }
+    }
+
+    const onError = (err) => {
+      console.error(err)
+      $q.notify({ 
+        color: 'negative', 
+        message: 'Camera error or permission denied.', 
+        icon: 'error' 
+      })
+    }
+
+    const onInit = async (promise) => {
+      try {
+        await promise
+      } catch (error) {
+        if (error.name === 'NotAllowedError') {
+          $q.notify({ color: 'negative', message: 'ERROR: you need to grant camera access permission' })
+        } else if (error.name === 'NotFoundError') {
+          $q.notify({ color: 'negative', message: 'ERROR: no camera on this device' })
+        } else if (error.name === 'NotSupportedError') {
+          $q.notify({ color: 'negative', message: 'ERROR: secure context required (HTTPS, localhost)' })
+        } else if (error.name === 'NotReadableError') {
+          $q.notify({ color: 'negative', message: 'ERROR: is the camera already in use?' })
+        } else if (error.name === 'OverconstrainedError') {
+          $q.notify({ color: 'negative', message: 'ERROR: installed cameras are not suitable' })
+        } else if (error.name === 'StreamApiNotSupportedError') {
+          $q.notify({ color: 'negative', message: 'ERROR: Stream API is not supported in this browser' })
+        }
+      }
     }
 
     const onSubmit = () => {
@@ -327,8 +394,11 @@ export default defineComponent({
       service,
       frequencyOptions,
       checklist,
+      showScanner,
+      onDecode,
+      onError,
+      onInit,
       calculateNextService,
-      endService,
       onSubmit
     }
   }
@@ -357,6 +427,13 @@ export default defineComponent({
 }
 .border-grey {
   border: 1px solid #e0e0e0;
+}
+.scanner-wrapper {
+  min-height: 300px;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
 
