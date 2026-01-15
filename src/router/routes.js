@@ -8,13 +8,10 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/login'
-  },
-  {
-    path: '/dashboard',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Dashboard.vue') },
+      { path: '', redirect: '/login' },
+      { path: 'dashboard', component: () => import('pages/Dashboard.vue') },
       { path: 'customers', component: () => import('pages/CustomerRegistration.vue') },
       { path: 'projects', component: () => import('pages/Projects.vue') },
       { path: 'assets', component: () => import('pages/Assets.vue') },
