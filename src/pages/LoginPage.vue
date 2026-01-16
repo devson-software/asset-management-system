@@ -2,8 +2,8 @@
   <q-page class="flex flex-center bg-grey-1">
     <q-card style="width: 100%; max-width: 400px;" flat bordered>
       <q-card-section class="text-center">
-        <div class="text-h5 text-primary q-mb-xs">Technician Portal</div>
-        <div class="text-caption text-grey-7">Log in to access drawings and unit details</div>
+        <div class="text-h5 text-primary q-mb-xs">HVAC Portal</div>
+        <!-- <div class="text-caption text-grey-7">Log in to access drawings and unit details</div> -->
       </q-card-section>
 
       <q-card-section>
@@ -46,7 +46,7 @@
       <q-separator />
 
       <q-card-section class="bg-grey-2 text-center text-caption">
-        Access is restricted to authorized service technicians.
+        Access is restricted to authorized hvac employees.
       </q-card-section>
     </q-card>
   </q-page>
