@@ -58,6 +58,15 @@
                   />
                 </div>
                 <div class="col-12 col-md-4">
+                  <q-select 
+                    v-model="service.checklistType" 
+                    :options="['Standard HVAC', 'Cooling Tower']" 
+                    label="Checklist Template" 
+                    outlined 
+                    dense 
+                  />
+                </div>
+                <div class="col-12 col-md-4">
                   <q-input v-model="service.nextScheduleDate" label="Planned Next Service" outlined dense readonly bg-color="blue-1" />
                 </div>
                 <div class="col-12 col-md-6">
@@ -264,6 +273,7 @@ export default defineComponent({
     const service = reactive({
       lastServiceDate: '2025-12-14',
       frequency: 'Monthly',
+      checklistType: 'Standard HVAC',
       nextScheduleDate: '2026-01-14',
       currentServiceDate: new Date().toISOString().substr(0, 10),
       timeArrived: new Date().toLocaleTimeString(),
@@ -285,6 +295,19 @@ export default defineComponent({
       'Annual',
       'Every 3-5 Years'
     ]
+
+    const specializedChecklists = {
+      'Cooling Tower': [
+        { label: 'Fan & drive inspection', desc: 'No abnormal noise or vibration', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Fan belts & sheaves', desc: 'Proper tension and alignment', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Spray headers & nozzles', desc: 'Uniform water distribution over fill', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Drift eliminators', desc: 'Clean, intact, and properly seated', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Basin & sump cleaning', desc: 'Sediment, sludge, and debris removed', freq: ['Quarterly'], status: 'not_completed' },
+        { label: 'Fill media inspection', desc: 'No fouling, scaling, or biological growth', freq: ['Quarterly'], status: 'not_completed' },
+        { label: 'Legionella control review', desc: 'Controls implemented per WMP', freq: ['Semi-Annual'], status: 'not_completed' },
+        { label: 'Drain, clean & disinfect basin', desc: 'Basin cleaned prior to disinfection', freq: ['Annual'], status: 'not_completed' }
+      ]
+    }
 
     const allTasks = [
       { label: 'Visual Inspection', desc: 'Check unit for abnormal noise, vibration, or leaks.', freq: ['Monthly', 'Quarterly', 'Semi-Annual', 'Annual'], status: 'not_completed' },
@@ -314,7 +337,10 @@ export default defineComponent({
     ]
 
     const checklist = computed(() => {
-      return allTasks.filter(task => task.freq.includes(service.frequency))
+      const tasks = service.checklistType === 'Cooling Tower' 
+        ? specializedChecklists['Cooling Tower'] 
+        : allTasks
+      return tasks.filter(task => task.freq.includes(service.frequency))
     })
 
     const calculateNextService = (val) => {

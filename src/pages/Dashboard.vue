@@ -48,6 +48,16 @@
         </q-card>
       </div>
 
+      <div class="col-12 col-md-3">
+        <q-card class="bg-indigo-8 text-white shadow-5">
+          <q-card-section>
+            <div class="text-subtitle2 opacity-80">Commissioning</div>
+            <div class="text-h3 text-weight-bolder">{{ store.commissioningRecords.length }}</div>
+            <q-icon name="fact_check" size="lg" class="absolute-right q-ma-md opacity-40" />
+          </q-card-section>
+        </q-card>
+      </div>
+
       <!-- Main Actions -->
       <div class="col-12 col-md-8">
         <q-card flat bordered>
@@ -82,6 +92,7 @@
           <q-card-section class="q-gutter-y-sm">
             <q-btn color="primary" icon="person_add" label="New Customer" class="full-width" to="/customers/add" />
             <q-btn color="secondary" icon="calendar_today" label="Service Schedule" class="full-width" to="/service-calendar" />
+            <q-btn color="indigo-8" icon="fact_check" label="Commissioning Master" class="full-width" to="/commissioning" />
             <q-btn outline color="primary" icon="file_download" label="Export Register" class="full-width" to="/assets" />
           </q-card-section>
         </q-card>

@@ -159,6 +159,16 @@
           </q-item-section>
         </q-item>
 
+        <q-item clickable to="/commissioning" class="navigation-item" active-class="navigation-item-active">
+          <q-item-section avatar>
+            <q-icon name="fact_check" size="sm" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-weight-bold">Commissioning</q-item-label>
+            <q-item-label caption>CIBSE & ASHRAE Master</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-separator q-my-lg />
 
         <q-item clickable to="/login" class="navigation-item text-grey-7">

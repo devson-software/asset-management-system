@@ -133,6 +133,11 @@ export const store = reactive({
     { id: 'JOB-2026-005', date: '2025/12/28', unitRef: 'NB-01', customer: 'Alpha Corp', tech: 'John Doe', faultFound: true },
     { id: 'JOB-2025-154', date: '2025/12/15', unitRef: 'Ac1.01', customer: 'Alpha Corp', tech: 'Sarah Jenkins', faultFound: false }
   ],
+  commissioningRecords: [
+    { id: 'COMM-001', date: '2026/01/16', unitRef: 'P-01', type: 'Pump', customer: 'Alpha Corp', project: 'Downtown Office', status: 'Completed' },
+    { id: 'COMM-002', date: '2026/01/16', unitRef: 'F-01', type: 'Fan', customer: 'Global Logistics Hub', project: 'Main Warehouse', status: 'Completed' },
+    { id: 'COMM-003', date: '2026/01/16', unitRef: 'DX-01', type: 'DX Split', customer: 'City Mall Plaza', project: 'Food Court', status: 'In Progress' }
+  ],
   // Helper to add a customer
   addCustomer(customer) {
     this.customers.push({
@@ -215,6 +220,20 @@ export const store = reactive({
     const index = this.services.findIndex(s => s.id === id)
     if (index !== -1) {
       this.services.splice(index, 1)
+    }
+  },
+  // Helper to add a commissioning record
+  addCommissioningRecord(record) {
+    this.commissioningRecords.push({
+      id: 'COMM-' + Date.now(),
+      ...record
+    })
+  },
+  // Helper to update a commissioning record
+  updateCommissioningRecord(id, updatedRecord) {
+    const index = this.commissioningRecords.findIndex(r => r.id === id)
+    if (index !== -1) {
+      this.commissioningRecords[index] = { ...this.commissioningRecords[index], ...updatedRecord }
     }
   }
 })

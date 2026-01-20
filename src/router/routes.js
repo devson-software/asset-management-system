@@ -26,7 +26,10 @@ const routes = [
       { path: 'technical-data/:assetId?', component: () => import('pages/TechnicalDataSheet.vue') },
       { path: 'service-calendar', component: () => import('pages/ServiceCalendar.vue') },
       { path: 'service-entry/:assetId?', component: () => import('pages/ServiceForm.vue') },
-      { path: 'job-cards', component: () => import('pages/JobCardHistory.vue') }
+      { path: 'job-cards', component: () => import('pages/JobCardHistory.vue') },
+      { path: 'commissioning', component: () => import('pages/CommissioningList.vue') },
+      { path: 'commissioning/new/:type/:assetId?', component: () => import('pages/CommissioningForm.vue') },
+      { path: 'commissioning/view/:recordId', component: () => import('pages/CommissioningForm.vue') }
     ]
   },
   {

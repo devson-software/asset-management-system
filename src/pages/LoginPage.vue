@@ -66,13 +66,21 @@ export default defineComponent({
     const password = ref('')
 
     const onLogin = () => {
-      // Mock login
-      $q.notify({
-        color: 'positive',
-        message: 'Login successful',
-        icon: 'lock_open'
-      })
-      router.push('/dashboard')
+      // Hard-coded login check
+      if (username.value === 'admin' && password.value === 'HVAC@Admin2026!') {
+        $q.notify({
+          color: 'positive',
+          message: 'Login successful',
+          icon: 'lock_open'
+        })
+        router.push('/dashboard')
+      } else {
+        $q.notify({
+          color: 'negative',
+          message: 'Invalid username or password',
+          icon: 'error'
+        })
+      }
     }
 
     return {
