@@ -85,10 +85,11 @@
       <q-list class="q-gutter-y-xs">
         <q-item clickable to="/dashboard" exact class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fas fa-table-columns" size="sm" />
+            <q-icon name="fas fa-table-columns" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Dashboard</q-item-label>
+            <q-item-label caption>System Overview</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -100,7 +101,7 @@
 
         <q-item clickable to="/customers" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fas fa-users" size="sm" />
+            <q-icon name="fas fa-users" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Customers</q-item-label>
@@ -110,7 +111,7 @@
 
         <q-item clickable to="/projects" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fas fa-building" size="sm" />
+            <q-icon name="fas fa-building" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Projects</q-item-label>
@@ -120,7 +121,7 @@
 
         <q-item clickable to="/assets" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fas fa-boxes-stacked" size="sm" />
+            <q-icon name="fas fa-boxes-stacked" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Assets</q-item-label>
@@ -134,34 +135,37 @@
 
         <q-item clickable to="/service-calendar" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fas fa-calendar-days" size="sm" />
+            <q-icon name="fas fa-calendar-days" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Service Schedule</q-item-label>
+            <q-item-label caption>Maintenance Planning</q-item-label>
           </q-item-section>
         </q-item>
 
         <q-item clickable to="/job-cards" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fas fa-file-contract" size="sm" />
+            <q-icon name="fas fa-file-contract" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Job Card History</q-item-label>
+            <q-item-label caption>Digital Records</q-item-label>
           </q-item-section>
         </q-item>
 
         <q-item clickable to="/technical-data" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fas fa-chart-line" size="sm" />
+            <q-icon name="fas fa-chart-line" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Technical Data Sheet</q-item-label>
+            <q-item-label caption>Unit Specifications</q-item-label>
           </q-item-section>
         </q-item>
 
         <q-item clickable to="/commissioning" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fas fa-clipboard-check" size="sm" />
+            <q-icon name="fas fa-clipboard-check" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Commissioning</q-item-label>
@@ -173,10 +177,11 @@
 
         <q-item clickable to="/login" class="navigation-item text-grey-7">
           <q-item-section avatar>
-            <q-icon name="fas fa-arrow-right-from-bracket" size="sm" />
+            <q-icon name="fas fa-arrow-right-from-bracket" size="14px" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Sign Out</q-item-label>
+            <q-item-label caption>Secure Logout</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
