@@ -1,24 +1,28 @@
 <template>
-  <q-page class="flex flex-center bg-grey-1">
-    <q-card style="width: 100%; max-width: 400px;" flat bordered>
-      <q-card-section class="text-center">
-        <div class="text-h5 text-primary q-mb-xs">HVAC Portal</div>
-        <!-- <div class="text-caption text-grey-7">Log in to access drawings and unit details</div> -->
+  <q-page class="login-page flex flex-center" :style="{ backgroundImage: `url(${currentBg})` }">
+    <div class="login-overlay"></div>
+    <q-card class="login-card shadow-24" flat bordered>
+      <q-card-section class="text-center q-pt-xl">
+        <q-avatar size="100px" font-size="52px" color="primary" text-color="white" icon="settings_suggest" class="q-mb-md shadow-5" />
+        <div class="text-h4 text-weight-bolder text-primary q-mb-xs">HVAC Portal</div>
+        <div class="text-subtitle2 text-grey-7">Asset Management System</div>
       </q-card-section>
 
-      <q-card-section>
+      <q-card-section class="q-px-xl q-pb-xl">
         <q-form @submit="onLogin" class="q-gutter-md">
           <q-input
             v-model="username"
             label="Username"
             outlined
+            rounded
+            bg-color="white"
             dense
             required
             lazy-rules
             :rules="[ val => val && val.length > 0 || 'Please type something']"
           >
             <template v-slot:prepend>
-              <q-icon name="person" />
+              <q-icon name="person" color="primary" />
             </template>
           </q-input>
 
@@ -27,33 +31,43 @@
             type="password"
             label="Password"
             outlined
+            rounded
+            bg-color="white"
             dense
             required
             lazy-rules
             :rules="[ val => val && val.length > 0 || 'Please type something']"
           >
             <template v-slot:prepend>
-              <q-icon name="lock" />
+              <q-icon name="lock" color="primary" />
             </template>
           </q-input>
 
-          <div>
-            <q-btn label="Log In" type="submit" color="primary" class="full-width" />
+          <div class="q-mt-lg">
+            <q-btn 
+              label="Sign In" 
+              type="submit" 
+              color="primary" 
+              rounded 
+              size="lg"
+              class="full-width text-weight-bold" 
+              unelevated
+            />
           </div>
         </q-form>
       </q-card-section>
 
-      <q-separator />
+      <q-separator inset />
 
-      <q-card-section class="bg-grey-2 text-center text-caption">
-        Access is restricted to authorized hvac employees.
+      <q-card-section class="text-center text-caption q-py-md text-grey-6">
+        &copy; 2026 Devson Software - Secure Access Only
       </q-card-section>
     </q-card>
   </q-page>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 
@@ -64,6 +78,29 @@ export default defineComponent({
     const $q = useQuasar()
     const username = ref('')
     const password = ref('')
+
+    const images = [
+      'https://images.unsplash.com/photo-1621905251918-48416bd8575a?q=80&w=1920',
+      // 'https://images.unsplash.com/photo-1581094288338-2314dddb7bc3?q=80&w=1920',
+      'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=1920',
+      // 'https://images.unsplash.com/photo-1631548675611-d072f886164e?q=80&w=1920',
+      // 'https://images.unsplash.com/photo-1599806112334-d007ec532958?q=80&w=1920'
+    ]
+
+    const currentBgIndex = ref(0)
+    const currentBg = ref(images[0])
+    let interval = null
+
+    onMounted(() => {
+      interval = setInterval(() => {
+        currentBgIndex.value = (currentBgIndex.value + 1) % images.length
+        currentBg.value = images[currentBgIndex.value]
+      }, 5000) // Rotate every 5 seconds
+    })
+
+    onUnmounted(() => {
+      if (interval) clearInterval(interval)
+    })
 
     const onLogin = () => {
       // Hard-coded login check
@@ -86,6 +123,7 @@ export default defineComponent({
     return {
       username,
       password,
+      currentBg,
       onLogin
     }
   }
@@ -93,6 +131,34 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.login-page {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  transition: background-image 1.5s ease-in-out;
+}
+
+.login-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(26, 54, 93, 0.8) 0%, rgba(42, 67, 101, 0.7) 100%);
+  z-index: 1;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 2;
+  border: none;
+}
+
 .full-width {
   width: 100%;
 }
