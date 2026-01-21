@@ -1,0 +1,18 @@
+name: Google Chat Notification
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  google-chat-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Notification to Google Chat
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d "{
+            'text': '🚀 *New Push to asset-management-system*\n\n*Branch:* ${{ github.ref_name }}\n*Commit:* ${{ github.event.head_commit.message }}\n*Author:* ${{ github.actor }}\n\n[View Commit](${{ github.event.head_commit.url }})'
+          }" \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}"
