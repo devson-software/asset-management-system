@@ -218,6 +218,11 @@ export default defineComponent({
   color: #5f6368;
 }
 
+.navigation-item .q-item__section--avatar {
+  min-width: 32px !important;
+  padding-right: 1rem !important;
+}
+
 .navigation-item-active {
   background-color: #e8f0fe !important;
   color: #1976D2 !important;

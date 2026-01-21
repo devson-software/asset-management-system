@@ -6,7 +6,7 @@
           <div class="text-h4 text-weight-bold text-primary">Customer Directory</div>
           <div class="text-subtitle1 text-grey-7">Manage your global client base and contact records</div>
         </div>
-        <q-btn color="primary" icon="add" label="Register New Customer" to="/customers/add" class="shadow-2" />
+        <q-btn color="primary" icon="fas fa-plus" label="Register New Customer" to="/customers/add" class="shadow-2" />
       </div>
 
       <div class="col-12">
@@ -22,7 +22,7 @@
             <template v-slot:top-right>
               <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Customers...">
                 <template v-slot:append>
-                  <q-icon name="search" />
+                  <q-icon name="fas fa-magnifying-glass" size="xs" />
                 </template>
               </q-input>
             </template>
@@ -30,7 +30,7 @@
             <template v-slot:body-cell-name="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">
-                  <q-avatar color="blue-1" text-color="primary" icon="business" size="32px" class="q-mr-md" />
+                  <q-avatar color="blue-1" text-color="primary" icon="fas fa-building" size="32px" class="q-mr-md" />
                   <div>
                     <div class="text-weight-bold">{{ props.row.name }}</div>
                     <div class="text-caption text-grey-7">ID: {{ props.row.id }}</div>
@@ -48,7 +48,7 @@
 
             <template v-slot:body-cell-mobile="props">
               <q-td :props="props">
-                <q-chip outline color="grey-7" size="sm" icon="phone" dense>
+                <q-chip outline color="grey-7" size="sm" icon="fas fa-phone" dense>
                   {{ props.row.mobile }}
                 </q-chip>
               </q-td>
@@ -61,7 +61,7 @@
                   @click="$router.push({ path: '/projects', query: { customerId: props.row.id } })"
                   color="blue-1" 
                   text-color="primary" 
-                  icon="assignment" 
+                  icon="fas fa-building-circle-check" 
                   size="sm"
                   class="text-weight-bold"
                 >
@@ -73,25 +73,25 @@
 
             <template v-slot:body-cell-actions="props">
               <q-td :props="props">
-                <q-btn flat round color="grey-7" icon="more_vert">
+                <q-btn flat round color="grey-7" icon="fas fa-ellipsis-vertical">
                   <q-menu auto-close transition-show="scale" transition-hide="scale" class="rounded-borders shadow-2">
                     <q-list style="min-width: 150px">
                       <q-item clickable :to="{ path: '/projects', query: { customerId: props.row.id } }">
                         <q-item-section avatar>
-                          <q-icon name="visibility" color="primary" size="sm" />
+                          <q-icon name="fas fa-eye" color="primary" size="sm" />
                         </q-item-section>
                         <q-item-section>View Projects</q-item-section>
                       </q-item>
                       <q-separator />
                       <q-item clickable :to="'/customers/edit/' + props.row.id">
                         <q-item-section avatar>
-                          <q-icon name="edit" color="grey-7" size="sm" />
+                          <q-icon name="fas fa-edit" color="grey-7" size="sm" />
                         </q-item-section>
                         <q-item-section>Edit Info</q-item-section>
                       </q-item>
                       <q-item clickable class="text-negative">
                         <q-item-section avatar>
-                          <q-icon name="delete" color="negative" size="sm" />
+                          <q-icon name="fas fa-trash-can" color="negative" size="sm" />
                         </q-item-section>
                         <q-item-section>Remove Client</q-item-section>
                       </q-item>

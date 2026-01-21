@@ -1,26 +1,26 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
-      <div class="row items-center q-mb-lg">
+    <div class="row q-col-gutter-lg">
+      <div class="col-12 flex justify-between items-center">
         <div>
           <div class="text-h4 text-weight-bold text-primary">Assets Register</div>
           <div class="text-subtitle1 text-grey-7" v-if="activeProjectName">
-            Managing units for: <span class="text-weight-bold text-primary">{{ activeProjectName }}</span>
+            Managing equipment for: <span class="text-weight-bold text-primary">{{ activeProjectName }}</span>
           </div>
           <div class="text-subtitle1 text-grey-7" v-else>
-            Complete repository of all installed HVAC equipment
+            Complete repository of all installed HVAC units
           </div>
         </div>
-        <q-space />
         <div class="q-gutter-sm">
-          <q-btn v-if="$route.query.projectId" flat color="primary" icon="arrow_back" label="Show All Assets" :to="{ path: '/assets', query: {} }" />
-          <q-btn color="secondary" icon="add" label="Register New Asset" @click="goToAddAsset" class="shadow-1" />
-          <q-btn color="green-7" icon="file_download" label="Export CSV" @click="exportToExcel" class="shadow-1" />
-          <q-btn color="secondary" icon="qr_code" label="Generate QR" @click="generateQRs" class="shadow-1" />
+          <q-btn v-if="$route.query.projectId" flat color="primary" icon="fas fa-arrow-left" label="Show All Assets" :to="{ path: '/assets', query: {} }" />
+          <q-btn color="primary" icon="fas fa-plus" label="Register New Asset" @click="goToAddAsset" class="shadow-2" />
+          <q-btn color="green-7" icon="fas fa-file-csv" label="Export CSV" @click="exportToExcel" class="shadow-2" />
+          <q-btn color="indigo-7" icon="fas fa-qrcode" label="Generate QRs" @click="generateQRs" class="shadow-2" />
         </div>
       </div>
 
-      <q-card flat bordered class="rounded-borders">
+      <div class="col-12">
+        <q-card flat bordered class="rounded-borders">
         <q-table
           :rows="rows"
           :columns="columns"
@@ -31,22 +31,28 @@
         >
           <template v-slot:top-right>
             <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Assets...">
-              <template v-slot:append><q-icon name="search" /></template>
+              <template v-slot:append>
+                <q-icon name="fas fa-magnifying-glass" size="xs" />
+              </template>
             </q-input>
           </template>
 
           <template v-slot:body-cell-customer="props">
             <q-td :props="props">
-              <div class="text-weight-bold">{{ props.row.customerName }}</div>
+              <div class="text-weight-bold text-primary">{{ props.row.customerName }}</div>
               <div class="text-caption text-grey-7">{{ props.row.projectName }}</div>
             </q-td>
           </template>
 
           <template v-slot:body-cell-unitRef="props">
             <q-td :props="props">
-              <q-chip dense color="blue-1" text-color="primary" class="text-weight-bold">
-                {{ props.row.unitRef }}
-              </q-chip>
+              <div class="row items-center no-wrap">
+                <q-avatar color="blue-1" text-color="primary" icon="fas fa-snowflake" size="32px" class="q-mr-md" />
+                <div>
+                  <div class="text-weight-bold text-primary">{{ props.row.unitRef }}</div>
+                  <div class="text-caption text-grey-7">{{ props.row.indoorModel }}</div>
+                </div>
+              </div>
             </q-td>
           </template>
 
@@ -91,6 +97,7 @@
           </template>
         </q-table>
       </q-card>
+    </div>
     </div>
   </q-page>
 </template>

@@ -5,15 +5,15 @@
         <div>
           <div class="text-h4 text-weight-bold text-primary">Projects Explorer</div>
           <div class="text-subtitle1 text-grey-7" v-if="activeCustomerName">
-            Projects for: <span class="text-weight-bold text-primary">{{ activeCustomerName }}</span>
+            Managing sites for: <span class="text-weight-bold text-primary">{{ activeCustomerName }}</span>
           </div>
           <div class="text-subtitle1 text-grey-7" v-else>
-            Manage sites across all customers
+            Complete directory of all managed customer sites
           </div>
         </div>
         <div class="q-gutter-sm">
-          <q-btn v-if="$route.query.customerId" flat color="primary" icon="arrow_back" label="Show All Customers" :to="{ path: '/projects', query: {} }" />
-          <q-btn v-if="$route.query.customerId" color="secondary" icon="add" label="Add Project" :to="'/customers/' + $route.query.customerId + '/add-project'" class="shadow-1" />
+          <q-btn v-if="$route.query.customerId" flat color="primary" icon="fas fa-arrow-left" label="Show All Customers" :to="{ path: '/projects', query: {} }" />
+          <q-btn color="primary" icon="fas fa-plus" label="Add New Project" :to="$route.query.customerId ? '/customers/' + $route.query.customerId + '/add-project' : '/customers'" class="shadow-2" />
         </div>
       </div>
 
@@ -26,19 +26,26 @@
             flat
             :filter="filter"
           >
-            <template v-slot:top-right>
-              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Projects...">
-                <template v-slot:append><q-icon name="search" /></template>
-              </q-input>
-            </template>
+          <template v-slot:top-right>
+            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Projects...">
+              <template v-slot:append>
+                <q-icon name="fas fa-magnifying-glass" size="xs" />
+              </template>
+            </q-input>
+          </template>
 
-            <!-- Custom Project Name / Customer Cell -->
-            <template v-slot:body-cell-name="props">
-              <q-td :props="props">
-                <div class="text-weight-bold text-primary">{{ props.row.name }}</div>
-                <div class="text-caption text-grey-7">Client: {{ props.row.customerName }}</div>
-              </q-td>
-            </template>
+          <!-- Custom Project Name / Customer Cell -->
+          <template v-slot:body-cell-name="props">
+            <q-td :props="props">
+              <div class="row items-center no-wrap">
+                <q-avatar color="blue-1" text-color="primary" icon="fas fa-map-location-dot" size="32px" class="q-mr-md" />
+                <div>
+                  <div class="text-weight-bold text-primary">{{ props.row.name }}</div>
+                  <div class="text-caption text-grey-7">Client: {{ props.row.customerName }}</div>
+                </div>
+              </div>
+            </q-td>
+          </template>
 
             <!-- Custom Site Address Cell -->
             <template v-slot:body-cell-siteAddress="props">
