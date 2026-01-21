@@ -9,7 +9,7 @@
 
       <!-- Quick Stats -->
       <div class="col-12 col-md-3">
-        <q-card class="hvac-gradient text-white shadow-5">
+        <q-card class="hvac-gradient text-white shadow-5 hover-lift">
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Total Assets</div>
             <div class="text-h3 text-weight-bolder">{{ allAssets.length }}</div>
@@ -19,7 +19,7 @@
       </div>
 
       <div class="col-12 col-md-3">
-        <q-card class="cool-gradient text-white shadow-5">
+        <q-card class="cool-gradient text-white shadow-5 hover-lift">
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Scheduled Visits</div>
             <div class="text-h3 text-weight-bolder">{{ store.services.length }}</div>
@@ -29,7 +29,7 @@
       </div>
 
       <div class="col-12 col-md-3">
-        <q-card class="bg-red-9 text-white shadow-5">
+        <q-card class="bg-red-9 text-white shadow-5 hover-lift">
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Emergency Faults</div>
             <div class="text-h3 text-weight-bolder">1</div>
@@ -39,7 +39,7 @@
       </div>
 
       <div class="col-12 col-md-3">
-        <q-card class="bg-green-8 text-white shadow-5">
+        <q-card class="bg-green-8 text-white shadow-5 hover-lift">
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Reports Ready</div>
             <div class="text-h3 text-weight-bolder">{{ store.jobCards.length }}</div>
@@ -49,7 +49,7 @@
       </div>
 
       <div class="col-12 col-md-3">
-        <q-card class="bg-indigo-8 text-white shadow-5">
+        <q-card class="bg-indigo-8 text-white shadow-5 hover-lift">
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Commissioning</div>
             <div class="text-h3 text-weight-bolder">{{ store.commissioningRecords.length }}</div>

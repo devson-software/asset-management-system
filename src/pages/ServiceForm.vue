@@ -2,9 +2,9 @@
   <q-page padding>
     <div class="q-pa-md">
       <q-card flat bordered class="service-card shadow-2">
-        <q-card-section class="bg-secondary text-white">
+        <q-card-section :class="headerColor + ' text-white'">
           <div class="row items-center no-wrap">
-            <q-icon name="handyman" size="md" class="q-mr-md" />
+            <q-icon :name="headerIcon" size="md" class="q-mr-md" />
             <div>
               <div class="text-h5 text-weight-bold">Maintenance Service Entry</div>
               <div class="text-subtitle2" v-if="targetAsset">
@@ -60,7 +60,7 @@
                 <div class="col-12 col-md-4">
                   <q-select 
                     v-model="service.checklistType" 
-                    :options="['Standard HVAC', 'Cooling Tower']" 
+                    :options="['Standard HVAC', 'Cooling Tower', 'Chiller', 'Fan / FCU', 'Electrical Panel']" 
                     label="Checklist Template" 
                     outlined 
                     dense 
@@ -108,19 +108,58 @@
             <!-- Technical Measurements -->
             <div class="section-container bg-white">
               <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="thermostat" class="q-mr-sm" /> Performance Data
+                <q-icon name="thermostat" class="q-mr-sm" /> Performance Verification (ASHRAE 180)
               </div>
+              
+              <!-- Dynamic Fields Based on Equipment Type -->
               <div class="row q-col-gutter-md">
-                <div class="col-12 col-sm-6">
-                  <q-input v-model="service.onCoilTemp" label="On Coil Temperature (°C)" outlined dense>
-                    <template v-slot:append><span class="text-caption text-grey">°C</span></template>
-                  </q-input>
-                </div>
-                <div class="col-12 col-sm-6">
-                  <q-input v-model="service.offCoilTemp" label="Off Coil Temperature (°C)" outlined dense>
-                    <template v-slot:append><span class="text-caption text-grey">°C</span></template>
-                  </q-input>
-                </div>
+                <!-- Standard / VRF / FCU -->
+                <template v-if="service.checklistType === 'Standard HVAC' || service.checklistType === 'Fan / FCU'">
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.onCoilTemp" label="Return Air Temp (°C)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.offCoilTemp" label="Supply Air Temp (°C)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.suctionPressure" label="Suction Pressure (kPa)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.dischargePressure" label="Discharge Pressure (kPa)" outlined dense />
+                  </div>
+                </template>
+
+                <!-- Cooling Tower -->
+                <template v-if="service.checklistType === 'Cooling Tower'">
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.hotWaterIn" label="Hot Water Inlet Temp (°C)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.coldWaterOut" label="Cold Water Outlet Temp (°C)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.fanCurrent" label="Fan Motor Current (A)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.waterLevel" label="Water Level Stability" outlined dense />
+                  </div>
+                </template>
+
+                <!-- Chiller -->
+                <template v-if="service.checklistType === 'Chiller'">
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.chilledWaterIn" label="Chilled Water Return Temp (°C)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.chilledWaterOut" label="Chilled Water Supply Temp (°C)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.compCurrent" label="Compressor Current (A)" outlined dense />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="service.approachTemp" label="Condenser Approach (°C)" outlined dense />
+                  </div>
+                </template>
               </div>
             </div>
 
@@ -270,6 +309,24 @@ export default defineComponent({
       return found
     })
 
+    const headerColor = computed(() => {
+      const type = service.checklistType
+      if (type === 'Cooling Tower') return 'bg-cyan-9'
+      if (type === 'Chiller') return 'bg-blue-10'
+      if (type === 'Fan / FCU') return 'bg-teal-8'
+      if (type === 'Electrical Panel') return 'bg-amber-9'
+      return 'bg-secondary'
+    })
+
+    const headerIcon = computed(() => {
+      const type = service.checklistType
+      if (type === 'Cooling Tower') return 'water'
+      if (type === 'Chiller') return 'ac_unit'
+      if (type === 'Fan / FCU') return 'air'
+      if (type === 'Electrical Panel') return 'bolt'
+      return 'handyman'
+    })
+
     const service = reactive({
       lastServiceDate: '2025-12-14',
       frequency: 'Monthly',
@@ -281,6 +338,16 @@ export default defineComponent({
       travelDistance: '',
       onCoilTemp: '',
       offCoilTemp: '',
+      suctionPressure: '',
+      dischargePressure: '',
+      hotWaterIn: '',
+      coldWaterOut: '',
+      fanCurrent: '',
+      waterLevel: '',
+      chilledWaterIn: '',
+      chilledWaterOut: '',
+      compCurrent: '',
+      approachTemp: '',
       faultFound: false,
       faultDetails: '',
       faultPictures: null,
@@ -298,14 +365,29 @@ export default defineComponent({
 
     const specializedChecklists = {
       'Cooling Tower': [
-        { label: 'Fan & drive inspection', desc: 'No abnormal noise or vibration', freq: ['Monthly'], status: 'not_completed' },
-        { label: 'Fan belts & sheaves', desc: 'Proper tension and alignment', freq: ['Monthly'], status: 'not_completed' },
-        { label: 'Spray headers & nozzles', desc: 'Uniform water distribution over fill', freq: ['Monthly'], status: 'not_completed' },
-        { label: 'Drift eliminators', desc: 'Clean, intact, and properly seated', freq: ['Monthly'], status: 'not_completed' },
-        { label: 'Basin & sump cleaning', desc: 'Sediment, sludge, and debris removed', freq: ['Quarterly'], status: 'not_completed' },
-        { label: 'Fill media inspection', desc: 'No fouling, scaling, or biological growth', freq: ['Quarterly'], status: 'not_completed' },
-        { label: 'Legionella control review', desc: 'Controls implemented per WMP', freq: ['Semi-Annual'], status: 'not_completed' },
-        { label: 'Drain, clean & disinfect basin', desc: 'Basin cleaned prior to disinfection', freq: ['Annual'], status: 'not_completed' }
+        { label: 'Inspect casing & structure', desc: 'No structural damage', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Inspect fan & guards', desc: 'Check blades, balance, guards secure', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Check basin cleanliness', desc: 'Clean; no bio growth', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Check drift eliminators', desc: 'Correctly seated; intact', freq: ['Quarterly'], status: 'not_completed' },
+        { label: 'Inspect fill pack', desc: 'Clean; not collapsed', freq: ['Annual'], status: 'not_completed' }
+      ],
+      'Chiller': [
+        { label: 'Inspect refrigerant piping', desc: 'No leaks; insulation intact', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Check compressor condition', desc: 'Normal operation; no noise', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Clean condenser coils', desc: 'Coils clean; no damage', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Check oil level / condition', desc: 'Within OEM range; clean', freq: ['Quarterly'], status: 'not_completed' }
+      ],
+      'Fan / FCU': [
+        { label: 'Clean / replace filters', desc: 'Filter clean and intact', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Inspect & clean indoor coil', desc: 'No significant fouling', freq: ['Quarterly'], status: 'not_completed' },
+        { label: 'Inspect fan motor & wheel', desc: 'Clean; smooth operation', freq: ['Quarterly'], status: 'not_completed' },
+        { label: 'Check electrical terminals', desc: 'Within limits; secure', freq: ['Annual'], status: 'not_completed' }
+      ],
+      'Electrical Panel': [
+        { label: 'Check for abnormal noise/smell', desc: 'None observed', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Visual inspection for dust/insects', desc: 'Clean and dry', freq: ['Monthly'], status: 'not_completed' },
+        { label: 'Torque check on busbars', desc: 'As per manufacturer torque', freq: ['Quarterly'], status: 'not_completed' },
+        { label: 'Thermal Scan', desc: 'No hot spots', freq: ['Annual'], status: 'not_completed' }
       ]
     }
 
@@ -417,6 +499,8 @@ export default defineComponent({
 
     return {
       targetAsset,
+      headerColor,
+      headerIcon,
       service,
       frequencyOptions,
       checklist,
