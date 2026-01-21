@@ -3,7 +3,7 @@
     <div class="login-overlay"></div>
     <q-card class="login-card shadow-24" flat bordered>
       <q-card-section class="text-center q-pt-xl">
-        <q-avatar size="100px" font-size="52px" color="primary" text-color="white" icon="settings_suggest" class="q-mb-md shadow-5" />
+        <q-avatar size="100px" font-size="52px" color="primary" text-color="white" icon="fas fa-screwdriver-wrench" class="q-mb-md shadow-5" />
         <div class="text-h4 text-weight-bolder text-primary q-mb-xs">HVAC Portal</div>
         <div class="text-subtitle2 text-grey-7">Asset Management System</div>
       </q-card-section>
@@ -22,7 +22,7 @@
             :rules="[ val => val && val.length > 0 || 'Please type something']"
           >
             <template v-slot:prepend>
-              <q-icon name="person" color="primary" />
+              <q-icon name="fas fa-user" color="primary" />
             </template>
           </q-input>
 
@@ -39,7 +39,7 @@
             :rules="[ val => val && val.length > 0 || 'Please type something']"
           >
             <template v-slot:prepend>
-              <q-icon name="lock" color="primary" />
+              <q-icon name="fas fa-lock" color="primary" />
             </template>
           </q-input>
 

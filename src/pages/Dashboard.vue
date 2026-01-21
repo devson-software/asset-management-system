@@ -13,7 +13,7 @@
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Total Assets</div>
             <div class="text-h3 text-weight-bolder">{{ allAssets.length }}</div>
-            <q-icon name="ac_unit" size="lg" class="absolute-right q-ma-md opacity-40" />
+            <q-icon name="fas fa-snowflake" size="lg" class="absolute-right q-ma-md opacity-40" />
           </q-card-section>
         </q-card>
       </div>
@@ -23,7 +23,7 @@
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Scheduled Visits</div>
             <div class="text-h3 text-weight-bolder">{{ store.services.length }}</div>
-            <q-icon name="engineering" size="lg" class="absolute-right q-ma-md opacity-40" />
+            <q-icon name="fas fa-user-gear" size="lg" class="absolute-right q-ma-md opacity-40" />
           </q-card-section>
         </q-card>
       </div>
@@ -33,7 +33,7 @@
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Emergency Faults</div>
             <div class="text-h3 text-weight-bolder">1</div>
-            <q-icon name="warning" size="lg" class="absolute-right q-ma-md opacity-40" />
+            <q-icon name="fas fa-triangle-exclamation" size="lg" class="absolute-right q-ma-md opacity-40" />
           </q-card-section>
         </q-card>
       </div>
@@ -43,7 +43,7 @@
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Reports Ready</div>
             <div class="text-h3 text-weight-bolder">{{ store.jobCards.length }}</div>
-            <q-icon name="cloud_done" size="lg" class="absolute-right q-ma-md opacity-40" />
+            <q-icon name="fas fa-file-invoice" size="lg" class="absolute-right q-ma-md opacity-40" />
           </q-card-section>
         </q-card>
       </div>
@@ -53,7 +53,7 @@
           <q-card-section>
             <div class="text-subtitle2 opacity-80">Commissioning</div>
             <div class="text-h3 text-weight-bolder">{{ store.commissioningRecords.length }}</div>
-            <q-icon name="fact_check" size="lg" class="absolute-right q-ma-md opacity-40" />
+            <q-icon name="fas fa-clipboard-check" size="lg" class="absolute-right q-ma-md opacity-40" />
           </q-card-section>
         </q-card>
       </div>
@@ -70,7 +70,7 @@
           <q-list>
             <q-item v-for="asset in allAssets.slice(0, 5)" :key="asset.id" clickable v-ripple>
               <q-item-section avatar>
-                <q-avatar color="blue-1" text-color="primary" icon="ac_unit" />
+                <q-avatar color="blue-1" text-color="primary" icon="fas fa-snowflake" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ asset.unitRef }}</q-item-label>
@@ -90,10 +90,10 @@
             <div class="text-h6">Quick Actions</div>
           </q-card-section>
           <q-card-section class="q-gutter-y-sm">
-            <q-btn color="primary" icon="person_add" label="New Customer" class="full-width" to="/customers/add" />
-            <q-btn color="secondary" icon="calendar_today" label="Service Schedule" class="full-width" to="/service-calendar" />
-            <q-btn color="indigo-8" icon="fact_check" label="Commissioning Master" class="full-width" to="/commissioning" />
-            <q-btn outline color="primary" icon="file_download" label="Export Register" class="full-width" to="/assets" />
+            <q-btn color="primary" icon="fas fa-user-plus" label="New Customer" class="full-width" to="/customers/add" />
+            <q-btn color="secondary" icon="fas fa-calendar-day" label="Service Schedule" class="full-width" to="/service-calendar" />
+            <q-btn color="indigo-8" icon="fas fa-clipboard-check" label="Commissioning Master" class="full-width" to="/commissioning" />
+            <q-btn outline color="primary" icon="fas fa-file-export" label="Export Register" class="full-width" to="/assets" />
           </q-card-section>
         </q-card>
       </div>

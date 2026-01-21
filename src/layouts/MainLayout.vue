@@ -7,23 +7,23 @@
           dense
           round
         
-          icon="menu"
+          icon="fas fa-bars"
           aria-label="Menu"
           @click="toggleLeftDrawer"
           class="q-mr-sm"
         />
 
         <q-toolbar-title class="text-weight-bold row items-center">
-          <q-icon name="ac_unit" color="primary" size="32px" class="q-mr-sm" />
+          <q-icon name="fas fa-snowflake" color="primary" size="32px" class="q-mr-sm" />
           <span class="gt-xs">Asset Management System</span>
           <span class="xs">AMS</span>
         </q-toolbar-title>
 
         <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn round flat icon="search" color="grey-7" class="gt-sm">
+          <q-btn round flat icon="fas fa-magnifying-glass" color="grey-7" class="gt-sm">
             <q-tooltip>Search Anything</q-tooltip>
           </q-btn>
-          <q-btn round flat icon="notifications" color="grey-7">
+          <q-btn round flat icon="fas fa-bell" color="grey-7">
             <q-badge color="negative" floating>2</q-badge>
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
@@ -56,16 +56,16 @@
                 </q-item>
                 <q-separator />
                 <q-item clickable>
-                  <q-item-section avatar><q-icon name="person" color="primary" /></q-item-section>
+                  <q-item-section avatar><q-icon name="fas fa-user-gear" color="primary" /></q-item-section>
                   <q-item-section>My Profile</q-item-section>
                 </q-item>
                 <q-item clickable>
-                  <q-item-section avatar><q-icon name="settings" color="grey-7" /></q-item-section>
+                  <q-item-section avatar><q-icon name="fas fa-gear" color="grey-7" /></q-item-section>
                   <q-item-section>Account Settings</q-item-section>
                 </q-item>
                 <q-separator />
                 <q-item clickable to="/login" class="text-negative">
-                  <q-item-section avatar><q-icon name="logout" color="negative" /></q-item-section>
+                  <q-item-section avatar><q-icon name="fas fa-arrow-right-from-bracket" color="negative" /></q-item-section>
                   <q-item-section>Sign Out</q-item-section>
                 </q-item>
               </q-list>
@@ -85,7 +85,7 @@
       <q-list class="q-gutter-y-xs">
         <q-item clickable to="/dashboard" exact class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="dashboard" size="sm" />
+            <q-icon name="fas fa-table-columns" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Dashboard</q-item-label>
@@ -100,7 +100,7 @@
 
         <q-item clickable to="/customers" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="people" size="sm" />
+            <q-icon name="fas fa-users" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Customers</q-item-label>
@@ -110,7 +110,7 @@
 
         <q-item clickable to="/projects" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="assignment" size="sm" />
+            <q-icon name="fas fa-building" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Projects</q-item-label>
@@ -120,7 +120,7 @@
 
         <q-item clickable to="/assets" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="inventory" size="sm" />
+            <q-icon name="fas fa-boxes-stacked" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Assets</q-item-label>
@@ -134,7 +134,7 @@
 
         <q-item clickable to="/service-calendar" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="calendar_month" size="sm" />
+            <q-icon name="fas fa-calendar-days" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Service Schedule</q-item-label>
@@ -143,7 +143,7 @@
 
         <q-item clickable to="/job-cards" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="cloud_done" size="sm" />
+            <q-icon name="fas fa-file-contract" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Job Card History</q-item-label>
@@ -152,7 +152,7 @@
 
         <q-item clickable to="/technical-data" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="analytics" size="sm" />
+            <q-icon name="fas fa-chart-line" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Technical Data Sheet</q-item-label>
@@ -161,7 +161,7 @@
 
         <q-item clickable to="/commissioning" class="navigation-item" active-class="navigation-item-active">
           <q-item-section avatar>
-            <q-icon name="fact_check" size="sm" />
+            <q-icon name="fas fa-clipboard-check" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Commissioning</q-item-label>
@@ -173,7 +173,7 @@
 
         <q-item clickable to="/login" class="navigation-item text-grey-7">
           <q-item-section avatar>
-            <q-icon name="logout" size="sm" />
+            <q-icon name="fas fa-arrow-right-from-bracket" size="sm" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">Sign Out</q-item-label>

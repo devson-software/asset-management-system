@@ -5,7 +5,7 @@ module.exports = configure(function (/* ctx */) {
     boot: [],
     css: ['app.scss'],
     extras: [
-      'roboto-font',
+      'fontawesome-v6',
       'material-icons'
     ],
     build: {
