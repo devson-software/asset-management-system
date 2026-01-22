@@ -1,46 +1,55 @@
-# HVAC Asset Pro - Detailed Database Design Sketch (ASHRAE 180 Compliant)
+# HVAC Asset Pro - Comprehensive Database Architecture
 
-This document outlines the professional-grade database architecture for the Asset Management System, incorporating detailed **ASHRAE 180** standards for Axial Flow Fans and other equipment.
+This document outlines the professional-grade database architecture for the Asset Management System, specifically rechecked against the system's current functional requirements (Commissioning, Technical Data Sheets, and ASHRAE 180 Maintenance).
 
 ## Detailed Entity Relationship Diagram (ERD)
 
 ```mermaid
 erDiagram
-    %% Lookup Tables
-    LU_ROLES {
-        int id PK
-        string role_name "Admin, Tech, Manager, Client"
-    }
+    %% --- LOOKUP TABLES ---
     LU_EQUIPMENT_TYPES {
         int id PK
-        string name "Chiller, AHU, FCU, Pump, Fan"
-        string code "CHLR, AHU, FCU, PMP, FAN"
+        string name "Chiller, AHU, FCU, Pump, Fan, DX Split"
+        string category "Mechanical, Electrical, HVAC"
     }
     LU_REFRIGERANTS {
         int id PK
-        string name "R410A, R32, R134a, R407C"
+        string name "R410A, R32, R134a, R407C, R404A"
+        float gwp_value "Global Warming Potential"
     }
     LU_SERVICE_FREQUENCIES {
         int id PK
-        string name "Monthly, Quarterly, Bi-Annual, Annual"
+        string name "Monthly, Quarterly, Semi-Annual, Annual"
         int months_interval
     }
-    LU_TASK_CATEGORIES {
+    LU_ROLES {
         int id PK
-        string name "Mechanical, Electrical, Performance"
+        string name "Admin, Field Engineer, Client Manager"
+    }
+    LU_OWNERSHIP_TYPES {
+        int id PK
+        string name "Landlord, Tenant, Owner"
     }
 
-    %% Main Entities
+    %% --- CORE ENTITIES ---
     USERS {
         uuid id PK
         string username
+        string email
+        string password_hash
         int role_id FK
+        datetime last_login
     }
 
     CUSTOMERS {
         uuid id PK
         string name
-        string contact_name
+        string vat_number
+        string account_code
+        string contact_person
+        string email
+        string mobile
+        string billing_address
     }
 
     PROJECTS {
@@ -48,99 +57,117 @@ erDiagram
         uuid customer_id FK
         string site_name
         string site_address
+        string region
+        string gps_coordinates
     }
 
     ASSETS {
         uuid id PK
         uuid project_id FK
         int equipment_type_id FK
-        string unit_ref "P-01, AC-01"
+        string unit_ref "e.g. Ac1.01"
         string manufacturer
-        string model
-        string serial_number
-        string system_served "System served by asset"
-        string fan_duty "Airflow / ESP"
-        float motor_rating_kw "kW"
-        string drive_type "Direct, Belt"
+        string indoor_model
+        string indoor_serial
+        string outdoor_model
+        string outdoor_serial
         int refrigerant_id FK
-        float charge_kg
+        float factory_charge_kg
+        datetime installation_date
+        datetime warranty_expiry
+        %% ASHRAE / Tech Data Fields
+        string system_served
+        string fan_duty "Airflow/ESP"
+        float cooling_kw
+        float heating_kw
+        float mca "Max Circuit Amps"
+        float mfa "Max Fuse Amps"
+        string power_supply_indoor
+        string power_supply_outdoor
+        string liquid_pipe_size
+        string gas_pipe_size
+        %% Financials
+        int ownership_type_id FK
+        string service_responsibility "Owner/Contractor"
+        float asset_value
+        float depreciation_rate_pct
     }
 
-    %% ASHRAE 180 Checklist Templates
-    CHECKLIST_TEMPLATES {
+    %% --- WORKFLOW & PERFORMANCE ---
+    COMMISSIONING_RECORDS {
         uuid id PK
-        int equipment_type_id FK
-        string name "Axial Fan Quarterly, etc."
+        uuid asset_id FK
+        uuid engineer_id FK
+        datetime record_date
+        string witness_name
+        json electrical_measurements "L1-L2, L2-L3, Measured Amps"
+        json performance_measurements "Suction, Discharge, Airflow, etc"
+        json functional_checks_json "Checklist pass/fail"
+        text overall_comments
+        boolean is_finalized
     }
 
-    TEMPLATE_TASKS {
-        uuid id PK
-        uuid template_id FK
-        int category_id FK
-        string task_description
-        string method_detail
-        string acceptance_criteria
-        int default_frequency_id FK
-    }
-
-    %% Workflow / Execution
     SERVICE_SCHEDULE {
         uuid id PK
         uuid asset_id FK
         int frequency_id FK
-        datetime next_service_due
+        datetime next_due_date
+        string status "Pending, Overdue, Completed"
     }
 
     JOB_CARDS {
         uuid id PK
         uuid asset_id FK
-        uuid schedule_id FK
+        uuid schedule_id FK "Optional if breakdown"
         uuid technician_id FK
-        datetime completion_date
-        string overall_condition
-        text actions_required
-        string client_rep_name
-        string signature_path
+        datetime check_in_time
+        datetime check_out_time
+        string exit_qr_token "Proof of presence"
+        boolean fault_discovered
+        text fault_description
+        text work_performed
+        string client_signature_path
+        json measurements_json "Current performance data"
+        json checklist_results_json "Maintenance tasks status"
     }
 
-    TASK_LOGS {
+    ATTACHMENTS {
         uuid id PK
-        uuid job_card_id FK
-        uuid task_id FK "Points to TEMPLATE_TASKS"
-        string result "Pass, Fail, N/A"
-        string measured_value "For performance checks"
-        string units "m3/s, Pa, RPM, dBA"
-        text comments
+        uuid linked_id FK "JobCard ID, Asset ID, etc"
+        string file_type "Image, PDF, Document"
+        string storage_url
+        datetime uploaded_at
     }
 
-    %% Relationships
-    LU_ROLES ||--o{ USERS : "assigned_to"
+    %% --- RELATIONSHIPS ---
+    LU_ROLES ||--o{ USERS : "defines"
     LU_EQUIPMENT_TYPES ||--o{ ASSETS : "categorizes"
-    LU_REFRIGERANTS ||--o{ ASSETS : "used_in"
-    LU_EQUIPMENT_TYPES ||--o{ CHECKLIST_TEMPLATES : "defines_standards"
+    LU_REFRIGERANTS ||--o{ ASSETS : "charges"
+    LU_OWNERSHIP_TYPES ||--o{ ASSETS : "classifies"
+    LU_SERVICE_FREQUENCIES ||--o{ SERVICE_SCHEDULE : "calculates"
     
-    CHECKLIST_TEMPLATES ||--o{ TEMPLATE_TASKS : "contains"
-    LU_TASK_CATEGORIES ||--o{ TEMPLATE_TASKS : "groups"
+    CUSTOMERS ||--o{ PROJECTS : "owns"
+    PROJECTS ||--o{ ASSETS : "houses"
     
+    USERS ||--o{ JOB_CARDS : "executes"
+    USERS ||--o{ COMMISSIONING_RECORDS : "authorizes"
+    
+    ASSETS ||--o{ COMMISSIONING_RECORDS : "verified_by"
     ASSETS ||--o{ SERVICE_SCHEDULE : "planned_for"
-    SERVICE_SCHEDULE ||--o{ JOB_CARDS : "triggers"
+    ASSETS ||--o{ JOB_CARDS : "maintained_by"
     
-    JOB_CARDS ||--o{ TASK_LOGS : "records_results"
-    TEMPLATE_TASKS ||--o{ TASK_LOGS : "defines_results"
+    SERVICE_SCHEDULE ||--o{ JOB_CARDS : "generates"
+    JOB_CARDS ||--o{ ATTACHMENTS : "contains_photos"
+    ASSETS ||--o{ ATTACHMENTS : "manuals_photos"
 ```
 
-## ASHRAE 180 Specific Integration
+## System Alignment Summary
 
-Based on the **Axial Flow Fan** requirements, the design now handles:
+This detailed design is specifically tailored to the features already present in the UI:
 
-1.  **Detailed Asset Specifications**:
-    *   Fields for `system_served`, `fan_duty`, `motor_rating_kw`, and `drive_type` are added to the `ASSETS` table to match the image requirements.
-2.  **Structured Task Hierarchy**:
-    *   Tasks are split into categories (Mechanical, Electrical, Performance) via `LU_TASK_CATEGORIES`.
-    *   `TEMPLATE_TASKS` stores the `Method/Detail` and `Acceptance Criteria` directly, ensuring technicians always know the standard they are testing against.
-3.  **Performance Verification (ASHRAE 180 Section)**:
-    *   `TASK_LOGS` handles the "Measured Value" and "Units" for critical ASHRAE checks like Airflow (m3/s), External Static Pressure (Pa), Fan Speed (RPM), and Noise/Vibration.
-4.  **Compliance Audit Trail**:
-    *   By linking `TASK_LOGS` back to `TEMPLATE_TASKS`, the system can generate a PDF report that looks exactly like the Excel spreadsheet provided, including the specific acceptance criteria and frequency for every single line item.
-5.  **Sign-off & Actions**:
-    *   The `JOB_CARDS` table captures the `Overall Condition`, `Actions Required`, and both the Technician and `Client Rep` names for full accountability.
+1.  **Technical Data Sheet Support**: The `ASSETS` table now includes all 20+ specialized fields found in the "Technical Data Sheet" stepper, including electrical ratings (MCA/MFA), piping sizes, and financial depreciation.
+2.  **ASHRAE 180 Compliance**: The `TASK_LOGS` logic is integrated into `JOB_CARDS` via `checklist_results_json`, allowing the system to store specific results for Mechanical, Electrical, and Performance tasks as defined in the ASHRAE Axial Fan maintenance image.
+3.  **Commissioning Performance**: The `COMMISSIONING_RECORDS` table is structured to handle the specialized data found in the Commissioning Form (L1-L2-L3 voltages, suction/discharge pressures, and calculated flow rates).
+4.  **Verification Loop**: Proof-of-presence is enforced via `check_in_time`, `check_out_time`, and the `exit_qr_token` in the `JOB_CARDS` table.
+5.  **Multi-Asset Photos**: The `ATTACHMENTS` table allows technicians to upload "Fault Pictures" as seen in the Service Entry form, keeping the main data tables lightweight.
+6.  **Normalization & Scalability**: By using UUIDs and comprehensive Lookup tables, the system is ready to scale from a single site to a global enterprise asset registry.

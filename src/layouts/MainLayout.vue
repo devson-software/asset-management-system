@@ -33,8 +33,8 @@
           <!-- Dummy Logged In User -->
           <div class="row items-center no-wrap cursor-pointer profile-section q-pa-xs rounded-borders">
             <div class="column items-end q-mr-md gt-xs">
-              <div class="text-weight-bold text-subtitle2 line-height-1">Jeram HVAC</div>
-              <div class="text-caption text-grey-6 line-height-1">Senior Technician</div>
+              <div class="text-weight-bold text-subtitle2 line-height-1">{{ store.currentUser.fullName || store.currentUser.username }}</div>
+              <div class="text-caption text-grey-6 line-height-1 text-capitalize">{{ store.currentUser.role }}</div>
             </div>
             <q-avatar size="40px" class="shadow-1">
               <img src="https://cdn.quasar.dev/img/avatar2.jpg">
@@ -50,8 +50,8 @@
                     </q-avatar>
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label class="text-weight-bold">Jeram HVAC</q-item-label>
-                    <q-item-label caption>jeram@example.com</q-item-label>
+                    <q-item-label class="text-weight-bold">{{ store.currentUser.fullName || store.currentUser.username }}</q-item-label>
+                    <q-item-label caption>{{ store.currentUser.email || 'user@example.com' }}</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator />
@@ -93,7 +93,26 @@
           </q-item-section>
         </q-item>
 
+        
         <q-separator q-my-md />
+
+        <!-- Separate Administration Menu -->
+        <template v-if="isAdmin">
+          <q-item-label header class="text-overline text-weight-bold text-grey-8 q-pt-md q-pb-md">
+            ADMINISTRATION
+          </q-item-label>
+
+          <q-item clickable to="/admin/users" class="navigation-item" active-class="navigation-item-active">
+            <q-item-section avatar>
+              <q-icon name="fas fa-users-gear" size="14px" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">User Management</q-item-label>
+              <q-item-label caption>Roles & Access</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+
 
         <q-item-label header class="text-overline text-weight-bold text-grey-8 q-pt-md q-pb-md">
           ASSETS & CUSTOMERS
@@ -194,15 +213,19 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
+import { store } from '../store'
 
 export default defineComponent({
   name: 'MainLayout',
   setup () {
     const leftDrawerOpen = ref(false)
+    const isAdmin = computed(() => store.currentUser?.role === 'administrator')
 
     return {
+      store,
       leftDrawerOpen,
+      isAdmin,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
       }

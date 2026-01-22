@@ -70,6 +70,7 @@
 import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { store } from '../store'
 
 export default defineComponent({
   name: 'LoginPage',
@@ -105,17 +106,26 @@ export default defineComponent({
     const onLogin = () => {
       // Hard-coded login check
       if (username.value === 'admin' && password.value === 'HVAC@Admin2026!') {
+        store.currentUser = store.users.find(u => u.username === 'admin')
         $q.notify({
           color: 'positive',
           message: 'Login successful',
-          icon: 'lock_open'
+          icon: 'fas fa-lock-open'
+        })
+        router.push('/dashboard')
+      } else if (username.value === 'tech' && password.value === 'tech') {
+        store.currentUser = store.users.find(u => u.username === 'tech1')
+        $q.notify({
+          color: 'positive',
+          message: 'Login successful',
+          icon: 'fas fa-lock-open'
         })
         router.push('/dashboard')
       } else {
         $q.notify({
           color: 'negative',
           message: 'Invalid username or password',
-          icon: 'error'
+          icon: 'fas fa-circle-exclamation'
         })
       }
     }

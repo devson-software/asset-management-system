@@ -119,6 +119,7 @@ import { store } from '../store'
 export default defineComponent({
   name: 'DashboardPage',
   setup () {
+    const isAdmin = computed(() => store.currentUser?.role === 'administrator')
     const allAssets = computed(() => {
       const assets = []
       store.customers.forEach(c => {
@@ -139,7 +140,7 @@ export default defineComponent({
       return count
     })
 
-    return { store, allAssets, totalProjects }
+    return { store, allAssets, totalProjects, isAdmin }
   }
 })
 </script>

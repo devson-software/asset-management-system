@@ -131,7 +131,12 @@ export const store = reactive({
     { id: 13, date: '2026/01/21', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' },
     { id: 14, date: '2026/01/21', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Emergency Callout' },
     { id: 15, date: '2026/01/21', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Maintenance' },
-    { id: 16, date: '2026/01/21', unitRef: 'CS-01', customer: 'Global Logistics Hub', project: 'Cold Storage', type: 'Monthly Service' }
+    { id: 16, date: '2026/01/21', unitRef: 'CS-01', customer: 'Global Logistics Hub', project: 'Cold Storage', type: 'Monthly Service' },
+    { id: 17, date: '2026/02/25', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service' },
+    { id: 18, date: '2026/02/26', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Filter Cleaning' },
+    { id: 19, date: '2026/02/27', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Monthly Service' },
+    { id: 20, date: '2026/02/28', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Quarterly Service' },
+    { id: 21, date: '2026/02/14', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Valentine Day Check' }
   ],
   jobCards: [
     { id: 'JOB-2026-001', date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', tech: 'John Doe', faultFound: false },
@@ -146,6 +151,12 @@ export const store = reactive({
     { id: 'COMM-002', date: '2026/01/16', unitRef: 'F-01', type: 'Fan', customer: 'Global Logistics Hub', project: 'Main Warehouse', status: 'Completed' },
     { id: 'COMM-003', date: '2026/01/16', unitRef: 'DX-01', type: 'DX Split', customer: 'City Mall Plaza', project: 'Food Court', status: 'In Progress' }
   ],
+  users: [
+    { id: 'U1', username: 'admin', fullName: 'System Administrator', email: 'admin@jeramhvac.co.za', role: 'administrator', active: true },
+    { id: 'U2', username: 'tech1', fullName: 'John Doe', email: 'john@jeramhvac.co.za', role: 'technician', active: true },
+    { id: 'U3', username: 'tech2', fullName: 'Sarah Jenkins', email: 'sarah@jeramhvac.co.za', role: 'technician', active: true }
+  ],
+  currentUser: { id: 'U1', username: 'admin', role: 'administrator' }, // Mock logged-in user
   // Helper to add a customer
   addCustomer(customer) {
     this.customers.push({
@@ -242,6 +253,38 @@ export const store = reactive({
     const index = this.commissioningRecords.findIndex(r => r.id === id)
     if (index !== -1) {
       this.commissioningRecords[index] = { ...this.commissioningRecords[index], ...updatedRecord }
+    }
+  },
+  addJobCard(jobCard) {
+    this.jobCards.unshift({
+      id: 'JOB-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000),
+      ...jobCard
+    })
+  },
+  updateJobCard(id, updatedJobCard) {
+    const index = this.jobCards.findIndex(j => j.id === id)
+    if (index !== -1) {
+      this.jobCards[index] = { ...this.jobCards[index], ...updatedJobCard }
+    }
+  },
+  // User Management Helpers
+  addUser(user) {
+    this.users.push({
+      id: 'U' + Date.now(),
+      active: true,
+      ...user
+    })
+  },
+  updateUser(id, updatedUser) {
+    const index = this.users.findIndex(u => u.id === id)
+    if (index !== -1) {
+      this.users[index] = { ...this.users[index], ...updatedUser }
+    }
+  },
+  deleteUser(id) {
+    const index = this.users.findIndex(u => u.id === id)
+    if (index !== -1) {
+      this.users.splice(index, 1)
     }
   }
 })

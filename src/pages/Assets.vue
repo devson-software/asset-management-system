@@ -22,13 +22,66 @@
       <div class="col-12">
         <q-card flat bordered class="rounded-borders">
         <q-table
-          :rows="rows"
+          :rows="filteredRows"
           :columns="columns"
           row-key="id"
           flat
           :filter="filter"
           class="master-table"
         >
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+                :class="'text-' + col.align"
+              >
+                <div class="row items-center no-wrap" :class="col.align === 'center' ? 'justify-center' : (col.align === 'right' ? 'justify-end' : '')">
+                  <!-- Modern Sort Icon on the Left -->
+                  <q-icon
+                    v-if="col.sortable"
+                    :name="props.pagination && props.pagination.sortBy === col.name ? (props.pagination.descending ? 'fas fa-arrow-down-long' : 'fas fa-arrow-up-long') : 'fas fa-arrow-up-long'"
+                    size="12px"
+                    class="q-mr-xs cursor-pointer sort-icon"
+                    :class="{ 'active': props.pagination && props.pagination.sortBy === col.name }"
+                    @click="props.sort(col)"
+                  />
+                  <span class="cursor-pointer" @click="col.sortable && props.sort(col)">{{ col.label }}</span>
+                  <q-btn
+                    v-if="col.name !== 'actions'"
+                    flat
+                    round
+                    dense
+                    size="xs"
+                    icon="fas fa-filter"
+                    class="q-ml-xs filter-btn"
+                    :class="{ 'active': columnFilters[col.name] }"
+                    :color="columnFilters[col.name] ? 'primary' : 'grey-5'"
+                  >
+                    <q-menu cover anchor="top middle">
+                      <q-list style="min-width: 200px">
+                        <q-item>
+                          <q-input
+                            v-model="columnFilters[col.name]"
+                            :label="'Filter ' + col.label"
+                            outlined
+                            dense
+                            autofocus
+                            clearable
+                          >
+                            <template v-slot:append>
+                              <q-icon name="fas fa-magnifying-glass" size="xs" />
+                            </template>
+                          </q-input>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
+                </div>
+              </q-th>
+            </q-tr>
+          </template>
           <template v-slot:top-right>
             <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Assets...">
               <template v-slot:append>
@@ -73,6 +126,10 @@
                       <q-item-section avatar><q-icon name="visibility" color="primary" size="sm" /></q-item-section>
                       <q-item-section>Quick View</q-item-section>
                     </q-item>
+                    <q-item clickable :to="'/assets/' + props.row.id + '/history'">
+                      <q-item-section avatar><q-icon name="fas fa-history" color="indigo" size="sm" /></q-item-section>
+                      <q-item-section>Service History</q-item-section>
+                    </q-item>
                     <q-item clickable :to="'/customers/' + props.row.customerId + '/projects/' + props.row.projectId + '/assets/' + props.row.id + '/edit'">
                       <q-item-section avatar><q-icon name="edit" color="grey-7" size="sm" /></q-item-section>
                       <q-item-section>Edit Asset</q-item-section>
@@ -98,12 +155,12 @@
         </q-table>
       </q-card>
     </div>
-    </div>
+  </div>
   </q-page>
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, reactive } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { store } from '../store'
@@ -115,13 +172,20 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const filter = ref('')
+    const columnFilters = reactive({
+      customer: '',
+      unitRef: '',
+      indoorModel: '',
+      serialNumber: '',
+      status: ''
+    })
 
     const columns = [
       { name: 'customer', label: 'Client / Project', align: 'left', field: row => row.customerName, sortable: true },
       { name: 'unitRef', label: 'Unit Ref #', align: 'left', field: 'unitRef', sortable: true },
       { name: 'indoorModel', label: 'Indoor Model', align: 'left', field: 'indoorModel', sortable: true },
       { name: 'serialNumber', label: 'Serial Number', align: 'left', field: 'serialNumber', sortable: true },
-      { name: 'status', label: 'Status', align: 'center', field: row => row.status },
+      { name: 'status', label: 'Status', align: 'center', field: row => row.status, sortable: true },
       { name: 'actions', label: '', align: 'right' }
     ]
 
@@ -146,6 +210,18 @@ export default defineComponent({
         })
       })
       return allAssets
+    })
+
+    const filteredRows = computed(() => {
+      return rows.value.filter(row => {
+        return Object.keys(columnFilters).every(key => {
+          if (!columnFilters[key]) return true
+          const val = key === 'customer'
+            ? row.customerName + ' / ' + row.projectName
+            : row[key] || ''
+          return String(val).toLowerCase().includes(columnFilters[key].toLowerCase())
+        })
+      })
     })
 
     const activeProjectName = computed(() => {
@@ -214,8 +290,10 @@ export default defineComponent({
 
     return {
       filter,
+      columnFilters,
       columns,
       rows,
+      filteredRows,
       activeProjectName,
       goToAddAsset,
       generateQRs,

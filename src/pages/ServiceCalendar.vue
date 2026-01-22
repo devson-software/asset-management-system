@@ -25,6 +25,54 @@
       </div>
 
       <div class="col-12">
+        <q-card flat bordered class="rounded-borders q-pa-md bg-grey-1">
+          <div class="row q-col-gutter-md items-center">
+            <div class="col-12 col-sm-5">
+              <q-select
+                v-model="customerFilter"
+                :options="customerOptions"
+                label="Filter by Customer"
+                outlined
+                dense
+                clearable
+                emit-value
+                map-options
+                bg-color="white"
+              >
+                <template v-slot:prepend><q-icon name="fas fa-business-time" size="xs" color="primary" /></template>
+              </q-select>
+            </div>
+            <div class="col-12 col-sm-5">
+              <q-select
+                v-model="projectFilter"
+                :options="filterProjectOptions"
+                label="Filter by Project"
+                outlined
+                dense
+                clearable
+                emit-value
+                map-options
+                :disable="!customerFilter"
+                bg-color="white"
+              >
+                <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" color="primary" /></template>
+              </q-select>
+            </div>
+            <div class="col-12 col-sm-2 flex justify-end">
+              <q-btn 
+                flat 
+                color="grey-7" 
+                icon="fas fa-filter-circle-xmark" 
+                label="Reset" 
+                @click="clearFilters" 
+                v-if="customerFilter || projectFilter" 
+              />
+            </div>
+          </div>
+        </q-card>
+      </div>
+
+      <div class="col-12">
         <div class="row q-col-gutter-xl">
           <!-- Left Column: Calendar -->
           <div class="col-12 col-md-5">
@@ -236,6 +284,8 @@ export default defineComponent({
     const showDialog = ref(false)
     const isEditing = ref(false)
     const currentServiceId = ref(null)
+    const customerFilter = ref(null)
+    const projectFilter = ref(null)
 
     const form = reactive({
       customerId: null,
@@ -245,15 +295,34 @@ export default defineComponent({
       date: selectedDate.value
     })
 
-    const events = computed(() => store.services.map(s => s.date))
+    const events = computed(() => {
+      return store.services
+        .filter(s => {
+          const matchCustomer = !customerFilter.value || s.customer === store.customers.find(c => c.id === customerFilter.value)?.name
+          const matchProject = !projectFilter.value || s.project === store.customers.find(c => c.id === customerFilter.value)?.projects.find(p => p.id === projectFilter.value)?.name
+          return matchCustomer && matchProject
+        })
+        .map(s => s.date)
+    })
 
     const filteredServices = computed(() => {
-      return store.services.filter(s => s.date === selectedDate.value)
+      return store.services.filter(s => {
+        const matchDate = s.date === selectedDate.value
+        const matchCustomer = !customerFilter.value || s.customer === store.customers.find(c => c.id === customerFilter.value)?.name
+        const matchProject = !projectFilter.value || s.project === store.customers.find(c => c.id === customerFilter.value)?.projects.find(p => p.id === projectFilter.value)?.name
+        return matchDate && matchCustomer && matchProject
+      })
     })
 
     // Options for selects
     const customerOptions = computed(() => {
       return store.customers.map(c => ({ label: c.name, value: c.id }))
+    })
+
+    const filterProjectOptions = computed(() => {
+      if (!customerFilter.value) return []
+      const customer = store.customers.find(c => c.id === customerFilter.value)
+      return customer ? customer.projects.map(p => ({ label: p.name, value: p.id })) : []
     })
 
     const projectOptions = computed(() => {
@@ -286,6 +355,15 @@ export default defineComponent({
         form.unitRef = null
       }
     })
+
+    watch(customerFilter, () => {
+      projectFilter.value = null
+    })
+
+    const clearFilters = () => {
+      customerFilter.value = null
+      projectFilter.value = null
+    }
 
     const openAddDialog = () => {
       isEditing.value = false
@@ -380,7 +458,11 @@ export default defineComponent({
       form,
       customerOptions,
       projectOptions,
+      filterProjectOptions,
       assetOptions,
+      customerFilter,
+      projectFilter,
+      clearFilters,
       openAddDialog,
       editService,
       saveService,

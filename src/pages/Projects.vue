@@ -20,12 +20,65 @@
       <div class="col-12">
         <q-card flat bordered class="rounded-borders shadow-1">
           <q-table
-            :rows="allProjects"
+            :rows="filteredRows"
             :columns="projectColumns"
             row-key="id"
             flat
             :filter="filter"
           >
+            <template v-slot:header="props">
+              <q-tr :props="props">
+                <q-th
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                  :class="'text-' + col.align"
+                >
+                  <div class="row items-center no-wrap" :class="col.align === 'center' ? 'justify-center' : (col.align === 'right' ? 'justify-end' : '')">
+                    <!-- Modern Sort Icon on the Left -->
+                    <q-icon
+                      v-if="col.sortable"
+                      :name="props.pagination && props.pagination.sortBy === col.name ? (props.pagination.descending ? 'fas fa-arrow-down-long' : 'fas fa-arrow-up-long') : 'fas fa-arrow-up-long'"
+                      size="12px"
+                      class="q-mr-xs cursor-pointer sort-icon"
+                      :class="{ 'active': props.pagination && props.pagination.sortBy === col.name }"
+                      @click="props.sort(col)"
+                    />
+                    <span class="cursor-pointer" @click="col.sortable && props.sort(col)">{{ col.label }}</span>
+                    <q-btn
+                      v-if="col.name !== 'actions'"
+                      flat
+                      round
+                      dense
+                      size="xs"
+                      icon="fas fa-filter"
+                      class="q-ml-xs filter-btn"
+                      :class="{ 'active': columnFilters[col.name] }"
+                      :color="columnFilters[col.name] ? 'primary' : 'grey-5'"
+                    >
+                      <q-menu cover anchor="top middle">
+                        <q-list style="min-width: 200px">
+                          <q-item>
+                            <q-input
+                              v-model="columnFilters[col.name]"
+                              :label="'Filter ' + col.label"
+                              outlined
+                              dense
+                              autofocus
+                              clearable
+                            >
+                              <template v-slot:append>
+                                <q-icon name="fas fa-magnifying-glass" size="xs" />
+                              </template>
+                            </q-input>
+                          </q-item>
+                        </q-list>
+                      </q-menu>
+                    </q-btn>
+                  </div>
+                </q-th>
+              </q-tr>
+            </template>
           <template v-slot:top-right>
             <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Projects...">
               <template v-slot:append>
@@ -104,7 +157,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, reactive } from 'vue'
 import { store } from '../store'
 import { useRoute } from 'vue-router'
 
@@ -113,6 +166,11 @@ export default defineComponent({
   setup () {
     const route = useRoute()
     const filter = ref('')
+    const columnFilters = reactive({
+      name: '',
+      siteAddress: '',
+      assetsCount: ''
+    })
 
     const allProjects = computed(() => {
       const projects = []
@@ -132,6 +190,18 @@ export default defineComponent({
       return projects
     })
 
+    const filteredRows = computed(() => {
+      return allProjects.value.filter(row => {
+        return Object.keys(columnFilters).every(key => {
+          if (!columnFilters[key]) return true
+          const val = key === 'assetsCount'
+            ? row.assets.length.toString()
+            : row[key] || ''
+          return String(val).toLowerCase().includes(columnFilters[key].toLowerCase())
+        })
+      })
+    })
+
     const activeCustomerName = computed(() => {
       const customerId = route.query.customerId
       if (!customerId) return null
@@ -149,7 +219,9 @@ export default defineComponent({
     return {
       store,
       filter,
+      columnFilters,
       allProjects,
+      filteredRows,
       activeCustomerName,
       projectColumns
     }

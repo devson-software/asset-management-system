@@ -12,13 +12,65 @@
       <div class="col-12">
         <q-card flat bordered class="rounded-borders">
           <q-table
-            :rows="store.users"
+            :rows="filteredRows"
             :columns="columns"
             row-key="id"
             flat
             :filter="filter"
             class="users-table"
           >
+            <template v-slot:header="props">
+              <q-tr :props="props">
+                <q-th
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                  :class="'text-' + col.align"
+                >
+                  <div class="row items-center no-wrap" :class="col.align === 'center' ? 'justify-center' : (col.align === 'right' ? 'justify-end' : '')">
+                    <q-icon
+                      v-if="col.sortable"
+                      :name="props.pagination && props.pagination.sortBy === col.name ? (props.pagination.descending ? 'fas fa-arrow-down-long' : 'fas fa-arrow-up-long') : 'fas fa-arrow-up-long'"
+                      size="12px"
+                      class="q-mr-xs cursor-pointer sort-icon"
+                      :class="{ 'active': props.pagination && props.pagination.sortBy === col.name }"
+                      @click="props.sort(col)"
+                    />
+                    <span class="cursor-pointer" @click="col.sortable && props.sort(col)">{{ col.label }}</span>
+                    <q-btn
+                      v-if="col.name !== 'actions'"
+                      flat
+                      round
+                      dense
+                      size="xs"
+                      icon="fas fa-filter"
+                      class="q-ml-xs filter-btn"
+                      :class="{ 'active': columnFilters[col.name] }"
+                      :color="columnFilters[col.name] ? 'primary' : 'grey-5'"
+                    >
+                      <q-menu cover anchor="top middle">
+                        <q-list style="min-width: 200px">
+                          <q-item>
+                            <q-input
+                              v-model="columnFilters[col.name]"
+                              :label="'Filter ' + col.label"
+                              outlined
+                              dense
+                              autofocus
+                              clearable
+                            >
+                              <template v-slot:append>
+                                <q-icon name="fas fa-magnifying-glass" size="xs" />
+                              </template>
+                            </q-input>
+                          </q-item>
+                        </q-list>
+                      </q-menu>
+                    </q-btn>
+                  </div>
+                </q-th>
+              </q-tr>
+            </template>
             <template v-slot:top-right>
               <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Users...">
                 <template v-slot:append>
@@ -111,7 +163,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, reactive, computed } from 'vue'
 import { store } from '../store'
 import { useQuasar } from 'quasar'
 
@@ -122,6 +174,12 @@ export default defineComponent({
     const filter = ref('')
     const showDeleteDialog = ref(false)
     const userToDelete = ref(null)
+    const columnFilters = reactive({
+      fullName: '',
+      email: '',
+      role: '',
+      active: ''
+    })
 
     const columns = [
       { name: 'fullName', label: 'User', align: 'left', field: 'fullName', sortable: true },
@@ -130,6 +188,18 @@ export default defineComponent({
       { name: 'active', label: 'Status', align: 'left', field: 'active', sortable: true },
       { name: 'actions', label: '', align: 'right' }
     ]
+
+    const filteredRows = computed(() => {
+      return store.users.filter(row => {
+        return Object.keys(columnFilters).every(key => {
+          if (!columnFilters[key]) return true
+          const val = key === 'active'
+            ? (row.active ? 'Active' : 'Inactive')
+            : row[key] || ''
+          return String(val).toLowerCase().includes(columnFilters[key].toLowerCase())
+        })
+      })
+    })
 
     const confirmDelete = (user) => {
       userToDelete.value = user
@@ -148,7 +218,9 @@ export default defineComponent({
     return {
       store,
       filter,
+      columnFilters,
       columns,
+      filteredRows,
       showDeleteDialog,
       userToDelete,
       confirmDelete,

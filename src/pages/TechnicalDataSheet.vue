@@ -15,16 +15,69 @@
       </div>
       
       <!-- Asset Selection Table (Shown if no assetId is selected) -->
-      <div class="col-12" v-if="!showForm">
+      <div class="col-12" v-if="!showForm"> 
         <q-card flat bordered class="rounded-borders shadow-1">
           <q-table
-            :rows="allAssets"
+            :rows="filteredAssets"
             :columns="assetColumns"
             row-key="id"
             flat
             :filter="filter"
             class="asset-selection-table"
           >
+            <template v-slot:header="props">
+              <q-tr :props="props">
+                <q-th
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                  :class="'text-' + col.align"
+                >
+                  <div class="row items-center no-wrap" :class="col.align === 'center' ? 'justify-center' : (col.align === 'right' ? 'justify-end' : '')">
+                    <!-- Sort Icon on the Left -->
+                    <q-icon
+                      v-if="col.sortable"
+                      :name="props.pagination && props.pagination.sortBy === col.name ? (props.pagination.descending ? 'fas fa-arrow-down-long' : 'fas fa-arrow-up-long') : 'fas fa-arrow-up-long'"
+                      size="12px"
+                      class="q-mr-xs cursor-pointer sort-icon"
+                      :class="{ 'active': props.pagination && props.pagination.sortBy === col.name }"
+                      @click="props.sort(col)"
+                    />
+                    <span class="cursor-pointer" @click="col.sortable && props.sort(col)">{{ col.label }}</span>
+                    <q-btn
+                      v-if="col.name !== 'actions'"
+                      flat
+                      round
+                      dense
+                      size="xs"
+                      icon="fas fa-filter"
+                      class="q-ml-xs filter-btn"
+                      :class="{ 'active': columnFilters[col.name] }"
+                      :color="columnFilters[col.name] ? 'primary' : 'grey-5'"
+                    >
+                      <q-menu cover anchor="top middle">
+                        <q-list style="min-width: 200px">
+                          <q-item>
+                            <q-input
+                              v-model="columnFilters[col.name]"
+                              :label="'Filter ' + col.label"
+                              outlined
+                              dense
+                              autofocus
+                              clearable
+                            >
+                              <template v-slot:append>
+                                <q-icon name="fas fa-magnifying-glass" size="xs" />
+                              </template>
+                            </q-input>
+                          </q-item>
+                        </q-list>
+                      </q-menu>
+                    </q-btn>
+                  </div>
+                </q-th>
+              </q-tr>
+            </template>
             <template v-slot:top-right>
               <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Assets...">
                 <template v-slot:append>
@@ -74,6 +127,7 @@
           flat
           bordered
           class="bg-white rounded-borders shadow-3 overflow-hidden"
+          header-nav
         >
           <!-- Step 1: Unit Identification -->
           <q-step
@@ -281,6 +335,12 @@ export default defineComponent({
 
     const step = ref(1)
     const filter = ref('')
+    const columnFilters = reactive({
+      unitRef: '',
+      customer: '',
+      project: '',
+      model: ''
+    })
 
     const startNewSheet = () => {
       isNew.value = true
@@ -294,8 +354,8 @@ export default defineComponent({
       { name: 'unitRef', label: 'Unit Ref', align: 'left', field: 'unitRef', sortable: true },
       { name: 'customer', label: 'Customer', align: 'left', field: 'customerName', sortable: true },
       { name: 'project', label: 'Project', align: 'left', field: 'projectName', sortable: true },
-      { name: 'model', label: 'Model', align: 'left', field: 'indoorModel' },
-      { name: 'actions', label: 'Actions', align: 'right' }
+      { name: 'model', label: 'Model', align: 'left', field: 'indoorModel', sortable: true },
+      { name: 'actions', label: '', align: 'right' }
     ]
 
     const allAssets = computed(() => {
@@ -308,6 +368,23 @@ export default defineComponent({
         })
       })
       return assets
+    })
+
+    const filteredAssets = computed(() => {
+      return allAssets.value.filter(row => {
+        return Object.keys(columnFilters).every(key => {
+          if (!columnFilters[key]) return true
+          const val = key === 'customer' 
+            ? row.customerName 
+            : key === 'project'
+              ? row.projectName
+              : key === 'model'
+                ? row.indoorModel
+                : row[key] || ''
+          
+          return String(val).toLowerCase().includes(columnFilters[key].toLowerCase())
+        })
+      })
     })
 
     const targetAsset = computed(() => {
@@ -371,12 +448,14 @@ export default defineComponent({
     return {
       step,
       filter,
+      columnFilters,
       assetId,
       isNew,
       showForm,
       startNewSheet,
       assetColumns,
       allAssets,
+      filteredAssets,
       form,
       targetAsset,
       onSubmit
