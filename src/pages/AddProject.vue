@@ -4,7 +4,7 @@
       <q-card flat bordered class="form-card shadow-2">
         <q-card-section class="bg-secondary text-white">
           <div class="row items-center no-wrap">
-            <q-icon name="add_business" size="md" class="q-mr-md" />
+            <q-icon name="fas fa-map-location-dot" size="md" class="q-mr-md" />
             <div>
               <div class="text-h5">{{ isEdit ? 'Update Project' : 'Capture New Project' }}</div>
               <div class="text-subtitle2">{{ isEdit ? 'Editing site details' : 'Assigning site to client' }}</div>
@@ -16,7 +16,7 @@
           <q-form @submit="onSubmit" class="q-gutter-y-lg">
             <!-- Customer Context -->
             <div class="bg-blue-1 q-pa-md rounded-borders flex items-center">
-              <q-avatar color="blue-2" text-color="primary" icon="business" size="sm" class="q-mr-sm" />
+              <q-avatar color="blue-2" text-color="primary" icon="fas fa-building" size="sm" class="q-mr-sm" />
               <div>
                 <span class="text-grey-7">Assigning project to:</span>
                 <span class="text-weight-bold text-primary q-ml-xs">{{ customerName }}</span>
@@ -34,7 +34,7 @@
                   placeholder="e.g. Downtown Office Tower"
                   bg-color="white"
                 >
-                  <template v-slot:prepend><q-icon name="label" /></template>
+                  <template v-slot:prepend><q-icon name="fas fa-tag" size="xs" /></template>
                 </q-input>
               </div>
 
@@ -49,7 +49,7 @@
                   placeholder="Street address where units are installed"
                   bg-color="white"
                 >
-                  <template v-slot:prepend><q-icon name="place" /></template>
+                  <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" /></template>
                 </q-input>
               </div>
 
@@ -62,14 +62,14 @@
                   placeholder="e.g. Roof Level, Basement, Plant Room"
                   bg-color="white"
                 >
-                  <template v-slot:prepend><q-icon name="apartment" /></template>
+                  <template v-slot:prepend><q-icon name="fas fa-building-circle-check" size="xs" /></template>
                 </q-input>
               </div>
             </div>
 
             <div class="row q-gutter-sm justify-between q-mt-xl">
               <q-btn label="Cancel" flat color="grey-7" @click="$router.back()" />
-              <q-btn :label="isEdit ? 'Update Project' : 'Confirm & Capture Project'" color="secondary" type="submit" icon="check_circle" class="q-px-md" />
+              <q-btn :label="isEdit ? 'Update Project' : 'Confirm & Capture Project'" color="secondary" type="submit" icon="fas fa-check-circle" class="q-px-md" />
             </div>
           </q-form>
         </q-card-section>

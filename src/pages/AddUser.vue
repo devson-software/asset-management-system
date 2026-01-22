@@ -2,17 +2,19 @@
   <q-page padding>
     <div class="row q-col-gutter-lg justify-center">
       <div class="col-12 col-md-8">
-        <div class="flex justify-between items-center q-mb-lg">
-          <div>
-            <div class="text-h4 text-weight-bold text-primary">{{ isEdit ? 'Edit User' : 'Add New User' }}</div>
-            <div class="text-subtitle1 text-grey-7">{{ isEdit ? 'Update system access and role' : 'Create a new system user with specific roles' }}</div>
-          </div>
-          <q-btn flat color="grey-7" icon="fas fa-arrow-left" label="Back to Users" @click="$router.back()" />
-        </div>
-
         <q-card flat bordered class="rounded-borders shadow-2">
+          <q-card-section class="bg-primary text-white">
+            <div class="row items-center no-wrap">
+              <q-icon name="fas fa-user-gear" size="md" class="q-mr-md" />
+              <div>
+                <div class="text-h5">{{ isEdit ? 'Update User Account' : 'Register New User' }}</div>
+                <div class="text-subtitle2">{{ isEdit ? 'Managing system access and permissions' : 'Create a new profile for a technician or administrator' }}</div>
+              </div>
+            </div>
+          </q-card-section>
+
           <q-card-section class="q-pa-lg">
-            <q-form @submit="onSubmit" class="q-gutter-y-md">
+            <q-form @submit="onSubmit" class="q-gutter-y-lg">
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-sm-6">
                   <q-input 
@@ -25,7 +27,7 @@
                     :bg-color="isEdit ? 'grey-1' : 'white'"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="fas fa-user" color="primary" />
+                      <q-icon name="fas fa-user-tag" size="xs" color="primary" />
                     </template>
                   </q-input>
                 </div>
@@ -38,9 +40,10 @@
                     outlined 
                     dense 
                     required 
+                    bg-color="white"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="fas fa-user-shield" color="secondary" />
+                      <q-icon name="fas fa-user-shield" size="xs" color="secondary" />
                     </template>
                   </q-select>
                 </div>
@@ -52,7 +55,10 @@
                     outlined 
                     dense 
                     required 
-                  />
+                    bg-color="white"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-id-card" size="xs" /></template>
+                  </q-input>
                 </div>
 
                 <div class="col-12">
@@ -63,27 +69,32 @@
                     outlined 
                     dense 
                     required 
-                  />
+                    bg-color="white"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-envelope" size="xs" /></template>
+                  </q-input>
                 </div>
 
                 <div class="col-12">
-                  <q-toggle 
-                    v-model="userForm.active" 
-                    label="User Account Active" 
-                    color="positive" 
-                    class="text-weight-bold"
-                  />
+                  <div class="q-pa-md bg-grey-1 rounded-borders border-dashed">
+                    <q-toggle 
+                      v-model="userForm.active" 
+                      label="User account is currently active" 
+                      color="positive" 
+                      class="text-weight-bold"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div class="row justify-end q-mt-xl q-gutter-sm">
-                <q-btn label="Discard" flat color="grey-7" @click="$router.back()" />
+              <div class="row justify-between q-mt-xl">
+                <q-btn label="Discard & Return" flat color="grey-7" @click="$router.back()" />
                 <q-btn 
-                  :label="isEdit ? 'Update User Account' : 'Create User Account'" 
+                  :label="isEdit ? 'Update User Account' : 'Confirm & Create User'" 
                   type="submit" 
                   color="primary" 
                   unelevated 
-                  class="q-px-xl" 
+                  class="q-px-lg" 
                   icon="fas fa-user-check" 
                 />
               </div>
@@ -157,6 +168,15 @@ export default defineComponent({
           position: 'top'
         })
       }
+
+      // Clear form
+      Object.assign(userForm, {
+        username: '',
+        fullName: '',
+        email: '',
+        role: 'technician',
+        active: true
+      })
 
       router.push('/admin/users')
     }

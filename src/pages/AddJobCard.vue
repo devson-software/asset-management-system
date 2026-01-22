@@ -2,17 +2,19 @@
   <q-page padding>
     <div class="row q-col-gutter-lg justify-center">
       <div class="col-12 col-md-8">
-        <div class="flex justify-between items-center q-mb-lg">
-          <div>
-            <div class="text-h4 text-weight-bold text-primary">{{ isEdit ? 'Edit Job Card' : 'Create Job Card' }}</div>
-            <div class="text-subtitle1 text-grey-7">{{ isEdit ? 'Update job details and technician notes' : 'Record a manual service or repair event' }}</div>
-          </div>
-          <q-btn flat color="grey-7" icon="fas fa-arrow-left" label="Back to History" @click="$router.back()" />
-        </div>
-
         <q-card flat bordered class="rounded-borders shadow-2">
+          <q-card-section class="bg-secondary text-white">
+            <div class="row items-center no-wrap">
+              <q-icon name="fas fa-file-invoice" size="md" class="q-mr-md" />
+              <div>
+                <div class="text-h5">{{ isEdit ? 'Update Job Card' : 'Create New Job Card' }}</div>
+                <div class="text-subtitle2">{{ isEdit ? 'Refining job details and technician notes' : 'Capture a manual service or repair event for the history' }}</div>
+              </div>
+            </div>
+          </q-card-section>
+
           <q-card-section class="q-pa-lg">
-            <q-form @submit="onSubmit" class="q-gutter-y-md">
+            <q-form @submit="onSubmit" class="q-gutter-y-lg">
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-sm-6">
                   <q-input 
@@ -23,7 +25,10 @@
                     dense 
                     stack-label 
                     required 
-                  />
+                    bg-color="white"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-calendar" size="xs" /></template>
+                  </q-input>
                 </div>
                 
                 <div class="col-12 col-sm-6">
@@ -36,9 +41,10 @@
                     emit-value
                     map-options
                     required
+                    bg-color="white"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="fas fa-user-gear" color="secondary" />
+                      <q-icon name="fas fa-user-gear" size="xs" color="secondary" />
                     </template>
                   </q-select>
                 </div>
@@ -47,7 +53,7 @@
                   <q-select 
                     v-model="form.assetId" 
                     :options="allAssets" 
-                    label="Select Asset" 
+                    label="Select Target Asset" 
                     outlined 
                     dense 
                     emit-value
@@ -55,38 +61,44 @@
                     required
                     use-input
                     @filter="filterAssets"
+                    bg-color="white"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="fas fa-snowflake" color="primary" />
+                      <q-icon name="fas fa-snowflake" size="xs" color="primary" />
                     </template>
                   </q-select>
                 </div>
 
                 <div class="col-12">
-                  <q-toggle 
-                    v-model="form.faultFound" 
-                    label="Was a fault found during service?" 
-                    color="negative" 
-                    class="text-weight-bold"
-                  />
+                  <div class="q-pa-md bg-grey-1 rounded-borders border-dashed">
+                    <q-toggle 
+                      v-model="form.faultFound" 
+                      label="Was a fault discovered during this site visit?" 
+                      color="negative" 
+                      class="text-weight-bold"
+                    />
+                  </div>
                 </div>
 
                 <div class="col-12">
                   <q-input 
                     v-model="form.comments" 
-                    label="Technician Notes / Work Performed" 
+                    label="Work Performed & Technician Observations" 
                     type="textarea" 
                     outlined 
                     dense 
-                    placeholder="Enter details of the service or repair..."
+                    placeholder="Provide a detailed description of the service, repair or findings..."
                     rows="6"
-                  />
+                    bg-color="white"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-comment-dots" size="xs" /></template>
+                  </q-input>
                 </div>
               </div>
 
-              <div class="row justify-end q-mt-xl q-gutter-sm">
-                <q-btn label="Discard" flat color="grey-7" @click="$router.back()" />
-                <q-btn :label="isEdit ? 'Update Job Card' : 'Save & Store Job Card'" type="submit" color="secondary" unelevated class="q-px-xl" icon="fas fa-cloud-arrow-up" />
+              <div class="row justify-between q-mt-xl">
+                <q-btn label="Discard & Return" flat color="grey-7" @click="$router.back()" />
+                <q-btn :label="isEdit ? 'Update Job Card' : 'Confirm & Save Job Card'" type="submit" color="secondary" unelevated class="q-px-lg" icon="fas fa-cloud-arrow-up" />
               </div>
             </q-form>
           </q-card-section>
@@ -216,6 +228,15 @@ export default defineComponent({
           position: 'top'
         })
       }
+
+      // Clear form
+      Object.assign(form, {
+        date: new Date().toISOString().substr(0, 10),
+        assetId: null,
+        techId: null,
+        faultFound: false,
+        comments: ''
+      })
 
       router.push('/job-cards')
     }

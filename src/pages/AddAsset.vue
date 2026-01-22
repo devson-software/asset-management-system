@@ -1,38 +1,101 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
-      <q-card flat bordered class="form-card">
-        <q-card-section>
-          <div class="text-h5 text-positive">{{ isEdit ? 'Update Asset' : 'Register New Asset' }}</div>
-          <div class="text-subtitle2 text-grey-7">
-            Project: <span class="text-weight-bold">{{ projectName }}</span>
+      <q-card flat bordered class="form-card shadow-2">
+        <q-card-section class="bg-positive text-white">
+          <div class="row items-center no-wrap">
+            <q-icon name="fas fa-snowflake" size="md" class="q-mr-md" />
+            <div>
+              <div class="text-h5">{{ isEdit ? 'Update Asset' : 'Register New Asset' }}</div>
+              <div class="text-subtitle2">{{ isEdit ? 'Editing unit specifications' : 'Adding a new unit to the site register' }}</div>
+            </div>
           </div>
         </q-card-section>
 
-        <q-card-section>
-          <q-form @submit="onSubmit" class="q-gutter-md">
-            <div class="text-subtitle1 text-primary">Unit Specifications</div>
-            <div class="row q-col-gutter-sm">
-              <div class="col-12 col-md-6">
-                <q-input v-model="asset.unitRef" label="Unit Reference #" outlined dense required hint="e.g. Ac1.01" />
-              </div>
-              <div class="col-12 col-md-6">
-                <q-input v-model="asset.indoorModel" label="Indoor Model" outlined dense required />
-              </div>
-              <div class="col-12 col-md-6">
-                <q-input v-model="asset.serialNumber" label="Serial Number" outlined dense required />
-              </div>
-              <div class="col-12 col-md-6">
-                <q-select v-model="asset.refrigerantType" :options="['R410A', 'R32', 'R22']" label="Refrigerant Type" outlined dense />
-              </div>
-              <div class="col-12 col-md-6">
-                <q-input v-model="asset.refrigerantKg" label="Charge (kg)" type="number" outlined dense />
+        <q-card-section class="q-pa-lg">
+          <q-form @submit="onSubmit" class="q-gutter-y-lg">
+            <!-- Project Context -->
+            <div class="bg-green-1 q-pa-md rounded-borders flex items-center border-green">
+              <q-avatar color="green-2" text-color="positive" icon="fas fa-location-dot" size="sm" class="q-mr-sm" />
+              <div>
+                <span class="text-grey-7">Adding to project:</span>
+                <span class="text-weight-bold text-positive q-ml-xs">{{ projectName }}</span>
               </div>
             </div>
 
-            <div class="row q-gutter-sm justify-end q-mt-xl">
-              <q-btn label="Cancel" flat @click="$router.back()" />
-              <q-btn :label="isEdit ? 'Update Asset' : 'Complete Registration'" color="positive" type="submit" icon="check" />
+            <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center">
+              <q-icon name="fas fa-list-check" size="xs" class="q-mr-sm" />
+              Unit Specifications
+            </div>
+
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="asset.unitRef" 
+                  label="Unit Reference #" 
+                  outlined 
+                  dense 
+                  required 
+                  hint="e.g. Ac1.01"
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-tag" size="xs" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="asset.indoorModel" 
+                  label="Indoor Model" 
+                  outlined 
+                  dense 
+                  required
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-box" size="xs" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="asset.serialNumber" 
+                  label="Serial Number" 
+                  outlined 
+                  dense 
+                  required
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-barcode" size="xs" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-select 
+                  v-model="asset.refrigerantType" 
+                  :options="['R410A', 'R32', 'R22', 'R404A', 'R134a']" 
+                  label="Refrigerant Type" 
+                  outlined 
+                  dense
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-gas-pump" size="xs" /></template>
+                </q-select>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="asset.refrigerantKg" 
+                  label="Charge (kg)" 
+                  type="number" 
+                  step="0.01"
+                  outlined 
+                  dense
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-weight-hanging" size="xs" /></template>
+                </q-input>
+              </div>
+            </div>
+
+            <div class="row q-gutter-sm justify-between q-mt-xl">
+              <q-btn label="Cancel" flat color="grey-7" @click="$router.back()" />
+              <q-btn :label="isEdit ? 'Update Asset' : 'Complete Registration'" color="positive" type="submit" icon="fas fa-check-circle" class="q-px-md" />
             </div>
           </q-form>
         </q-card-section>

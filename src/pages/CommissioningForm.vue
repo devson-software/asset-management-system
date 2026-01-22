@@ -17,140 +17,156 @@
             
             <!-- SECTION 1: ASSET / PROJECT INFORMATION -->
             <div class="section-container">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="info" class="q-mr-sm" /> Asset / Project Information
+              <div class="text-subtitle1 text-weight-bold text-primary q-mb-md row items-center">
+                <q-icon name="fas fa-circle-info" size="xs" class="q-mr-sm" /> Asset / Project Information
               </div>
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.project" label="Project Name" outlined dense required />
+                  <q-input v-model="form.project" label="Project Name" outlined dense required bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-diagram-project" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.customer" label="Client" outlined dense required />
+                  <q-input v-model="form.customer" label="Client" outlined dense required bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-building" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.site" label="Site / Location" outlined dense required />
+                  <q-input v-model="form.site" label="Site / Location" outlined dense required bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.assetId" label="Asset ID" outlined dense required />
+                  <q-input v-model="form.assetId" label="Asset ID" outlined dense required bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-tag" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.manufacturer" label="Manufacturer" outlined dense />
+                  <q-input v-model="form.manufacturer" label="Manufacturer" outlined dense bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-industry" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.model" label="Model" outlined dense />
+                  <q-input v-model="form.model" label="Model" outlined dense bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-box" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.serialNo" label="Serial No" outlined dense />
+                  <q-input v-model="form.serialNo" label="Serial No" outlined dense bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-barcode" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.date" label="Date" type="date" outlined dense stack-label />
+                  <q-input v-model="form.date" label="Date" type="date" outlined dense stack-label bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-calendar-day" size="xs" /></template>
+                  </q-input>
                 </div>
               </div>
             </div>
 
             <!-- SECTION 2: ELECTRICAL MEASUREMENTS -->
             <div class="section-container">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="bolt" class="q-mr-sm" /> Electrical Measurements
+              <div class="text-subtitle1 text-weight-bold text-primary q-mb-md row items-center">
+                <q-icon name="fas fa-bolt" size="xs" class="q-mr-sm" /> Electrical Measurements
               </div>
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-4">
-                  <q-input v-model="form.elec.l1l2" label="L1-L2 (V)" outlined dense />
+                  <q-input v-model="form.elec.l1l2" label="L1-L2 (V)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-4">
-                  <q-input v-model="form.elec.l2l3" label="L2-L3 (V)" outlined dense />
+                  <q-input v-model="form.elec.l2l3" label="L2-L3 (V)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-4">
-                  <q-input v-model="form.elec.l1l3" label="L1-L3 (V)" outlined dense />
+                  <q-input v-model="form.elec.l1l3" label="L1-L3 (V)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-4">
-                  <q-input v-model="form.elec.ratedAmps" label="Rated Amps" outlined dense />
+                  <q-input v-model="form.elec.ratedAmps" label="Rated Amps" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-4">
-                  <q-input v-model="form.elec.measuredAmps" label="Measured Amps" outlined dense />
+                  <q-input v-model="form.elec.measuredAmps" label="Measured Amps" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-4">
-                  <q-select v-model="form.elec.pass" :options="['Pass', 'Fail']" label="Result" outlined dense />
+                  <q-select v-model="form.elec.pass" :options="['Pass', 'Fail']" label="Result" outlined dense bg-color="white" />
                 </div>
               </div>
             </div>
 
             <!-- SECTION 3: PERFORMANCE MEASUREMENTS (Dynamic based on Type) -->
             <div class="section-container" v-if="type === 'Pump'">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="water" class="q-mr-sm" /> Hydraulic / Performance Measurements
+              <div class="text-subtitle1 text-weight-bold text-primary q-mb-md row items-center">
+                <q-icon name="fas fa-faucet-drip" size="xs" class="q-mr-sm" /> Hydraulic / Performance Measurements
               </div>
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.suction" label="Suction Pressure (kPa / bar)" outlined dense />
+                  <q-input v-model="form.perf.suction" label="Suction Pressure (kPa / bar)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.discharge" label="Discharge Pressure (kPa / bar)" outlined dense />
+                  <q-input v-model="form.perf.discharge" label="Discharge Pressure (kPa / bar)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.flowRate" label="Calculated Flow Rate (L/s)" outlined dense />
+                  <q-input v-model="form.perf.flowRate" label="Calculated Flow Rate (L/s)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.waterTemp" label="Water Temperature (°C)" outlined dense />
+                  <q-input v-model="form.perf.waterTemp" label="Water Temperature (°C)" outlined dense bg-color="white" />
                 </div>
               </div>
             </div>
 
             <div class="section-container" v-if="type === 'Fan'">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="air" class="q-mr-sm" /> Air Performance Measurements
+              <div class="text-subtitle1 text-weight-bold text-primary q-mb-md row items-center">
+                <q-icon name="fas fa-wind" size="xs" class="q-mr-sm" /> Air Performance Measurements
               </div>
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.airflow" label="Measured Airflow (L/s)" outlined dense />
+                  <q-input v-model="form.perf.airflow" label="Measured Airflow (L/s)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.staticPressure" label="External Static Pressure (Pa)" outlined dense />
+                  <q-input v-model="form.perf.staticPressure" label="External Static Pressure (Pa)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.fanSpeed" label="Fan Speed (RPM or %)" outlined dense />
+                  <q-input v-model="form.perf.fanSpeed" label="Fan Speed (RPM or %)" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.vibration" label="Vibration Level (mm/s)" outlined dense />
+                  <q-input v-model="form.perf.vibration" label="Vibration Level (mm/s)" outlined dense bg-color="white" />
                 </div>
               </div>
             </div>
 
             <div class="section-container" v-if="type === 'DX Split'">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="ac_unit" class="q-mr-sm" /> Refrigeration / Airside Performance
+              <div class="text-subtitle1 text-weight-bold text-primary q-mb-md row items-center">
+                <q-icon name="fas fa-snowflake" size="xs" class="q-mr-sm" /> Refrigeration / Airside Performance
               </div>
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.returnAir" label="Return Air Temp (Off Coil) °C" outlined dense />
+                  <q-input v-model="form.perf.returnAir" label="Return Air Temp (Off Coil) °C" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.supplyAir" label="Supply Air Temp (On Coil) °C" outlined dense />
+                  <q-input v-model="form.perf.supplyAir" label="Supply Air Temp (On Coil) °C" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.suctionLine" label="Suction Line Temp °C" outlined dense />
+                  <q-input v-model="form.perf.suctionLine" label="Suction Line Temp °C" outlined dense bg-color="white" />
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.perf.liquidLine" label="Liquid Line Temp °C" outlined dense />
+                  <q-input v-model="form.perf.liquidLine" label="Liquid Line Temp °C" outlined dense bg-color="white" />
                 </div>
               </div>
             </div>
 
             <!-- SECTION 4: FUNCTIONAL CHECKS -->
             <div class="section-container">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="fact_check" class="q-mr-sm" /> Functional Checks
+              <div class="text-subtitle1 text-weight-bold text-primary q-mb-md row items-center">
+                <q-icon name="fas fa-clipboard-check" size="xs" class="q-mr-sm" /> Functional Checks
               </div>
-              <q-list separator class="border-grey rounded-borders">
+              <q-list separator class="border-grey rounded-borders bg-white">
                 <q-item v-for="(check, index) in functionalChecks" :key="index" tag="label" v-ripple>
                   <q-item-section side top>
                     <q-checkbox v-model="check.value" color="positive" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ check.label }}</q-item-label>
+                    <q-item-label class="text-grey-9">{{ check.label }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    <q-badge :color="check.value ? 'positive' : 'grey-4'">{{ check.value ? 'YES' : 'NO' }}</q-badge>
+                    <q-badge :color="check.value ? 'positive' : 'grey-4'" class="q-px-sm">{{ check.value ? 'YES' : 'NO' }}</q-badge>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -158,25 +174,29 @@
 
             <!-- SIGN-OFF -->
             <div class="section-container bg-grey-1">
-              <div class="text-subtitle1 text-grey-9 q-mb-md row items-center">
-                <q-icon name="history_edu" class="q-mr-sm" /> Commissioning Summary & Sign-off
+              <div class="text-subtitle1 text-weight-bold text-grey-9 q-mb-md row items-center">
+                <q-icon name="fas fa-signature" size="xs" class="q-mr-sm" /> Summary & Sign-off
               </div>
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.engineer" label="Commissioned By (Engineer)" outlined dense />
+                  <q-input v-model="form.engineer" label="Commissioned By (Engineer)" outlined dense bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-user-gear" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
-                  <q-input v-model="form.witness" label="Witness" outlined dense />
+                  <q-input v-model="form.witness" label="Witness" outlined dense bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-user-check" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12">
-                  <q-input v-model="form.comments" label="Outstanding Issues / Comments" type="textarea" outlined dense />
+                  <q-input v-model="form.comments" label="Outstanding Issues / Comments" type="textarea" outlined dense bg-color="white" />
                 </div>
               </div>
             </div>
 
-            <div class="row q-gutter-md justify-end q-mt-xl">
-              <q-btn label="Discard" flat color="grey-7" @click="$router.back()" />
-              <q-btn :label="isEdit ? 'Update & Save changes' : 'Finalize & Sign Report'" color="primary" type="submit" icon="cloud_done" class="q-px-lg" />
+            <div class="row q-gutter-md justify-between q-mt-xl">
+              <q-btn label="Discard Report" flat color="grey-7" @click="$router.back()" />
+              <q-btn :label="isEdit ? 'Update Report' : 'Finalize & Submit Report'" color="primary" type="submit" icon="fas fa-cloud-arrow-up" class="q-px-lg" />
             </div>
           </q-form>
         </q-card-section>
