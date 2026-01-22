@@ -27,6 +27,14 @@ const routes = [
       { path: 'service-calendar', component: () => import('pages/ServiceCalendar.vue') },
       { path: 'service-entry/:assetId?', component: () => import('pages/ServiceForm.vue') },
       { path: 'job-cards', component: () => import('pages/JobCardHistory.vue') },
+      { path: 'job-cards/add', component: () => import('pages/AddJobCard.vue') },
+      { path: 'job-cards/edit/:jobId', component: () => import('pages/AddJobCard.vue') },
+      
+      // Admin Routes
+      { path: 'admin/users', component: () => import('pages/AdminUserManagement.vue') },
+      { path: 'admin/users/add', component: () => import('pages/AddUser.vue') },
+      { path: 'admin/users/edit/:userId', component: () => import('pages/AddUser.vue') },
+
       { path: 'commissioning', component: () => import('pages/CommissioningList.vue') },
       { path: 'commissioning/new/:type/:assetId?', component: () => import('pages/CommissioningForm.vue') },
       { path: 'commissioning/view/:recordId', component: () => import('pages/CommissioningForm.vue') }
