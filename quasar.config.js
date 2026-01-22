@@ -37,7 +37,7 @@ module.exports = configure(function (/* ctx */) {
       manifest: {
         name: 'HVAC Asset Pro',
         short_name: 'HVAC Asset Pro',
-        description: 'Professional Asset Management System for Air Conditioning Business',
+        description: 'Professional HVAC management tool for Air Conditioning Business',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',

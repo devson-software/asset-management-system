@@ -1,7 +1,7 @@
 {
   "name": "hvac-asset-pro",
   "version": "1.0.0",
-  "description": "Professional Asset Management System for Air Conditioning Business",
+  "description": "Professional HVAC management tool for Air Conditioning Business",
   "productName": "HVAC Asset Pro",
   "author": "Jeram",
   "private": true,

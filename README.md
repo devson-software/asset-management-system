@@ -1,6 +1,6 @@
 # HVAC Asset Pro
 
-A professional Asset Management System built with Quasar.js for tracking HVAC units, service schedules, and maintenance records.
+A professional HVAC management tool built with Quasar.js for tracking HVAC units, service schedules, and maintenance records.
 
 ## Features
 - **Customer Registration**: Manage clients and their logos.
