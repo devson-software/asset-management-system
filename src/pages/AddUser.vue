@@ -35,7 +35,7 @@
                 <div class="col-12 col-sm-6">
                   <q-select 
                     v-model="userForm.role" 
-                    :options="['administrator', 'technician']" 
+                    :options="['administrator', 'technician', 'customer']" 
                     label="System Role" 
                     outlined 
                     dense 

@@ -1,6 +1,6 @@
 # HVAC Asset Pro - Comprehensive Database Architecture
 
-This document outlines the professional-grade database architecture for the Asset Management System, specifically rechecked against the system's current functional requirements (Commissioning, Technical Data Sheets, and ASHRAE 180 Maintenance).
+This document outlines the professional-grade database architecture for the HVAC management tool, specifically rechecked against the system's current functional requirements (Commissioning, Technical Data Sheets, and ASHRAE 180 Maintenance).
 
 ## Detailed Entity Relationship Diagram (ERD)
 

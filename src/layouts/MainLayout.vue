@@ -15,8 +15,8 @@
 
         <q-toolbar-title class="text-weight-bold row items-center">
           <q-icon name="fas fa-snowflake" color="primary" size="32px" class="q-mr-sm" />
-          <span class="gt-xs">Asset Management System</span>
-          <span class="xs">AMS</span>
+          <span class="gt-xs">HVAC Management Tool</span>
+          <span class="xs">QR</span>
         </q-toolbar-title>
 
         <div class="q-gutter-sm row items-center no-wrap">

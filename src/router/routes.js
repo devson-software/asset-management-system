@@ -14,6 +14,7 @@ const routes = [
       { path: 'dashboard', component: () => import('pages/Dashboard.vue') },
       { path: 'customers', component: () => import('pages/CustomerRegistration.vue') },
       { path: 'projects', component: () => import('pages/Projects.vue') },
+      { path: 'projects/add', component: () => import('pages/AddProject.vue') },
       { path: 'assets', component: () => import('pages/Assets.vue') },
       { path: 'assets/:assetId', component: () => import('pages/AssetDetails.vue') },
       { path: 'assets/:assetId/history', component: () => import('pages/AssetServiceHistory.vue') },

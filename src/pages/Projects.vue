@@ -13,7 +13,13 @@
         </div>
         <div class="q-gutter-sm">
           <q-btn v-if="$route.query.customerId" flat color="primary" icon="fas fa-arrow-left" label="Show All Customers" :to="{ path: '/projects', query: {} }" />
-          <q-btn color="primary" icon="fas fa-plus" label="Add New Project" :to="$route.query.customerId ? '/customers/' + $route.query.customerId + '/add-project' : '/customers'" class="shadow-2" />
+          <q-btn 
+            color="primary" 
+            icon="fas fa-plus" 
+            label="Add New Project" 
+            :to="$route.query.customerId ? '/customers/' + $route.query.customerId + '/add-project' : '/projects/add'" 
+            class="shadow-2" 
+          />
         </div>
       </div>
 
@@ -91,7 +97,10 @@
           <template v-slot:body-cell-name="props">
             <q-td :props="props">
               <div class="row items-center no-wrap">
-                <q-avatar color="blue-1" text-color="primary" icon="fas fa-map-location-dot" size="32px" class="q-mr-md" />
+                <q-avatar color="blue-1" text-color="primary" size="32px" class="q-mr-md shadow-1">
+                  <img v-if="props.row.pictureUrl" :src="props.row.pictureUrl">
+                  <q-icon v-else name="fas fa-map-location-dot" size="16px" />
+                </q-avatar>
                 <div>
                   <div class="text-weight-bold text-primary">{{ props.row.name }}</div>
                   <div class="text-caption text-grey-7">Client: {{ props.row.customerName }}</div>

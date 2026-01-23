@@ -61,22 +61,47 @@
                   required 
                   bg-color="white"
                 >
-                  <template v-slot:prepend><q-icon name="fas fa-phone-flip" size="xs" /></template>
+                  <template v-slot:prepend><q-icon name="fas fa-mobile-screen-button" size="xs" /></template>
                 </q-input>
               </div>
-              <div class="col-12">
+              <div class="col-12 col-md-6">
                 <q-input 
-                  v-model="customer.address" 
-                  label="Business Address" 
-                  type="textarea" 
+                  v-model="customer.telephone" 
+                  label="Telephone Number" 
                   outlined 
                   dense 
                   bg-color="white"
                 >
+                  <template v-slot:prepend><q-icon name="fas fa-phone-flip" size="xs" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="customer.address" 
+                  label="Physical Business Address" 
+                  type="textarea" 
+                  outlined 
+                  dense 
+                  bg-color="white"
+                  rows="3"
+                >
                   <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" /></template>
                 </q-input>
               </div>
-              <div class="col-12">
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="customer.billingAddress" 
+                  label="Billing Address" 
+                  type="textarea" 
+                  outlined 
+                  dense 
+                  bg-color="white"
+                  rows="3"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-file-invoice" size="xs" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
                 <q-input 
                   v-model="customer.vatNumber" 
                   label="VAT Number (Optional)" 
@@ -86,6 +111,26 @@
                 >
                   <template v-slot:prepend><q-icon name="fas fa-file-invoice-dollar" size="xs" /></template>
                 </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-file
+                  v-model="customer.picture"
+                  label="Customer / Company Picture"
+                  outlined
+                  dense
+                  bg-color="white"
+                  accept="image/*"
+                  @update:model-value="onFileChange"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="fas fa-image" size="xs" />
+                  </template>
+                  <template v-slot:append v-if="customer.picture">
+                    <q-avatar size="32px" square>
+                      <img :src="customer.pictureUrl || 'https://cdn.quasar.dev/img/avatar.png'">
+                    </q-avatar>
+                  </template>
+                </q-file>
               </div>
             </div>
 
@@ -116,7 +161,18 @@ export default defineComponent({
     const customerId = route.params.customerId
     const isEdit = !!customerId
 
-    const customer = reactive({ name: '', contactName: '', email: '', mobile: '', address: '', vatNumber: '' })
+    const customer = reactive({ 
+      name: '', 
+      contactName: '', 
+      email: '', 
+      mobile: '', 
+      telephone: '', 
+      address: '', 
+      billingAddress: '', 
+      vatNumber: '',
+      picture: null,
+      pictureUrl: null
+    })
 
     if (isEdit) {
       const existingCustomer = store.customers.find(c => c.id === customerId)
@@ -125,22 +181,34 @@ export default defineComponent({
       }
     }
 
+    const onFileChange = (file) => {
+      if (file) {
+        customer.pictureUrl = URL.createObjectURL(file)
+      }
+    }
+
     const onSubmit = () => {
+      const savedData = { ...customer }
+      
       if (isEdit) {
-        store.updateCustomer(customerId, { ...customer })
+        store.updateCustomer(customerId, savedData)
         $q.notify({ color: 'positive', message: 'Customer updated successfully' })
       } else {
-        store.addCustomer({ ...customer })
+        store.addCustomer(savedData)
         $q.notify({ color: 'positive', message: 'Customer created successfully' })
       }
 
       // Clear form
-      Object.keys(customer).forEach(key => customer[key] = '')
+      Object.keys(customer).forEach(key => {
+        if (key === 'picture') customer[key] = null
+        else customer[key] = ''
+      })
+      customer.pictureUrl = null
 
       router.push('/customers')
     }
 
-    return { customer, onSubmit, isEdit }
+    return { customer, onSubmit, isEdit, onFileChange }
   }
 })
 </script>

@@ -83,7 +83,14 @@
             <template v-slot:body-cell-name="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">
-                  <q-avatar color="blue-1" text-color="primary" icon="fas fa-building" size="32px" class="q-mr-md" />
+                  <q-avatar color="blue-1" text-color="primary" size="32px" class="q-mr-md shadow-1">
+                    <img v-if="props.row.pictureUrl" :src="props.row.pictureUrl">
+                    <q-icon v-else name="fas fa-building" size="16px" />
+                    <q-tooltip v-if="props.row.billingAddress">
+                      <div class="text-weight-bold">Billing Address:</div>
+                      <div>{{ props.row.billingAddress }}</div>
+                    </q-tooltip>
+                  </q-avatar>
                   <div>
                     <div class="text-weight-bold">{{ props.row.name }}</div>
                     <div class="text-caption text-grey-7">ID: {{ props.row.id }}</div>
@@ -96,6 +103,10 @@
               <q-td :props="props">
                 <div class="text-weight-medium text-grey-9">{{ props.row.contactName }}</div>
                 <div class="text-caption text-grey-6">{{ props.row.email }}</div>
+                <div v-if="props.row.telephone" class="text-caption text-grey-5 row items-center">
+                  <q-icon name="fas fa-phone" size="10px" class="q-mr-xs" />
+                  {{ props.row.telephone }}
+                </div>
               </q-td>
             </template>
 

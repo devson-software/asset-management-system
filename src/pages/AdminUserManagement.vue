@@ -82,7 +82,7 @@
             <template v-slot:body-cell-fullName="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">
-                  <q-avatar color="blue-1" text-color="primary" :icon="props.row.role === 'administrator' ? 'fas fa-user-shield' : 'fas fa-user-gear'" size="32px" class="q-mr-md" />
+                  <q-avatar color="blue-1" text-color="primary" :icon="props.row.role === 'administrator' ? 'fas fa-user-shield' : (props.row.role === 'customer' ? 'fas fa-building-user' : 'fas fa-user-gear')" size="32px" class="q-mr-md" />
                   <div>
                     <div class="text-weight-bold">{{ props.row.fullName }}</div>
                     <div class="text-caption text-grey-7">@{{ props.row.username }}</div>
@@ -94,8 +94,8 @@
             <template v-slot:body-cell-role="props">
               <q-td :props="props">
                 <q-chip 
-                  :color="props.row.role === 'administrator' ? 'indigo-1' : 'teal-1'" 
-                  :text-color="props.row.role === 'administrator' ? 'indigo-9' : 'teal-9'"
+                  :color="props.row.role === 'administrator' ? 'indigo-1' : (props.row.role === 'customer' ? 'orange-1' : 'teal-1')" 
+                  :text-color="props.row.role === 'administrator' ? 'indigo-9' : (props.row.role === 'customer' ? 'orange-9' : 'teal-9')"
                   dense
                   square
                   class="text-weight-bold"

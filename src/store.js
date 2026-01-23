@@ -154,7 +154,8 @@ export const store = reactive({
   users: [
     { id: 'U1', username: 'admin', fullName: 'System Administrator', email: 'admin@jeramhvac.co.za', role: 'administrator', active: true },
     { id: 'U2', username: 'tech1', fullName: 'John Doe', email: 'john@jeramhvac.co.za', role: 'technician', active: true },
-    { id: 'U3', username: 'tech2', fullName: 'Sarah Jenkins', email: 'sarah@jeramhvac.co.za', role: 'technician', active: true }
+    { id: 'U3', username: 'tech2', fullName: 'Sarah Jenkins', email: 'sarah@jeramhvac.co.za', role: 'technician', active: true },
+    { id: 'U4', username: 'client_manager', fullName: 'Alpha Corp Manager', email: 'manager@alphacorp.com', role: 'customer', active: true }
   ],
   currentUser: { id: 'U1', username: 'admin', role: 'administrator' }, // Mock logged-in user
   // Helper to add a customer
