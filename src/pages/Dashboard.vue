@@ -11,9 +11,9 @@
       <div class="col-6 col-md-2">
         <q-card class="hvac-gradient text-white shadow-5 hover-lift">
           <q-card-section>
-            <div class="text-subtitle2 opacity-80">Total Assets</div>
-            <div class="text-h4 text-weight-bolder">{{ allAssets.length }}</div>
-            <q-icon name="fas fa-snowflake" size="md" class="absolute-right q-ma-sm opacity-40" />
+            <div class="text-subtitle2 opacity-80">Total Customers</div>
+            <div class="text-h4 text-weight-bolder">{{ store.customers.length }}</div>
+            <q-icon name="fas fa-users-viewfinder" size="md" class="absolute-right q-ma-sm opacity-40" />
           </q-card-section>
         </q-card>
       </div>
