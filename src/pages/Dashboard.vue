@@ -83,11 +83,22 @@
                 <q-avatar color="blue-1" text-color="primary" icon="fas fa-snowflake" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ asset.unitRef }}</q-item-label>
-                <q-item-label caption>{{ asset.indoorModel }} | {{ asset.customerName }}</q-item-label>
+                <q-item-label class="text-weight-bold text-primary">{{ asset.unitRef }}</q-item-label>
+                <q-item-label caption>
+                  <span class="text-weight-medium text-grey-9">{{ asset.projectName }}</span>
+                  <span class="q-mx-xs">|</span>
+                  <span>{{ asset.customerName }}</span>
+                </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-badge color="positive" label="Active" />
+                <div class="column items-center">
+                  <q-badge color="indigo" class="q-mb-xs">
+                    {{ asset.serviceCount }} Service{{ asset.serviceCount !== 1 ? 's' : '' }}
+                  </q-badge>
+                  <q-item-label caption class="text-uppercase text-weight-bold" style="font-size: 10px">
+                    Call Outs
+                  </q-item-label>
+                </div>
               </q-item-section>
             </q-item>
           </q-list>
@@ -125,7 +136,13 @@ export default defineComponent({
       store.customers.forEach(c => {
         c.projects.forEach(p => {
           p.assets.forEach(a => {
-            assets.push({ ...a, customerName: c.name })
+            const serviceCount = store.services.filter(s => s.unitRef === a.unitRef).length
+            assets.push({ 
+              ...a, 
+              customerName: c.name, 
+              projectName: p.name,
+              serviceCount: serviceCount
+            })
           })
         })
       })
