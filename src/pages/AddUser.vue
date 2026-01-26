@@ -16,6 +16,33 @@
           <q-card-section class="q-pa-lg">
             <q-form @submit="onSubmit" class="q-gutter-y-lg">
               <div class="row q-col-gutter-md">
+                <!-- Profile Picture Upload -->
+                <div class="col-12 flex justify-center q-mb-md">
+                  <div class="column items-center">
+                    <q-avatar size="120px" class="shadow-3 border-primary">
+                      <img v-if="userForm.pictureUrl" :source="userForm.pictureUrl" :src="userForm.pictureUrl">
+                      <q-icon v-else name="fas fa-user" color="grey-4" size="64px" />
+                      <q-btn
+                        round
+                        dense
+                        color="primary"
+                        icon="fas fa-camera"
+                        class="absolute-bottom-right"
+                        size="sm"
+                        @click="$refs.fileInput.pickFiles()"
+                      />
+                    </q-avatar>
+                    <div class="text-caption text-grey-7 q-mt-sm">Profile Picture</div>
+                    <q-file
+                      ref="fileInput"
+                      v-model="userForm.picture"
+                      @update:model-value="onFileChange"
+                      style="display: none"
+                      accept="image/*"
+                    />
+                  </div>
+                </div>
+
                 <div class="col-12 col-sm-6">
                   <q-input 
                     v-model="userForm.username" 
@@ -35,7 +62,7 @@
                 <div class="col-12 col-sm-6">
                   <q-select 
                     v-model="userForm.role" 
-                    :options="['administrator', 'technician', 'customer']" 
+                    :options="roleOptions" 
                     label="System Role" 
                     outlined 
                     dense 
@@ -48,7 +75,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-12">
+                <div class="col-12 col-sm-6">
                   <q-input 
                     v-model="userForm.fullName" 
                     label="Full Name" 
@@ -59,6 +86,15 @@
                   >
                     <template v-slot:prepend><q-icon name="fas fa-id-card" size="xs" /></template>
                   </q-input>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <div class="q-pa-sm bg-blue-1 rounded-borders border-primary flex items-center full-height">
+                    <q-icon name="fas fa-paper-plane" color="primary" class="q-mr-sm" />
+                    <div class="text-caption text-grey-9">
+                      An invitation email will be sent to the user to set their password.
+                    </div>
+                  </div>
                 </div>
 
                 <div class="col-12">
@@ -90,12 +126,12 @@
               <div class="row justify-between q-mt-xl">
                 <q-btn label="Discard & Return" flat color="grey-7" @click="$router.back()" />
                 <q-btn 
-                  :label="isEdit ? 'Update User Account' : 'Confirm & Create User'" 
+                  :label="isEdit ? 'Update User Account' : 'Confirm & Send Invitation'" 
                   type="submit" 
                   color="primary" 
                   unelevated 
                   class="q-px-lg" 
-                  icon="fas fa-user-check" 
+                  icon="fas fa-paper-plane" 
                 />
               </div>
             </q-form>
@@ -121,14 +157,35 @@ export default defineComponent({
 
     const userId = route.params.userId
     const isEdit = !!userId
+    const showPassword = ref(false)
+    const fileInput = ref(null)
 
     const userForm = reactive({
       username: '',
       fullName: '',
       email: '',
       role: 'technician',
-      active: true
+      password: '',
+      active: true,
+      picture: null,
+      pictureUrl: ''
     })
+
+    const roleOptions = [
+      'administrator',
+      'Commissioning technician',
+      'Engineer',
+      'Senior technician',
+      'Tier 1 Technician',
+      'Tier 2 Technician',
+      'customer'
+    ]
+
+    const onFileChange = (file) => {
+      if (file) {
+        userForm.pictureUrl = URL.createObjectURL(file)
+      }
+    }
 
     onMounted(() => {
       if (isEdit) {
@@ -175,7 +232,10 @@ export default defineComponent({
         fullName: '',
         email: '',
         role: 'technician',
-        active: true
+        password: '',
+        active: true,
+        picture: null,
+        pictureUrl: ''
       })
 
       router.push('/admin/users')
@@ -184,7 +244,11 @@ export default defineComponent({
     return {
       userForm,
       isEdit,
-      onSubmit
+      onSubmit,
+      roleOptions,
+      showPassword,
+      onFileChange,
+      fileInput
     }
   }
 })

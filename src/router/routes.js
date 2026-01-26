@@ -7,6 +7,10 @@ const routes = [
     ]
   },
   {
+    path: '/complete-registration',
+    component: () => import('pages/CompleteRegistration.vue')
+  },
+  {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [

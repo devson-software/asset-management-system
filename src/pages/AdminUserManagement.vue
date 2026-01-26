@@ -82,7 +82,10 @@
             <template v-slot:body-cell-fullName="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">
-                  <q-avatar color="blue-1" text-color="primary" :icon="props.row.role === 'administrator' ? 'fas fa-user-shield' : (props.row.role === 'customer' ? 'fas fa-building-user' : 'fas fa-user-gear')" size="32px" class="q-mr-md" />
+                  <q-avatar size="32px" class="q-mr-md shadow-1">
+                    <img v-if="props.row.pictureUrl" :src="props.row.pictureUrl">
+                    <q-icon v-else :name="props.row.role === 'administrator' ? 'fas fa-user-shield' : (props.row.role === 'customer' ? 'fas fa-building-user' : 'fas fa-user-gear')" color="primary" />
+                  </q-avatar>
                   <div>
                     <div class="text-weight-bold">{{ props.row.fullName }}</div>
                     <div class="text-caption text-grey-7">@{{ props.row.username }}</div>
@@ -105,6 +108,21 @@
               </q-td>
             </template>
 
+            <template v-slot:body-cell-invitation="props">
+              <q-td :props="props" class="text-center">
+                <q-chip
+                  v-if="props.row.invitationStatus"
+                  :color="props.row.invitationStatus === 'Completed' ? 'green-1' : 'blue-1'"
+                  :text-color="props.row.invitationStatus === 'Completed' ? 'green-9' : 'blue-9'"
+                  dense
+                  class="text-weight-bold"
+                >
+                  {{ props.row.invitationStatus }}
+                </q-chip>
+                <span v-else class="text-grey-5">-</span>
+              </q-td>
+            </template>
+
             <template v-slot:body-cell-active="props">
               <q-td :props="props">
                 <q-badge :color="props.row.active ? 'positive' : 'grey-5'" rounded>
@@ -123,6 +141,12 @@
                           <q-icon name="fas fa-edit" color="primary" size="sm" />
                         </q-item-section>
                         <q-item-section>Edit Info</q-item-section>
+                      </q-item>
+                      <q-item clickable @click="resendInvite(props.row)" v-if="props.row.invitationStatus === 'Pending'">
+                        <q-item-section avatar>
+                          <q-icon name="fas fa-paper-plane" color="blue-8" size="sm" />
+                        </q-item-section>
+                        <q-item-section>Resend Invite</q-item-section>
                       </q-item>
                       <q-separator />
                       <q-item clickable class="text-negative" @click="confirmDelete(props.row)">
@@ -185,6 +209,7 @@ export default defineComponent({
       { name: 'fullName', label: 'User', align: 'left', field: 'fullName', sortable: true },
       { name: 'email', label: 'Email Address', align: 'left', field: 'email', sortable: true },
       { name: 'role', label: 'System Role', align: 'left', field: 'role', sortable: true },
+      { name: 'invitation', label: 'Invitation', align: 'center', field: 'invitationStatus', sortable: true },
       { name: 'active', label: 'Status', align: 'left', field: 'active', sortable: true },
       { name: 'actions', label: '', align: 'right' }
     ]
@@ -215,6 +240,14 @@ export default defineComponent({
       }
     }
 
+    const resendInvite = (user) => {
+      $q.notify({
+        color: 'info',
+        message: `Invitation email resent to ${user.email}`,
+        icon: 'fas fa-paper-plane'
+      })
+    }
+
     return {
       store,
       filter,
@@ -224,7 +257,8 @@ export default defineComponent({
       showDeleteDialog,
       userToDelete,
       confirmDelete,
-      deleteUser
+      deleteUser,
+      resendInvite
     }
   }
 })

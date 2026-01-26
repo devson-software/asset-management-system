@@ -123,7 +123,10 @@ export const store = reactive({
     { id: 2, date: '2026/01/15', endDate: '2026/01/15', time: '09:00', duration: '4 hours', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Service', teamId: 'T2' },
     { id: 3, date: '2026/01/15', endDate: '2026/01/15', time: '13:00', duration: '2 hours', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Monthly Service', teamId: 'T1' },
     { id: 4, date: '2026/01/16', endDate: '2026/01/16', time: '08:30', duration: '1 day', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Annual Maintenance', teamId: 'T2' },
-    { id: 5, date: '2026/01/20', endDate: '2026/02/06', time: '08:00', duration: '2.5 weeks', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service', teamId: 'T1' }
+    { id: 5, date: '2026/01/20', endDate: '2026/02/06', time: '08:00', duration: '2.5 weeks', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service', teamId: 'T1' },
+    { id: 6, date: '2026/01/26', endDate: '2026/01/26', time: '08:00', duration: '2 hours', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service', teamId: 'T1' },
+    { id: 7, date: '2026/01/26', endDate: '2026/01/26', time: '10:30', duration: '4 hours', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Service', teamId: 'T2' },
+    { id: 8, date: '2026/01/26', endDate: '2026/01/26', time: '14:00', duration: '2 hours', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Monthly Service', teamId: 'T1' }
   ],
   jobCards: [
     { id: 'JOB-2026-001', date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', tech: 'John Doe', faultFound: false },
@@ -139,10 +142,10 @@ export const store = reactive({
     { id: 'COMM-003', date: '2026/01/16', unitRef: 'DX-01', type: 'DX Split', customer: 'City Mall Plaza', project: 'Food Court', status: 'In Progress' }
   ],
   users: [
-    { id: 'U1', username: 'admin', fullName: 'System Administrator', email: 'admin@jeramhvac.co.za', role: 'administrator', active: true },
-    { id: 'U2', username: 'tech1', fullName: 'John Doe', email: 'john@jeramhvac.co.za', role: 'technician', active: true },
-    { id: 'U3', username: 'tech2', fullName: 'Sarah Jenkins', email: 'sarah@jeramhvac.co.za', role: 'technician', active: true },
-    { id: 'U4', username: 'client_manager', fullName: 'Alpha Corp Manager', email: 'manager@alphacorp.com', role: 'customer', active: true }
+    { id: 'U1', username: 'admin', fullName: 'System Administrator', email: 'admin@jeramhvac.co.za', role: 'administrator', active: true, invitationStatus: 'Completed' },
+    { id: 'U2', username: 'tech1', fullName: 'John Doe', email: 'john@jeramhvac.co.za', role: 'technician', active: true, invitationStatus: 'Completed' },
+    { id: 'U3', username: 'tech2', fullName: 'Sarah Jenkins', email: 'sarah@jeramhvac.co.za', role: 'technician', active: true, invitationStatus: 'Pending' },
+    { id: 'U4', username: 'client_manager', fullName: 'Alpha Corp Manager', email: 'manager@alphacorp.com', role: 'customer', active: true, invitationStatus: 'Completed' }
   ],
   teams: [
     { id: 'T1', name: 'Team Alpha', color: '#9C27B0', leaderId: 'U2', assistantId: 'U3' },
@@ -329,6 +332,9 @@ export const store = reactive({
     this.users.push({
       id: 'U' + Date.now(),
       active: true,
+      pictureUrl: user.pictureUrl || '',
+      password: '', // Password will be set during invitation completion
+      invitationStatus: 'Pending', // Pending, Completed, Expired
       ...user
     })
   },
