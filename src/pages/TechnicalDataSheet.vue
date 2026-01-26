@@ -169,6 +169,20 @@
               <div class="col-12 col-md-4">
                 <q-input v-model="form.dateInstalled" label="Date Installed" type="date" outlined dense stack-label />
               </div>
+
+              <q-separator class="col-12 q-my-sm" />
+              <div class="col-12">
+                <div class="text-subtitle2 text-grey-8 q-mb-sm">Base Vendor Details</div>
+              </div>
+              <div class="col-12 col-md-4">
+                <q-input v-model="form.vendorLocation" label="Vendor Location" outlined dense hint="e.g. TFG" />
+              </div>
+              <div class="col-12 col-md-4">
+                <q-input v-model="form.vendorArea" label="Vendor Area" outlined dense />
+              </div>
+              <div class="col-12 col-md-4">
+                <q-input v-model="form.vendorAddress" label="Vendor Address" outlined dense />
+              </div>
             </div>
           </q-step>
 
@@ -292,6 +306,21 @@
               <div class="col-6 col-md-3">
                 <q-input v-model="form.depreciationPercent" label="Depreciation / Year" type="number" outlined dense suffix="%" />
               </div>
+              <div class="col-12">
+                <q-separator class="q-my-sm" />
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="form.serviceTime" 
+                  label="Service Time (Minutes)" 
+                  type="number" 
+                  outlined 
+                  dense 
+                  hint="Time per asset for system-wide calculations"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-clock" size="xs" color="primary" /></template>
+                </q-input>
+              </div>
             </div>
           </q-step>
 
@@ -347,6 +376,7 @@ export default defineComponent({
       step.value = 1
       Object.keys(form).forEach(key => {
         if (typeof form[key] === 'string') form[key] = ''
+        else if (typeof form[key] === 'number') form[key] = null
       })
     }
 
@@ -420,7 +450,11 @@ export default defineComponent({
       ownership: 'Landlord',
       serviceProvider: 'Default Service Co.',
       equipmentValue: '',
-      depreciationPercent: ''
+      depreciationPercent: '',
+      serviceTime: '',
+      vendorLocation: '',
+      vendorArea: '',
+      vendorAddress: ''
     })
 
     const populateForm = () => {
@@ -430,6 +464,10 @@ export default defineComponent({
         form.unitRefNumber = targetAsset.value.unitRef || ''
         form.refrigerantType = targetAsset.value.refrigerantType || ''
         form.refrigerantKg = targetAsset.value.refrigerantKg || ''
+        form.serviceTime = targetAsset.value.serviceTime || ''
+        form.vendorLocation = targetAsset.value.vendorLocation || ''
+        form.vendorArea = targetAsset.value.vendorArea || ''
+        form.vendorAddress = targetAsset.value.vendorAddress || ''
       }
     }
 
@@ -437,6 +475,27 @@ export default defineComponent({
     watch(assetId, populateForm)
 
     const onSubmit = () => {
+      if (assetId.value) {
+        // Find the customer and project for this asset to update it in the store
+        store.customers.forEach(c => {
+          c.projects.forEach(p => {
+            const assetIndex = p.assets.findIndex(a => a.id === assetId.value)
+            if (assetIndex !== -1) {
+              // Update the asset with the form data
+              const updatedAsset = { 
+                ...p.assets[assetIndex],
+                ...form,
+                // Ensure model/serial fields from TDS map back to asset core fields if necessary
+                indoorModel: form.indoorUnit,
+                serialNumber: form.indoorSerial,
+                unitRef: form.unitRefNumber
+              }
+              store.updateAsset(c.id, p.id, assetId.value, updatedAsset)
+            }
+          })
+        })
+      }
+
       $q.notify({
         color: 'positive',
         message: 'Technical data sheet saved successfully',

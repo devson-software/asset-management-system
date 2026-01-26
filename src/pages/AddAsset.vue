@@ -91,6 +91,61 @@
                   <template v-slot:prepend><q-icon name="fas fa-weight-hanging" size="xs" /></template>
                 </q-input>
               </div>
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="asset.serviceTime" 
+                  label="Service Time (Minutes)" 
+                  type="number" 
+                  outlined 
+                  dense
+                  bg-color="white"
+                  hint="Time per asset for calculations"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-clock" size="xs" /></template>
+                </q-input>
+              </div>
+            </div>
+
+            <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-mt-md">
+              <q-icon name="fas fa-building" size="xs" class="q-mr-sm" />
+              Base Vendor Details
+            </div>
+
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-4">
+                <q-input 
+                  v-model="asset.vendorLocation" 
+                  label="Vendor Location" 
+                  outlined 
+                  dense
+                  bg-color="white"
+                  hint="e.g. TFG"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-4">
+                <q-input 
+                  v-model="asset.vendorArea" 
+                  label="Vendor Area" 
+                  outlined 
+                  dense
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-map-location-dot" size="xs" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-4">
+                <q-input 
+                  v-model="asset.vendorAddress" 
+                  label="Vendor Address" 
+                  outlined 
+                  dense
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-map-pin" size="xs" /></template>
+                </q-input>
+              </div>
             </div>
 
             <div class="row q-gutter-sm justify-between q-mt-xl">
@@ -128,7 +183,11 @@ export default defineComponent({
       indoorModel: '', 
       serialNumber: '', 
       refrigerantType: 'R410A', 
-      refrigerantKg: '' 
+      refrigerantKg: '',
+      serviceTime: '',
+      vendorLocation: '',
+      vendorArea: '',
+      vendorAddress: ''
     })
 
     if (isEdit && project) {

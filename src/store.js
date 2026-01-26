@@ -255,7 +255,11 @@ export const store = reactive({
         project.assets.push({
           id: 'A' + Date.now(),
           ...asset,
-          status: 'Registered'
+          status: 'Registered',
+          serviceTime: asset.serviceTime || 0,
+          vendorAddress: asset.vendorAddress || '',
+          vendorLocation: asset.vendorLocation || '',
+          vendorArea: asset.vendorArea || ''
         })
       }
     }

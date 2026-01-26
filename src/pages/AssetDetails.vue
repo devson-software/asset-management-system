@@ -47,6 +47,46 @@
                   <q-item-label class="text-weight-bold">{{ asset.refrigerantKg }} kg</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-item v-if="asset.serviceTime">
+                <q-item-section>
+                  <q-item-label caption>Service Time Allocation</q-item-label>
+                  <q-item-label class="text-weight-bold text-primary">
+                    <q-icon name="fas fa-clock" size="xs" class="q-mr-xs" />
+                    {{ asset.serviceTime }} Minutes
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <q-card flat bordered class="rounded-borders full-height">
+            <q-card-section class="bg-orange-1 text-orange-9">
+              <div class="text-h6">Vendor Details</div>
+            </q-card-section>
+            <q-list separator>
+              <q-item>
+                <q-item-section avatar><q-icon name="fas fa-location-dot" color="orange-9" /></q-item-section>
+                <q-item-section>
+                  <q-item-label caption>Vendor Location</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.vendorLocation || 'N/A' }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section avatar><q-icon name="fas fa-map-location-dot" color="orange-9" /></q-item-section>
+                <q-item-section>
+                  <q-item-label caption>Vendor Area</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.vendorArea || 'N/A' }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section avatar><q-icon name="fas fa-map-pin" color="orange-9" /></q-item-section>
+                <q-item-section>
+                  <q-item-label caption>Vendor Address</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.vendorAddress || 'N/A' }}</q-item-label>
+                </q-item-section>
+              </q-item>
             </q-list>
           </q-card>
         </div>
