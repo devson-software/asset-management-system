@@ -212,6 +212,67 @@ export const store = reactive({
       ]
     }
   },
+  plantHierachy: {
+    'DX Split': [
+      'Cassette',
+      '1 way blow cassette',
+      'Midwall',
+      'Underceiling',
+      'Console',
+      'Hide-away'
+    ],
+    'VRF / VRV System': [
+      'Outdoor Unit',
+      'Indoor Cassette',
+      'Indoor Midwall',
+      'Indoor Concealed'
+    ],
+    'Chiller Plant': [
+      'Air Cooled Chiller',
+      'Water Cooled Chiller',
+      'Cooling Tower',
+      'Primary Pump',
+      'Secondary Pump'
+    ],
+    'AHU / Ventilation': [
+      'Air Handling Unit',
+      'Fan Coil Unit',
+      'Extraction Fan',
+      'Fresh Air Fan'
+    ]
+  },
+  unitLibrary: [
+    {
+      id: 'LIB1',
+      manufacturer: 'Samsung',
+      unitType: '1 way blow cassette',
+      indoorModel: 'AM036FNNDEH',
+      outdoorModel: 'AM036FXMDGH',
+      refrigerantType: 'R410A',
+      refrigerantCharge: '0.26',
+      serviceDuration: '2 hours'
+    },
+    {
+      id: 'LIB2',
+      manufacturer: 'Samsung',
+      unitType: 'Cassette',
+      indoorModel: 'AC200KNHPKH/EU',
+      outdoorModel: 'AC200KXAPKH/EU',
+      refrigerantType: 'R410A',
+      refrigerantCharge: '4.0',
+      serviceDuration: '2.5 hours'
+    },
+    {
+      id: 'LIB3',
+      manufacturer: 'Daikin',
+      unitType: 'Midwall',
+      indoorModel: 'FTXM25R',
+      outdoorModel: 'RXM25R',
+      refrigerantType: 'R32',
+      refrigerantCharge: '0.7',
+      serviceDuration: '1.5 hours'
+    }
+  ],
   currentUser: { id: 'U1', username: 'admin', role: 'administrator' }, // Mock logged-in user
   // Helper to add a customer
   addCustomer(customer) {

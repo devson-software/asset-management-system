@@ -135,7 +135,10 @@
             <q-td :props="props">
               <div class="row items-center no-wrap">
                 <q-avatar color="blue-1" text-color="primary" icon="fas fa-snowflake" size="32px" class="q-mr-md" />
-                <div class="text-weight-bold text-primary">{{ props.row.unitRef }}</div>
+                <div>
+                  <div class="text-weight-bold text-primary">{{ props.row.unitRef }}</div>
+                  <div class="text-caption text-grey-7">{{ props.row.manufacturer }}</div>
+                </div>
               </div>
             </q-td>
           </template>
@@ -221,9 +224,11 @@ export default defineComponent({
     const filter = ref('')
     const columnFilters = reactive({
       unitRef: '',
+      manufacturer: '',
       unitType: '',
       indoorModel: '',
-      serialNumber: '',
+      outdoorModel: '',
+      vendorArea: '',
       vendorLocation: '',
       serviceCount: '',
       status: ''
@@ -231,10 +236,12 @@ export default defineComponent({
 
     const columns = [
       { name: 'unitRef', label: 'Unit Ref #', align: 'left', field: 'unitRef', sortable: true },
+      { name: 'manufacturer', label: 'Manufacturer', align: 'left', field: 'manufacturer', sortable: true },
       { name: 'unitType', label: 'Type of Unit', align: 'left', field: 'unitType', sortable: true },
       { name: 'indoorModel', label: 'Indoor Model', align: 'left', field: 'indoorModel', sortable: true },
-      { name: 'serialNumber', label: 'Serial Number', align: 'left', field: 'serialNumber', sortable: true },
-      { name: 'vendorLocation', label: 'Area / Location', align: 'left', field: 'vendorLocation', sortable: true },
+      { name: 'outdoorModel', label: 'Outdoor Model', align: 'left', field: 'outdoorModel', sortable: true },
+      { name: 'vendorArea', label: 'Area', align: 'left', field: 'vendorArea', sortable: true },
+      { name: 'vendorLocation', label: 'Specific Location', align: 'left', field: 'vendorLocation', sortable: true },
       { name: 'serviceCount', label: 'Call Outs', align: 'center', field: 'serviceCount', sortable: true },
       { name: 'status', label: 'Status', align: 'center', field: row => row.status, sortable: true },
       { name: 'actions', label: '', align: 'right' }
@@ -330,10 +337,18 @@ export default defineComponent({
         { label: 'Customer', field: 'customerName' },
         { label: 'Project', field: 'projectName' },
         { label: 'Unit Ref #', field: 'unitRef' },
+        { label: 'Manufacturer', field: 'manufacturer' },
         { label: 'Type of Unit', field: 'unitType' },
         { label: 'Indoor Model', field: 'indoorModel' },
-        { label: 'Serial Number', field: 'serialNumber' },
-        { label: 'Area / Location', field: 'vendorLocation' },
+        { label: 'Indoor Serial', field: 'serialNumber' },
+        { label: 'Outdoor Model', field: 'outdoorModel' },
+        { label: 'Outdoor Serial', field: 'outdoorSerial' },
+        { label: 'Area', field: 'vendorArea' },
+        { label: 'Specific Location', field: 'vendorLocation' },
+        { label: 'Refrigerant', field: 'refrigerantType' },
+        { label: 'Charge (kg)', field: 'refrigerantKg' },
+        { label: 'Service Schedule', field: 'serviceSchedule' },
+        { label: 'Service Duration', field: 'serviceTime' },
         { label: 'Call Outs', field: 'serviceCount' },
         { label: 'Status', field: 'status' }
       ]

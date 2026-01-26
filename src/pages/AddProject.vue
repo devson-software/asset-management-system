@@ -106,19 +106,6 @@
                   <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" /></template>
                 </q-input>
               </div>
-
-              <div class="col-12">
-                <q-input 
-                  v-model="project.vendorLocation" 
-                  label="Building Section / Internal Location" 
-                  outlined 
-                  dense 
-                  placeholder="e.g. Roof Level, Basement, Plant Room"
-                  bg-color="white"
-                >
-                  <template v-slot:prepend><q-icon name="fas fa-building-circle-check" size="xs" /></template>
-                </q-input>
-              </div>
             </div>
 
             <div class="row q-gutter-sm justify-between q-mt-xl">

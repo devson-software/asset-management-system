@@ -25,40 +25,42 @@
             <q-list separator>
               <q-item>
                 <q-item-section>
+                  <q-item-label caption>Manufacturer</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.manufacturer || 'N/A' }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
                   <q-item-label caption>Unit Type</q-item-label>
                   <q-item-label class="text-weight-bold text-primary">{{ asset.unitType || 'N/A' }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label caption>Indoor Unit Model</q-item-label>
-                  <q-item-label class="text-weight-bold">{{ asset.indoorModel }}</q-item-label>
+                  <q-item-label caption>Indoor Unit Model / Serial</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.indoorModel }} | {{ asset.serialNumber }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label caption>Serial Number</q-item-label>
-                  <q-item-label class="text-weight-bold">{{ asset.serialNumber }}</q-item-label>
+                  <q-item-label caption>Outdoor Unit Model / Serial</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.outdoorModel || 'N/A' }} | {{ asset.outdoorSerial || 'N/A' }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label caption>Refrigerant Type</q-item-label>
-                  <q-item-label class="text-weight-bold">{{ asset.refrigerantType }}</q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption>Refrigerant Charge (kg)</q-item-label>
-                  <q-item-label class="text-weight-bold">{{ asset.refrigerantKg }} kg</q-item-label>
+                  <q-item-label caption>Refrigerant Type / Charge</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.refrigerantType }} | {{ asset.refrigerantKg }} kg</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item v-if="asset.serviceTime">
                 <q-item-section>
-                  <q-item-label caption>Service Time Allocation</q-item-label>
+                  <q-item-label caption>Service Schedule / Duration</q-item-label>
                   <q-item-label class="text-weight-bold text-primary">
-                    <q-icon name="fas fa-clock" size="xs" class="q-mr-xs" />
-                    {{ asset.serviceTime }} Minutes
+                    <q-icon name="fas fa-repeat" size="xs" class="q-mr-xs" />
+                    {{ asset.serviceSchedule }} | 
+                    <q-icon name="fas fa-clock" size="xs" class="q-ml-sm q-mr-xs" />
+                    {{ asset.serviceTime }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -73,24 +75,24 @@
             </q-card-section>
             <q-list separator>
               <q-item>
-                <q-item-section avatar><q-icon name="fas fa-location-dot" color="orange-9" /></q-item-section>
+                <q-item-section avatar><q-icon name="fas fa-map" color="orange-9" /></q-item-section>
                 <q-item-section>
-                  <q-item-label caption>Vendor Location</q-item-label>
-                  <q-item-label class="text-weight-bold">{{ asset.vendorLocation || 'N/A' }}</q-item-label>
+                  <q-item-label caption>Area</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.vendorArea || 'N/A' }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
-                <q-item-section avatar><q-icon name="fas fa-map-location-dot" color="orange-9" /></q-item-section>
+                <q-item-section avatar><q-icon name="fas fa-location-dot" color="orange-9" /></q-item-section>
                 <q-item-section>
-                  <q-item-label caption>Vendor Area</q-item-label>
-                  <q-item-label class="text-weight-bold">{{ asset.vendorArea || 'N/A' }}</q-item-label>
+                  <q-item-label caption>Specific Location</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.vendorLocation || 'N/A' }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section avatar><q-icon name="fas fa-map-pin" color="orange-9" /></q-item-section>
                 <q-item-section>
-                  <q-item-label caption>Vendor Address</q-item-label>
-                  <q-item-label class="text-weight-bold">{{ asset.vendorAddress || 'N/A' }}</q-item-label>
+                  <q-item-label caption>Physical Address</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ asset.siteAddress || 'N/A' }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>

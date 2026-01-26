@@ -147,16 +147,19 @@
 
             <div class="row q-col-gutter-lg">
               <div class="col-12 col-md-6">
-                <q-input v-model="form.indoorUnit" label="Indoor Unit (Model)" outlined dense bg-color="blue-0" />
+                <q-input v-model="form.manufacturer" label="Manufacturer" outlined dense />
               </div>
               <div class="col-12 col-md-6">
                 <q-select 
                   v-model="form.unitType" 
-                  :options="['Cassette Unit', 'Midwall Split', 'Hideaway Unit', 'Under Ceiling', 'Rooftop Package', 'Chiller', 'AHU']" 
+                  :options="['Cassette', '1 way blow cassette', 'Midwall', 'Underceiling', 'Console', 'Hide-away']" 
                   label="Type of Unit" 
                   outlined 
                   dense
                 />
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input v-model="form.indoorUnit" label="Indoor Unit (Model)" outlined dense bg-color="blue-0" />
               </div>
               <div class="col-12 col-md-6">
                 <q-input v-model="form.indoorSerial" label="Indoor Serial Number" outlined dense />
@@ -171,26 +174,17 @@
                 <q-input v-model="form.unitRefNumber" label="Unit Reference Number" outlined dense hint="e.g. Ac1.01" />
               </div>
               <div class="col-12 col-md-4">
-                <q-input v-model="form.areaLocation" label="Area / Location" outlined dense>
+                <q-input v-model="form.vendorArea" label="Area" outlined dense placeholder="e.g. North Wing">
+                  <template v-slot:prepend><q-icon name="fas fa-map" color="grey-6" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-4">
+                <q-input v-model="form.vendorLocation" label="Location" outlined dense placeholder="e.g. Office 12">
                   <template v-slot:prepend><q-icon name="fas fa-location-dot" color="grey-6" /></template>
                 </q-input>
               </div>
               <div class="col-12 col-md-4">
                 <q-input v-model="form.dateInstalled" label="Date Installed" type="date" outlined dense stack-label />
-              </div>
-
-              <q-separator class="col-12 q-my-sm" />
-              <div class="col-12">
-                <div class="text-subtitle2 text-grey-8 q-mb-sm">Base Vendor Details</div>
-              </div>
-              <div class="col-12 col-md-4">
-                <q-input v-model="form.vendorLocation" label="Vendor Location" outlined dense hint="e.g. TFG" />
-              </div>
-              <div class="col-12 col-md-4">
-                <q-input v-model="form.vendorArea" label="Vendor Area" outlined dense />
-              </div>
-              <div class="col-12 col-md-4">
-                <q-input v-model="form.vendorAddress" label="Vendor Address" outlined dense />
               </div>
             </div>
           </q-step>
@@ -319,13 +313,23 @@
                 <q-separator class="q-my-sm" />
               </div>
               <div class="col-12 col-md-6">
+                <q-select 
+                  v-model="form.serviceSchedule" 
+                  :options="['Monthly', 'Quarterly', 'Bi-annual', 'Annual']" 
+                  label="Service Schedule" 
+                  outlined 
+                  dense
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-repeat" size="xs" color="primary" /></template>
+                </q-select>
+              </div>
+              <div class="col-12 col-md-6">
                 <q-input 
                   v-model="form.serviceTime" 
-                  label="Service Time (Minutes)" 
-                  type="number" 
+                  label="Service Duration" 
                   outlined 
                   dense 
-                  hint="Time per asset for system-wide calculations"
+                  hint="e.g. 2 hours"
                 >
                   <template v-slot:prepend><q-icon name="fas fa-clock" size="xs" color="primary" /></template>
                 </q-input>
@@ -432,6 +436,7 @@ export default defineComponent({
     })
 
     const form = reactive({
+      manufacturer: '',
       indoorUnit: '',
       unitType: '',
       indoorSerial: '',
@@ -439,6 +444,8 @@ export default defineComponent({
       outdoorUnit: '',
       outdoorSerial: '',
       areaLocation: '',
+      vendorArea: '',
+      vendorLocation: '',
       dateInstalled: '',
       coolingKw: '',
       coolingBtu: '',
@@ -461,20 +468,23 @@ export default defineComponent({
       serviceProvider: 'Default Service Co.',
       equipmentValue: '',
       depreciationPercent: '',
+      serviceSchedule: 'Monthly',
       serviceTime: '',
-      vendorLocation: '',
-      vendorArea: '',
       vendorAddress: ''
     })
 
     const populateForm = () => {
       if (targetAsset.value) {
+        form.manufacturer = targetAsset.value.manufacturer || ''
         form.indoorUnit = targetAsset.value.indoorModel || ''
         form.unitType = targetAsset.value.unitType || ''
         form.indoorSerial = targetAsset.value.serialNumber || ''
         form.unitRefNumber = targetAsset.value.unitRef || ''
+        form.outdoorUnit = targetAsset.value.outdoorModel || ''
+        form.outdoorSerial = targetAsset.value.outdoorSerial || ''
         form.refrigerantType = targetAsset.value.refrigerantType || ''
         form.refrigerantKg = targetAsset.value.refrigerantKg || ''
+        form.serviceSchedule = targetAsset.value.serviceSchedule || 'Monthly'
         form.serviceTime = targetAsset.value.serviceTime || ''
         form.vendorLocation = targetAsset.value.vendorLocation || ''
         form.vendorArea = targetAsset.value.vendorArea || ''
@@ -497,9 +507,12 @@ export default defineComponent({
                 ...p.assets[assetIndex],
                 ...form,
                 // Ensure model/serial fields from TDS map back to asset core fields if necessary
+                manufacturer: form.manufacturer,
                 indoorModel: form.indoorUnit,
                 unitType: form.unitType,
                 serialNumber: form.indoorSerial,
+                outdoorModel: form.outdoorUnit,
+                outdoorSerial: form.outdoorSerial,
                 unitRef: form.unitRefNumber
               }
               store.updateAsset(c.id, p.id, assetId.value, updatedAsset)
