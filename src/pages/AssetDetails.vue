@@ -25,6 +25,12 @@
             <q-list separator>
               <q-item>
                 <q-item-section>
+                  <q-item-label caption>Unit Type</q-item-label>
+                  <q-item-label class="text-weight-bold text-primary">{{ asset.unitType || 'N/A' }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
                   <q-item-label caption>Indoor Unit Model</q-item-label>
                   <q-item-label class="text-weight-bold">{{ asset.indoorModel }}</q-item-label>
                 </q-item-section>

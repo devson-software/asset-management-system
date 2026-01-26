@@ -13,6 +13,7 @@
         </div>
         <div class="q-gutter-sm">
           <q-btn v-if="$route.query.customerId" flat color="primary" icon="fas fa-arrow-left" label="Show All Customers" :to="{ path: '/projects', query: {} }" />
+          <q-btn color="green-7" icon="fas fa-file-excel" label="Export XLSX" @click="exportToExcel" class="shadow-2" />
           <q-btn 
             color="primary" 
             icon="fas fa-plus" 
@@ -179,11 +180,14 @@
 import { defineComponent, ref, computed, reactive } from 'vue'
 import { store } from '../store'
 import { useRoute } from 'vue-router'
+import { useQuasar } from 'quasar'
+import * as XLSX from 'xlsx'
 
 export default defineComponent({
   name: 'ProjectsPage',
   setup () {
     const route = useRoute()
+    const $q = useQuasar()
     const filter = ref('')
     const columnFilters = reactive({
       name: '',
@@ -237,6 +241,25 @@ export default defineComponent({
       { name: 'actions', label: '', align: 'right' }
     ]
 
+    const exportToExcel = () => {
+      $q.notify({ message: 'Exporting projects register to Excel...', color: 'green-7', icon: 'file_download' })
+      
+      const exportData = filteredRows.value.map(r => ({
+        'Project Name': r.name,
+        'Customer': r.customerName,
+        'Location': r.siteAddress,
+        'Specific Location': r.vendorLocation,
+        'Time Allocation': r.timeAllocation || 'N/A',
+        'Assets Count': r.assets.length
+      }))
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Projects Register')
+
+      XLSX.writeFile(workbook, `projects_register_${new Date().toISOString().split('T')[0]}.xlsx`)
+    }
+
     return {
       store,
       filter,
@@ -244,7 +267,8 @@ export default defineComponent({
       allProjects,
       filteredRows,
       activeCustomerName,
-      projectColumns
+      projectColumns,
+      exportToExcel
     }
   }
 })

@@ -8,6 +8,7 @@
         </div>
         <div class="q-gutter-sm">
           <q-btn color="secondary" icon="fas fa-plus" label="Create Job Card" to="/job-cards/add" class="shadow-2" />
+          <q-btn color="green-7" icon="fas fa-file-excel" label="Export XLSX" @click="exportToExcel" class="shadow-2" />
           <q-btn outline color="primary" icon="fas fa-paper-plane" label="Email Summary" @click="emailSummary" class="shadow-2" />
         </div>
       </div>
@@ -208,6 +209,7 @@
 import { defineComponent, ref, computed, reactive } from 'vue'
 import { useQuasar } from 'quasar'
 import { store } from '../store'
+import * as XLSX from 'xlsx'
 
 export default defineComponent({
   name: 'JobCardHistory',
@@ -260,6 +262,26 @@ export default defineComponent({
       })
     }
 
+    const exportToExcel = () => {
+      $q.notify({ message: 'Exporting job card history to Excel...', color: 'green-7', icon: 'file_download' })
+      
+      const exportData = filteredRows.value.map(r => ({
+        'Job #': r.id,
+        'Service Date': r.date,
+        'Unit Ref': r.unitRef,
+        'Customer': r.customer,
+        'Technician': r.tech,
+        'Status': r.faultFound ? 'Fault Reported' : 'System Clear',
+        'Comments': r.comments || ''
+      }))
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Job Card History')
+
+      XLSX.writeFile(workbook, `job_card_history_${new Date().toISOString().split('T')[0]}.xlsx`)
+    }
+
     return {
       columns,
       rows,
@@ -269,7 +291,8 @@ export default defineComponent({
       showViewDialog,
       selectedJobCard,
       viewJobCard,
-      emailSummary
+      emailSummary,
+      exportToExcel
     }
   }
 })

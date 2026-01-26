@@ -6,22 +6,25 @@
           <div class="text-h4 text-weight-bold text-primary">Commissioning Master</div>
           <div class="text-subtitle1 text-grey-7">Technical verification based on CIBSE & ASHRAE standards</div>
         </div>
-        <q-btn-dropdown color="primary" label="New Commissioning Report" icon="fas fa-plus" class="shadow-2">
-          <q-list style="min-width: 200px">
-            <q-item clickable v-close-popup @click="startComm('Pump')">
-              <q-item-section avatar><q-icon name="fas fa-faucet-drip" color="blue" /></q-item-section>
-              <q-item-section><q-item-label class="text-weight-bold">Pump / Hydraulic</q-item-label></q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="startComm('Fan')">
-              <q-item-section avatar><q-icon name="fas fa-wind" color="teal" /></q-item-section>
-              <q-item-section><q-item-label class="text-weight-bold">Fan / Airflow</q-item-label></q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="startComm('DX Split')">
-              <q-item-section avatar><q-icon name="fas fa-snowflake" color="orange" /></q-item-section>
-              <q-item-section><q-item-label class="text-weight-bold">DX Split Unit</q-item-label></q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
+        <div class="q-gutter-sm">
+          <q-btn color="green-7" icon="fas fa-file-excel" label="Export XLSX" @click="exportToExcel" class="shadow-2" />
+          <q-btn-dropdown color="primary" label="New Commissioning Report" icon="fas fa-plus" class="shadow-2">
+            <q-list style="min-width: 200px">
+              <q-item clickable v-close-popup @click="startComm('Pump')">
+                <q-item-section avatar><q-icon name="fas fa-faucet-drip" color="blue" /></q-item-section>
+                <q-item-section><q-item-label class="text-weight-bold">Pump / Hydraulic</q-item-label></q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="startComm('Fan')">
+                <q-item-section avatar><q-icon name="fas fa-wind" color="teal" /></q-item-section>
+                <q-item-section><q-item-label class="text-weight-bold">Fan / Airflow</q-item-label></q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="startComm('DX Split')">
+                <q-item-section avatar><q-icon name="fas fa-snowflake" color="orange" /></q-item-section>
+                <q-item-section><q-item-label class="text-weight-bold">DX Split Unit</q-item-label></q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
       </div>
 
       <div class="col-12">
@@ -139,11 +142,14 @@
 import { defineComponent, ref, reactive, computed } from 'vue'
 import { store } from '../store'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import * as XLSX from 'xlsx'
 
 export default defineComponent({
   name: 'CommissioningList',
   setup () {
     const router = useRouter()
+    const $q = useQuasar()
     const filter = ref('')
     const columnFilters = reactive({
       id: '',
@@ -189,6 +195,25 @@ export default defineComponent({
       }
     }
 
+    const exportToExcel = () => {
+      $q.notify({ message: 'Exporting commissioning records to Excel...', color: 'green-7', icon: 'file_download' })
+      
+      const exportData = filteredRows.value.map(r => ({
+        'ID': r.id,
+        'Date': r.date,
+        'Unit Ref': r.unitRef,
+        'Type': r.type,
+        'Customer': r.customer,
+        'Status': r.status
+      }))
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Commissioning Records')
+
+      XLSX.writeFile(workbook, `commissioning_records_${new Date().toISOString().split('T')[0]}.xlsx`)
+    }
+
     return { 
       store, 
       filter, 
@@ -197,7 +222,8 @@ export default defineComponent({
       filteredRows, 
       startComm, 
       viewRecord, 
-      deleteRecord 
+      deleteRecord,
+      exportToExcel
     }
   }
 })

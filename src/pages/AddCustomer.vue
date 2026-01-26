@@ -195,7 +195,7 @@ export default defineComponent({
         $q.notify({ color: 'positive', message: 'Customer updated successfully' })
       } else {
         store.addCustomer(savedData)
-        $q.notify({ color: 'positive', message: 'Customer created successfully' })
+      $q.notify({ color: 'positive', message: 'Customer created successfully' })
       }
 
       // Clear form

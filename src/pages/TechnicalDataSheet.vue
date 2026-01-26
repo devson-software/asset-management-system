@@ -150,6 +150,15 @@
                 <q-input v-model="form.indoorUnit" label="Indoor Unit (Model)" outlined dense bg-color="blue-0" />
               </div>
               <div class="col-12 col-md-6">
+                <q-select 
+                  v-model="form.unitType" 
+                  :options="['Cassette Unit', 'Midwall Split', 'Hideaway Unit', 'Under Ceiling', 'Rooftop Package', 'Chiller', 'AHU']" 
+                  label="Type of Unit" 
+                  outlined 
+                  dense
+                />
+              </div>
+              <div class="col-12 col-md-6">
                 <q-input v-model="form.indoorSerial" label="Indoor Serial Number" outlined dense />
               </div>
               <div class="col-12 col-md-6">
@@ -424,6 +433,7 @@ export default defineComponent({
 
     const form = reactive({
       indoorUnit: '',
+      unitType: '',
       indoorSerial: '',
       unitRefNumber: '',
       outdoorUnit: '',
@@ -460,6 +470,7 @@ export default defineComponent({
     const populateForm = () => {
       if (targetAsset.value) {
         form.indoorUnit = targetAsset.value.indoorModel || ''
+        form.unitType = targetAsset.value.unitType || ''
         form.indoorSerial = targetAsset.value.serialNumber || ''
         form.unitRefNumber = targetAsset.value.unitRef || ''
         form.refrigerantType = targetAsset.value.refrigerantType || ''
@@ -487,6 +498,7 @@ export default defineComponent({
                 ...form,
                 // Ensure model/serial fields from TDS map back to asset core fields if necessary
                 indoorModel: form.indoorUnit,
+                unitType: form.unitType,
                 serialNumber: form.indoorSerial,
                 unitRef: form.unitRefNumber
               }

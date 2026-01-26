@@ -100,9 +100,9 @@
       </div>
 
       <div class="col-12">
-        <div class="row q-col-gutter-xl">
-          <!-- Left Column: Calendar -->
-          <div class="col-12 col-md-5">
+      <div class="row q-col-gutter-xl">
+        <!-- Left Column: Calendar -->
+        <div class="col-12 col-md-5">
           <q-card flat bordered class="calendar-card overflow-hidden">
             <q-date
               v-model="selectedDate"
@@ -127,45 +127,45 @@
               </div>
             </q-card-section>
           </q-card>
+        </div>
+
+        <!-- Right Column: Service List -->
+        <div class="col-12 col-md-7">
+          <div class="row items-center justify-between q-mb-md">
+            <div class="text-h6 text-grey-8">
+              Services for <span class="text-primary text-weight-bold">{{ selectedDate }}</span>
+            </div>
+              <q-badge color="blue-1" text-color="primary" class="q-px-md q-py-xs text-weight-bold">
+              {{ filteredServices.length }} Appointments
+            </q-badge>
           </div>
 
-          <!-- Right Column: Service List -->
-          <div class="col-12 col-md-7">
-            <div class="row items-center justify-between q-mb-md">
-              <div class="text-h6 text-grey-8">
-                Services for <span class="text-primary text-weight-bold">{{ selectedDate }}</span>
-              </div>
-              <q-badge color="blue-1" text-color="primary" class="q-px-md q-py-xs text-weight-bold">
-                {{ filteredServices.length }} Appointments
-              </q-badge>
-            </div>
-
-            <transition-group
-              appear
-              enter-active-class="animated fadeIn"
-              leave-active-class="animated fadeOut"
+          <transition-group
+            appear
+            enter-active-class="animated fadeIn"
+            leave-active-class="animated fadeOut"
+          >
+            <q-card 
+              v-for="service in filteredServices" 
+              :key="service.id" 
+              flat 
+              bordered 
+              class="q-mb-md service-item-card"
             >
-              <q-card 
-                v-for="service in filteredServices" 
-                :key="service.id" 
-                flat 
-                bordered 
-                class="q-mb-md service-item-card"
-              >
-                <q-item class="q-py-md">
-                  <q-item-section avatar>
+              <q-item class="q-py-md">
+                <q-item-section avatar>
                     <q-avatar color="blue-1" text-color="primary" icon="fas fa-screwdriver-wrench" />
-                  </q-item-section>
+                </q-item-section>
 
-                  <q-item-section>
-                    <q-item-label class="text-weight-bold text-subtitle1">
-                      {{ service.unitRef }}
-                    </q-item-label>
-                    <q-item-label class="text-grey-9">{{ service.customer }}</q-item-label>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold text-subtitle1">
+                    {{ service.unitRef }}
+                  </q-item-label>
+                  <q-item-label class="text-grey-9">{{ service.customer }}</q-item-label>
                     <div class="row items-center q-gutter-x-md q-mt-xs">
                       <div class="text-caption text-grey-7 row items-center">
                         <q-icon name="fas fa-location-dot" size="10px" class="q-mr-xs" />
-                        {{ service.project }}
+                    {{ service.project }}
                       </div>
                       <div class="text-caption text-grey-7 row items-center" v-if="service.duration">
                         <q-icon name="fas fa-hourglass-half" size="10px" class="q-mr-xs" />
@@ -207,44 +207,44 @@
                         </div>
                       </div>
                     </div>
-                  </q-item-section>
+                </q-item-section>
 
-                  <q-item-section side>
-                    <div class="column items-end">
+                <q-item-section side>
+                  <div class="column items-end">
                       <q-chip dense color="orange-1" text-color="orange-10" icon="fas fa-clock" size="sm" class="text-weight-bold">
-                        {{ service.type }}
-                      </q-chip>
-                      <div class="row q-mt-sm">
+                      {{ service.type }}
+                    </q-chip>
+                    <div class="row q-mt-sm">
                         <q-btn flat round color="grey-7" icon="fas fa-ellipsis-vertical">
-                          <q-menu auto-close class="rounded-borders shadow-2">
-                            <q-list style="min-width: 150px">
-                              <q-item clickable @click="editService(service)">
+                        <q-menu auto-close class="rounded-borders shadow-2">
+                          <q-list style="min-width: 150px">
+                            <q-item clickable @click="editService(service)">
                                 <q-item-section avatar><q-icon name="fas fa-edit" color="primary" size="sm" /></q-item-section>
-                                <q-item-section>Edit Visit</q-item-section>
-                              </q-item>
-                              <q-item clickable @click="confirmDelete(service)" class="text-negative">
+                              <q-item-section>Edit Visit</q-item-section>
+                            </q-item>
+                            <q-item clickable @click="confirmDelete(service)" class="text-negative">
                                 <q-item-section avatar><q-icon name="fas fa-trash-can" color="negative" size="sm" /></q-item-section>
-                                <q-item-section>Cancel Visit</q-item-section>
-                              </q-item>
-                              <q-separator />
-                              <q-item clickable :to="'/service-entry'">
+                              <q-item-section>Cancel Visit</q-item-section>
+                            </q-item>
+                            <q-separator />
+                            <q-item clickable :to="'/service-entry'">
                                 <q-item-section avatar><q-icon name="fas fa-play" color="positive" size="sm" /></q-item-section>
-                                <q-item-section>Start Work</q-item-section>
-                              </q-item>
-                            </q-list>
-                          </q-menu>
-                        </q-btn>
-                      </div>
+                              <q-item-section>Start Work</q-item-section>
+                            </q-item>
+                          </q-list>
+                        </q-menu>
+                      </q-btn>
                     </div>
-                  </q-item-section>
-                </q-item>
-              </q-card>
-            </transition-group>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </q-card>
+          </transition-group>
 
-            <div v-if="filteredServices.length === 0" class="column items-center justify-center q-pa-xl empty-state">
+          <div v-if="filteredServices.length === 0" class="column items-center justify-center q-pa-xl empty-state">
               <q-icon name="fas fa-calendar-xmark" size="80px" color="grey-4" />
-              <div class="text-h6 text-grey-5 q-mt-md">Quiet day! No services scheduled.</div>
-              <q-btn flat color="primary" label="Schedule something?" @click="openAddDialog" class="q-mt-sm" />
+            <div class="text-h6 text-grey-5 q-mt-md">Quiet day! No services scheduled.</div>
+            <q-btn flat color="primary" label="Schedule something?" @click="openAddDialog" class="q-mt-sm" />
             </div>
           </div>
         </div>
@@ -351,26 +351,26 @@
 
             <div class="row q-col-gutter-sm">
               <div class="col-6">
-                <q-input 
-                  v-model="form.date" 
+            <q-input 
+              v-model="form.date" 
                   label="Start Date" 
-                  outlined 
-                  dense 
-                  mask="####/##/##" 
-                  required
-                >
-                  <template v-slot:append>
-                    <q-icon name="event" class="cursor-pointer">
-                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-date v-model="form.date" mask="YYYY/MM/DD">
-                          <div class="row items-center justify-end">
-                            <q-btn v-close-popup label="Close" color="primary" flat />
-                          </div>
-                        </q-date>
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-                </q-input>
+              outlined 
+              dense 
+              mask="####/##/##" 
+              required
+            >
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-date v-model="form.date" mask="YYYY/MM/DD">
+                      <div class="row items-center justify-end">
+                        <q-btn v-close-popup label="Close" color="primary" flat />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
               </div>
               <div class="col-6">
                 <q-input 

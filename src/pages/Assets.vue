@@ -14,7 +14,7 @@
         <div class="q-gutter-sm">
           <q-btn v-if="$route.query.projectId" flat color="primary" icon="fas fa-arrow-left" label="Show All Assets" :to="{ path: '/assets', query: {} }" />
           <q-btn color="primary" icon="fas fa-plus" label="Register New Asset" @click="goToAddAsset" class="shadow-2" />
-          <q-btn color="green-7" icon="fas fa-file-csv" label="Export CSV" @click="exportToExcel" class="shadow-2" />
+          <q-btn color="green-7" icon="fas fa-file-excel" label="Export XLSX" @click="exportToExcel" class="shadow-2" />
           <q-btn color="indigo-7" icon="fas fa-qrcode" label="Generate QRs" @click="generateQRs" class="shadow-2" />
         </div>
       </div>
@@ -135,10 +135,22 @@
             <q-td :props="props">
               <div class="row items-center no-wrap">
                 <q-avatar color="blue-1" text-color="primary" icon="fas fa-snowflake" size="32px" class="q-mr-md" />
-                <div>
-                  <div class="text-weight-bold text-primary">{{ props.row.unitRef }}</div>
-                  <div class="text-caption text-grey-7">{{ props.row.indoorModel }}</div>
-                </div>
+                <div class="text-weight-bold text-primary">{{ props.row.unitRef }}</div>
+              </div>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-unitType="props">
+            <q-td :props="props">
+              <div class="row items-center no-wrap">
+                <q-avatar size="32px" class="q-mr-md bg-grey-1">
+                  <q-icon 
+                    :name="props.row.unitType?.includes('Cassette') ? 'fas fa-square-poll-vertical' : (props.row.unitType?.includes('Split') ? 'fas fa-window-minimize' : 'fas fa-box')" 
+                    size="xs" 
+                    color="grey-7" 
+                  />
+                </q-avatar>
+                <div class="text-weight-medium">{{ props.row.unitType || 'N/A' }}</div>
               </div>
             </q-td>
           </template>
@@ -198,6 +210,7 @@ import { defineComponent, ref, computed, reactive } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { store } from '../store'
+import * as XLSX from 'xlsx'
 
 export default defineComponent({
   name: 'AssetsPage',
@@ -207,21 +220,21 @@ export default defineComponent({
     const router = useRouter()
     const filter = ref('')
     const columnFilters = reactive({
-      customerName: '',
-      projectName: '',
-      siteAddress: '',
-      vendorLocation: '',
       unitRef: '',
+      unitType: '',
+      indoorModel: '',
+      serialNumber: '',
+      vendorLocation: '',
       serviceCount: '',
       status: ''
     })
 
     const columns = [
-      { name: 'customerName', label: 'Customer', align: 'left', field: 'customerName', sortable: true },
-      { name: 'projectName', label: 'Project', align: 'left', field: 'projectName', sortable: true },
       { name: 'unitRef', label: 'Unit Ref #', align: 'left', field: 'unitRef', sortable: true },
-      { name: 'siteAddress', label: 'Site Address', align: 'left', field: 'siteAddress', sortable: true },
-      { name: 'vendorLocation', label: 'Specific Location', align: 'left', field: 'vendorLocation', sortable: true },
+      { name: 'unitType', label: 'Type of Unit', align: 'left', field: 'unitType', sortable: true },
+      { name: 'indoorModel', label: 'Indoor Model', align: 'left', field: 'indoorModel', sortable: true },
+      { name: 'serialNumber', label: 'Serial Number', align: 'left', field: 'serialNumber', sortable: true },
+      { name: 'vendorLocation', label: 'Area / Location', align: 'left', field: 'vendorLocation', sortable: true },
       { name: 'serviceCount', label: 'Call Outs', align: 'center', field: 'serviceCount', sortable: true },
       { name: 'status', label: 'Status', align: 'center', field: row => row.status, sortable: true },
       { name: 'actions', label: '', align: 'right' }
@@ -310,27 +323,37 @@ export default defineComponent({
     }
 
     const exportToExcel = () => {
-      $q.notify({ message: 'Exporting assets register to CSV...', color: 'green-7', icon: 'file_download' })
-      const header = columns.map(c => c.label).join(',')
-      const data = rows.value.map(r => [
-        `"${r.customerName}"`,
-        `"${r.projectName}"`,
-        r.unitRef,
-        `"${r.siteAddress}"`,
-        `"${r.vendorLocation}"`,
-        r.serviceCount,
-        r.status
-      ].join(',')).join('\n')
+      $q.notify({ message: 'Exporting assets register to Excel...', color: 'green-7', icon: 'file_download' })
       
-      const blob = new Blob([header + '\n' + data], { type: 'text/csv' })
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.setAttribute('hidden', '')
-      a.setAttribute('href', url)
-      a.setAttribute('download', 'assets_register.csv')
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
+      // Define the columns to export
+      const exportCols = [
+        { label: 'Customer', field: 'customerName' },
+        { label: 'Project', field: 'projectName' },
+        { label: 'Unit Ref #', field: 'unitRef' },
+        { label: 'Type of Unit', field: 'unitType' },
+        { label: 'Indoor Model', field: 'indoorModel' },
+        { label: 'Serial Number', field: 'serialNumber' },
+        { label: 'Area / Location', field: 'vendorLocation' },
+        { label: 'Call Outs', field: 'serviceCount' },
+        { label: 'Status', field: 'status' }
+      ]
+
+      // Prepare the data for XLSX
+      const data = rows.value.map(r => {
+        const rowData = {}
+        exportCols.forEach(c => {
+          rowData[c.label] = r[c.field] || 'N/A'
+        })
+        return rowData
+      })
+
+      // Create workbook and worksheet
+      const worksheet = XLSX.utils.json_to_sheet(data)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Assets Register')
+
+      // Export the file
+      XLSX.writeFile(workbook, `assets_register_${new Date().toISOString().split('T')[0]}.xlsx`)
     }
 
     const printQR = (row) => {

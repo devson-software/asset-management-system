@@ -6,7 +6,10 @@
           <div class="text-h4 text-weight-bold text-primary">Customer Directory</div>
           <div class="text-subtitle1 text-grey-7">Manage your global client base and contact records</div>
         </div>
-        <q-btn color="primary" icon="fas fa-plus" label="Register New Customer" to="/customers/add" class="shadow-2" />
+        <div class="q-gutter-sm">
+          <q-btn color="green-7" icon="fas fa-file-excel" label="Export XLSX" @click="exportToExcel" class="shadow-2" />
+          <q-btn color="primary" icon="fas fa-plus" label="Register New Customer" to="/customers/add" class="shadow-2" />
+        </div>
       </div>
 
       <div class="col-12">
@@ -174,10 +177,13 @@
 <script>
 import { defineComponent, ref, reactive, computed } from 'vue'
 import { store } from '../store'
+import { useQuasar } from 'quasar'
+import * as XLSX from 'xlsx'
 
 export default defineComponent({
   name: 'CustomerRegistration',
   setup () {
+    const $q = useQuasar()
     const filter = ref('')
     const columnFilters = reactive({
       name: '',
@@ -211,12 +217,34 @@ export default defineComponent({
       })
     })
 
+    const exportToExcel = () => {
+      $q.notify({ message: 'Exporting customer directory to Excel...', color: 'green-7', icon: 'file_download' })
+      
+      const exportData = filteredRows.value.map(r => ({
+        'Company Name': r.name,
+        'Primary Contact': r.contactName,
+        'Email': r.email,
+        'Telephone': r.telephone || 'N/A',
+        'Mobile': r.mobile,
+        'Billing Address': r.billingAddress || 'N/A',
+        'Projects Count': r.projects?.length || 0,
+        'VAT Number': r.vatNumber
+      }))
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Customer Directory')
+
+      XLSX.writeFile(workbook, `customer_directory_${new Date().toISOString().split('T')[0]}.xlsx`)
+    }
+
     return {
       store,
       filter,
       columnFilters,
       columns,
-      filteredRows
+      filteredRows,
+      exportToExcel
     }
   }
 })

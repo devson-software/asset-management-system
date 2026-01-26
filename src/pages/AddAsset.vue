@@ -43,6 +43,18 @@
                 </q-input>
               </div>
               <div class="col-12 col-md-6">
+                <q-select 
+                  v-model="asset.unitType" 
+                  :options="['Cassette Unit', 'Midwall Split', 'Hideaway Unit', 'Under Ceiling', 'Rooftop Package', 'Chiller', 'AHU']" 
+                  label="Type of Unit" 
+                  outlined 
+                  dense
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-layer-group" size="xs" /></template>
+                </q-select>
+              </div>
+              <div class="col-12 col-md-6">
                 <q-input 
                   v-model="asset.indoorModel" 
                   label="Indoor Model" 
@@ -180,6 +192,7 @@ export default defineComponent({
 
     const asset = reactive({ 
       unitRef: '', 
+      unitType: 'Cassette Unit',
       indoorModel: '', 
       serialNumber: '', 
       refrigerantType: 'R410A', 
@@ -202,8 +215,8 @@ export default defineComponent({
         store.updateAsset(customerId, projectId, assetId, { ...asset })
         $q.notify({ color: 'positive', message: 'Asset updated successfully' })
       } else {
-        store.addAsset(customerId, projectId, { ...asset })
-        $q.notify({ color: 'positive', message: 'Asset registered successfully' })
+      store.addAsset(customerId, projectId, { ...asset })
+      $q.notify({ color: 'positive', message: 'Asset registered successfully' })
       }
 
       // Clear form

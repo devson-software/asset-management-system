@@ -18,7 +18,7 @@ export const store = reactive({
           siteAddress: '123 Business Ave, Tech City',
           timeAllocation: '2 weeks',
           assets: [
-            { id: 'A1', unitRef: 'Ac1.01', indoorModel: 'AC200KNHPKH/EU', serialNumber: '55896331', refrigerantType: 'R410A', refrigerantKg: '4', status: 'Registered' }
+            { id: 'A1', unitRef: 'Ac1.01', unitType: 'Cassette Unit', indoorModel: 'AC200KNHPKH/EU', serialNumber: '55896331', refrigerantType: 'R410A', refrigerantKg: '4', status: 'Registered' }
           ]
         },
         {
@@ -27,7 +27,7 @@ export const store = reactive({
           vendorLocation: 'Server Room',
           siteAddress: '45 Industrial Way, North Tech',
           assets: [
-            { id: 'A4', unitRef: 'NB-01', indoorModel: 'LG-V3', serialNumber: 'SN1122', refrigerantType: 'R32', refrigerantKg: '2', status: 'Registered' }
+            { id: 'A4', unitRef: 'NB-01', unitType: 'Midwall Split', indoorModel: 'LG-V3', serialNumber: 'SN1122', refrigerantType: 'R32', refrigerantKg: '2', status: 'Registered' }
           ]
         }
       ]
@@ -48,7 +48,7 @@ export const store = reactive({
           siteAddress: '789 Terminal Way, Port District',
           timeAllocation: '10 days',
           assets: [
-            { id: 'A2', unitRef: 'WH-01', indoorModel: 'LG-INDUSTRIAL-V2', serialNumber: 'SN992233', refrigerantType: 'R32', refrigerantKg: '12', status: 'Registered' }
+            { id: 'A2', unitRef: 'WH-01', unitType: 'Hideaway Unit', indoorModel: 'LG-INDUSTRIAL-V2', serialNumber: 'SN992233', refrigerantType: 'R32', refrigerantKg: '12', status: 'Registered' }
           ]
         },
         {
@@ -64,7 +64,7 @@ export const store = reactive({
           vendorLocation: 'Section B',
           siteAddress: '789 Terminal Way, Port District',
           assets: [
-            { id: 'A5', unitRef: 'CS-01', indoorModel: 'CARRIER-MAX', serialNumber: 'SN5544', refrigerantType: 'R404A', refrigerantKg: '15', status: 'Registered' }
+            { id: 'A5', unitRef: 'CS-01', unitType: 'Under Ceiling', indoorModel: 'CARRIER-MAX', serialNumber: 'SN5544', refrigerantType: 'R404A', refrigerantKg: '15', status: 'Registered' }
           ]
         }
       ]
@@ -85,7 +85,7 @@ export const store = reactive({
           siteAddress: '456 Retail Boulevard, Central',
           timeAllocation: '3 days',
           assets: [
-            { id: 'A3', unitRef: 'FC-AC-01', indoorModel: 'DAIKIN-CASSETTE-X', serialNumber: 'DK887711', refrigerantType: 'R410A', refrigerantKg: '2.5', status: 'Registered' }
+            { id: 'A3', unitRef: 'FC-AC-01', unitType: 'Cassette Unit', indoorModel: 'DAIKIN-CASSETTE-X', serialNumber: 'DK887711', refrigerantType: 'R410A', refrigerantKg: '2.5', status: 'Registered' }
           ]
         }
       ]
@@ -112,7 +112,7 @@ export const store = reactive({
           vendorLocation: 'Ground Floor Lobby',
           siteAddress: '101 Healthcare Lane, North Side',
           assets: [
-            { id: 'A6', unitRef: 'EW-01', indoorModel: 'TRANE-XL', serialNumber: 'SN7788', refrigerantType: 'R410A', refrigerantKg: '5', status: 'Registered' }
+            { id: 'A6', unitRef: 'EW-01', unitType: 'Rooftop Package', indoorModel: 'TRANE-XL', serialNumber: 'SN7788', refrigerantType: 'R410A', refrigerantKg: '5', status: 'Registered' }
           ]
         }
       ]
