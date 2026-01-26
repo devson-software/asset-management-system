@@ -78,6 +78,19 @@
                 </q-file>
               </div>
 
+              <div class="col-12 col-md-6">
+                <q-input 
+                  v-model="project.timeAllocation" 
+                  label="Time Allocation" 
+                  outlined 
+                  dense 
+                  placeholder="e.g. 2 weeks, 3 days"
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-clock" size="xs" /></template>
+                </q-input>
+              </div>
+
               <div class="col-12">
                 <q-input 
                   v-model="project.siteAddress" 
@@ -156,7 +169,8 @@ export default defineComponent({
       vendorLocation: '',
       customerId: customerId || null,
       picture: null,
-      pictureUrl: null
+      pictureUrl: null,
+      timeAllocation: ''
     })
 
     if (isEdit && customerId) {

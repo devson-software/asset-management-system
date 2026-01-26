@@ -87,6 +87,7 @@
                 <q-item-label caption>
                   <span class="text-weight-medium text-grey-9">{{ asset.projectName }}</span>
                   <span class="q-mx-xs">|</span>
+                  
                   <span>{{ asset.customerName }}</span>
                 </q-item-label>
               </q-item-section>
@@ -111,11 +112,12 @@
             <div class="text-h6">Quick Actions</div>
           </q-card-section>
           <q-card-section class="q-gutter-y-sm">
-            <q-btn color="primary" icon="fas fa-user-plus" label="New Customer" class="full-width" to="/customers/add" />
-            <q-btn color="secondary" icon="fas fa-calendar-day" label="Service Schedule" class="full-width" to="/service-calendar" />
-            <q-btn color="indigo-8" icon="fas fa-clipboard-check" label="Commissioning Master" class="full-width" to="/commissioning" />
-            <q-btn outline color="primary" icon="fas fa-file-export" label="Export Register" class="full-width" to="/assets" />
-            <q-btn color="orange-8" icon="fas fa-building" label="Manage Projects" class="full-width" to="/projects" />
+            <q-btn color="primary" icon="fas fa-user-plus" label="Add New Customer" class="full-width" to="/customers/add" unelevated />
+            <q-btn color="orange-8" icon="fas fa-building-circle-plus" label="Add New Project" class="full-width" to="/projects/add" unelevated />
+            <q-btn color="secondary" icon="fas fa-calendar-plus" label="Add New Schedule" class="full-width" to="/service-calendar" unelevated />
+            <q-btn color="green-7" icon="fas fa-file-circle-plus" label="Add New Job Card" class="full-width" to="/job-cards/add" unelevated />
+            <q-btn color="indigo-8" icon="fas fa-clipboard-list" label="Add New Commissioning" class="full-width" to="/commissioning" unelevated />
+            <q-btn color="blue-grey-8" icon="fas fa-user-plus" label="Add New User" class="full-width" to="/admin/users/add" v-if="isAdmin" unelevated />
           </q-card-section>
         </q-card>
       </div>

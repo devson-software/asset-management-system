@@ -96,6 +96,7 @@
           <q-card flat bordered class="rounded-borders">
             <q-tabs v-model="tab" dense class="text-grey" active-color="primary" indicator-color="primary" align="justify" narrow-indicator>
               <q-tab name="history" label="Service History" />
+              <q-tab name="tasks" label="Maintenance Plan" />
               <q-tab name="docs" label="Technical Drawings" />
             </q-tabs>
 
@@ -158,6 +159,31 @@
                 <div v-if="assetServiceHistory.length === 0" class="column items-center q-pa-xl text-grey-5 bg-white">
                   <q-icon name="fas fa-folder-open" size="64px" color="grey-3" />
                   <div class="text-subtitle1 q-mt-md">No service records found.</div>
+                </div>
+              </q-tab-panel>
+
+              <q-tab-panel name="tasks" class="q-pa-md">
+                <div class="row q-col-gutter-md">
+                  <div v-for="(def, type) in store.serviceDefinitions" :key="type" class="col-12 col-md-6">
+                    <q-card flat bordered class="rounded-borders full-height bg-grey-1">
+                      <q-card-section class="q-pb-none flex justify-between items-center">
+                        <div class="text-subtitle1 text-weight-bold text-primary">{{ type }}</div>
+                        <q-chip dense color="blue-1" text-color="primary" icon="access_time" size="sm">
+                          {{ def.duration }}
+                        </q-chip>
+                      </q-card-section>
+                      <q-card-section>
+                        <q-list dense>
+                          <q-item v-for="(task, idx) in def.tasks" :key="idx" class="q-px-none min-height-0">
+                            <q-item-section avatar class="min-width-0 q-pr-sm">
+                              <q-icon name="check_circle" color="primary" size="14px" />
+                            </q-item-section>
+                            <q-item-section class="text-caption">{{ task }}</q-item-section>
+                          </q-item>
+                        </q-list>
+                      </q-card-section>
+                    </q-card>
+                  </div>
                 </div>
               </q-tab-panel>
 
@@ -224,7 +250,7 @@ export default defineComponent({
       $q.notify({ message: `Sent QR sticker for ${asset.value.unitRef} to label printer.`, color: 'orange-8', icon: 'print' })
     }
 
-    return { asset, tab, printQR, assetServiceHistory, historyColumns, assetId }
+    return { asset, tab, printQR, assetServiceHistory, historyColumns, assetId, store }
   }
 })
 </script>
@@ -232,5 +258,7 @@ export default defineComponent({
 <style scoped>
 .rounded-borders { border-radius: 12px; }
 .full-height { height: 100%; }
+.min-height-0 { min-height: unset; padding: 4px 0; }
+.min-width-0 { min-width: unset; }
 </style>
 

@@ -117,6 +117,16 @@
               </q-td>
             </template>
 
+            <!-- Time Allocation Cell -->
+            <template v-slot:body-cell-timeAllocation="props">
+              <q-td :props="props">
+                <q-chip dense color="orange-1" text-color="orange-9" icon="fas fa-hourglass-half" size="sm" v-if="props.value">
+                  {{ props.value }}
+                </q-chip>
+                <span v-else class="text-grey-4 italic">Not set</span>
+              </q-td>
+            </template>
+
             <!-- Assets Count Badge Cell -->
             <template v-slot:body-cell-assetsCount="props">
               <q-td :props="props" align="center">
@@ -178,6 +188,7 @@ export default defineComponent({
     const columnFilters = reactive({
       name: '',
       siteAddress: '',
+      timeAllocation: '',
       assetsCount: ''
     })
 
@@ -221,6 +232,7 @@ export default defineComponent({
     const projectColumns = [
       { name: 'name', label: 'Project Name', align: 'left', field: 'name', sortable: true },
       { name: 'siteAddress', label: 'Location', align: 'left', field: 'siteAddress', sortable: true },
+      { name: 'timeAllocation', label: 'Time Allocation', align: 'left', field: 'timeAllocation', sortable: true },
       { name: 'assetsCount', label: 'Assets', align: 'center', field: row => row.assets.length, sortable: true },
       { name: 'actions', label: '', align: 'right' }
     ]

@@ -90,10 +90,44 @@
             </q-input>
           </template>
 
-          <template v-slot:body-cell-customer="props">
+          <template v-slot:body-cell-customerName="props">
             <q-td :props="props">
-              <div class="text-weight-bold text-primary">{{ props.row.customerName }}</div>
-              <div class="text-caption text-grey-7">{{ props.row.projectName }}</div>
+              <div class="text-weight-bold text-primary">{{ props.value }}</div>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-projectName="props">
+            <q-td :props="props">
+              <div class="text-grey-8">{{ props.value }}</div>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-serviceCount="props">
+            <q-td :props="props">
+              <q-chip 
+                dense 
+                :color="props.value > 0 ? 'blue-1' : 'grey-2'" 
+                :text-color="props.value > 0 ? 'primary' : 'grey-7'"
+                class="text-weight-bold"
+              >
+                {{ props.value }}
+              </q-chip>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-siteAddress="props">
+            <q-td :props="props">
+              <div class="text-caption text-grey-8" style="max-width: 200px; white-space: normal;">
+                {{ props.value }}
+              </div>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-vendorLocation="props">
+            <q-td :props="props">
+              <q-chip dense color="blue-grey-1" text-color="blue-grey-9" size="sm">
+                {{ props.value }}
+              </q-chip>
             </q-td>
           </template>
 
@@ -173,18 +207,22 @@ export default defineComponent({
     const router = useRouter()
     const filter = ref('')
     const columnFilters = reactive({
-      customer: '',
+      customerName: '',
+      projectName: '',
+      siteAddress: '',
+      vendorLocation: '',
       unitRef: '',
-      indoorModel: '',
-      serialNumber: '',
+      serviceCount: '',
       status: ''
     })
 
     const columns = [
-      { name: 'customer', label: 'Client / Project', align: 'left', field: row => row.customerName, sortable: true },
+      { name: 'customerName', label: 'Customer', align: 'left', field: 'customerName', sortable: true },
+      { name: 'projectName', label: 'Project', align: 'left', field: 'projectName', sortable: true },
       { name: 'unitRef', label: 'Unit Ref #', align: 'left', field: 'unitRef', sortable: true },
-      { name: 'indoorModel', label: 'Indoor Model', align: 'left', field: 'indoorModel', sortable: true },
-      { name: 'serialNumber', label: 'Serial Number', align: 'left', field: 'serialNumber', sortable: true },
+      { name: 'siteAddress', label: 'Site Address', align: 'left', field: 'siteAddress', sortable: true },
+      { name: 'vendorLocation', label: 'Specific Location', align: 'left', field: 'vendorLocation', sortable: true },
+      { name: 'serviceCount', label: 'Call Outs', align: 'center', field: 'serviceCount', sortable: true },
       { name: 'status', label: 'Status', align: 'center', field: row => row.status, sortable: true },
       { name: 'actions', label: '', align: 'right' }
     ]
@@ -199,12 +237,19 @@ export default defineComponent({
           if (projectIdQuery && project.id !== projectIdQuery) return
 
           project.assets.forEach(asset => {
+            const serviceCount = store.services.filter(s => 
+              s.unitRef === asset.unitRef && s.customer === customer.name
+            ).length
+
             allAssets.push({
               ...asset,
               customerName: customer.name,
               projectName: project.name,
+              siteAddress: project.siteAddress || 'N/A',
+              vendorLocation: project.vendorLocation || 'N/A',
               customerId: customer.id,
-              projectId: project.id
+              projectId: project.id,
+              serviceCount
             })
           })
         })
@@ -216,9 +261,7 @@ export default defineComponent({
       return rows.value.filter(row => {
         return Object.keys(columnFilters).every(key => {
           if (!columnFilters[key]) return true
-          const val = key === 'customer'
-            ? row.customerName + ' / ' + row.projectName
-            : row[key] || ''
+          const val = row[key] || ''
           return String(val).toLowerCase().includes(columnFilters[key].toLowerCase())
         })
       })
@@ -270,7 +313,13 @@ export default defineComponent({
       $q.notify({ message: 'Exporting assets register to CSV...', color: 'green-7', icon: 'file_download' })
       const header = columns.map(c => c.label).join(',')
       const data = rows.value.map(r => [
-        r.customerName + ' / ' + r.projectName, r.unitRef, r.indoorModel, r.serialNumber, r.status
+        `"${r.customerName}"`,
+        `"${r.projectName}"`,
+        r.unitRef,
+        `"${r.siteAddress}"`,
+        `"${r.vendorLocation}"`,
+        r.serviceCount,
+        r.status
       ].join(',')).join('\n')
       
       const blob = new Blob([header + '\n' + data], { type: 'text/csv' })

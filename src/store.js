@@ -16,6 +16,7 @@ export const store = reactive({
           name: 'Downtown Office',
           vendorLocation: 'Floor 12',
           siteAddress: '123 Business Ave, Tech City',
+          timeAllocation: '2 weeks',
           assets: [
             { id: 'A1', unitRef: 'Ac1.01', indoorModel: 'AC200KNHPKH/EU', serialNumber: '55896331', refrigerantType: 'R410A', refrigerantKg: '4', status: 'Registered' }
           ]
@@ -45,6 +46,7 @@ export const store = reactive({
           name: 'Main Warehouse',
           vendorLocation: 'Loading Bay A',
           siteAddress: '789 Terminal Way, Port District',
+          timeAllocation: '10 days',
           assets: [
             { id: 'A2', unitRef: 'WH-01', indoorModel: 'LG-INDUSTRIAL-V2', serialNumber: 'SN992233', refrigerantType: 'R32', refrigerantKg: '12', status: 'Registered' }
           ]
@@ -81,6 +83,7 @@ export const store = reactive({
           name: 'Food Court',
           vendorLocation: 'Mezzanine Plant Room',
           siteAddress: '456 Retail Boulevard, Central',
+          timeAllocation: '3 days',
           assets: [
             { id: 'A3', unitRef: 'FC-AC-01', indoorModel: 'DAIKIN-CASSETTE-X', serialNumber: 'DK887711', refrigerantType: 'R410A', refrigerantKg: '2.5', status: 'Registered' }
           ]
@@ -116,27 +119,11 @@ export const store = reactive({
     }
   ],
   services: [
-    { id: 1, date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' },
-    { id: 2, date: '2026/01/15', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Service' },
-    { id: 3, date: '2026/01/15', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Monthly Service' },
-    { id: 4, date: '2026/01/16', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Annual Maintenance' },
-    { id: 5, date: '2026/01/20', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service' },
-    { id: 6, date: '2026/01/22', unitRef: 'CS-01', customer: 'Global Logistics Hub', project: 'Cold Storage', type: 'Breakdown Callout' },
-    { id: 7, date: '2026/01/25', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' },
-    { id: 8, date: '2026/02/01', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' },
-    { id: 9, date: '2026/02/05', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Quarterly Maintenance' },
-    { id: 10, date: '2026/02/10', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Monthly Service' },
-    { id: 11, date: '2026/02/15', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Filter Replacement' },
-    { id: 12, date: '2026/02/20', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Bi-Annual Check' },
-    { id: 13, date: '2026/01/21', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service' },
-    { id: 14, date: '2026/01/21', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Emergency Callout' },
-    { id: 15, date: '2026/01/21', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Maintenance' },
-    { id: 16, date: '2026/01/21', unitRef: 'CS-01', customer: 'Global Logistics Hub', project: 'Cold Storage', type: 'Monthly Service' },
-    { id: 17, date: '2026/02/25', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service' },
-    { id: 18, date: '2026/02/26', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Filter Cleaning' },
-    { id: 19, date: '2026/02/27', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Monthly Service' },
-    { id: 20, date: '2026/02/28', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Quarterly Service' },
-    { id: 21, date: '2026/02/14', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Valentine Day Check' }
+    { id: 1, date: '2026/01/14', endDate: '2026/01/14', time: '08:00', duration: '2 hours', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service', teamId: 'T1' },
+    { id: 2, date: '2026/01/15', endDate: '2026/01/15', time: '09:00', duration: '4 hours', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Service', teamId: 'T2' },
+    { id: 3, date: '2026/01/15', endDate: '2026/01/15', time: '13:00', duration: '2 hours', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Monthly Service', teamId: 'T1' },
+    { id: 4, date: '2026/01/16', endDate: '2026/01/16', time: '08:30', duration: '1 day', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Annual Maintenance', teamId: 'T2' },
+    { id: 5, date: '2026/01/20', endDate: '2026/02/06', time: '08:00', duration: '2.5 weeks', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service', teamId: 'T1' }
   ],
   jobCards: [
     { id: 'JOB-2026-001', date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', tech: 'John Doe', faultFound: false },
@@ -157,6 +144,71 @@ export const store = reactive({
     { id: 'U3', username: 'tech2', fullName: 'Sarah Jenkins', email: 'sarah@jeramhvac.co.za', role: 'technician', active: true },
     { id: 'U4', username: 'client_manager', fullName: 'Alpha Corp Manager', email: 'manager@alphacorp.com', role: 'customer', active: true }
   ],
+  teams: [
+    { id: 'T1', name: 'Team Alpha', color: '#9C27B0', leaderId: 'U2', assistantId: 'U3' },
+    { id: 'T2', name: 'Team Beta', color: '#26A69A', leaderId: 'U3', assistantId: 'U2' }
+  ],
+  serviceDefinitions: {
+    'Monthly Service': {
+      duration: '2 hours',
+      tasks: [
+        'Clean filters and return air grilles',
+        'Check condensate drain and pump operation',
+        'Inspect for unusual noise or vibration',
+        'Check controller settings and operation'
+      ]
+    },
+    'Quarterly Service': {
+      duration: '4 hours',
+      tasks: [
+        'All Monthly Service tasks',
+        'Check refrigerant pipe insulation',
+        'Inspect electrical connections and tighten',
+        'Clean outdoor unit coils (brush/vacuum)',
+        'Check compressor amperage draw'
+      ]
+    },
+    'Bi-Annual Check': {
+      duration: '6 hours',
+      tasks: [
+        'All Quarterly Service tasks',
+        'Deep clean evaporator and condenser coils',
+        'Check and record suction/discharge pressures',
+        'Test safety controls and cut-outs',
+        'Check fan motor bearings'
+      ]
+    },
+    'Annual Maintenance': {
+      duration: '1 day',
+      tasks: [
+        'All Bi-Annual tasks',
+        'Chemical clean of all coils',
+        'Check for refrigerant leaks (leak test)',
+        'Paint/treat any minor corrosion',
+        'Full performance verification and report'
+      ]
+    },
+    'Breakdown Callout': {
+      duration: '3 hours',
+      tasks: [
+        'Fault diagnosis and troubleshooting',
+        'Identify failed components',
+        'Check system operating parameters',
+        'Provide repair recommendation/quote'
+      ]
+    },
+    'Installation': {
+      duration: '2 days',
+      tasks: [
+        'Unpack and inspect equipment',
+        'Mount indoor and outdoor units',
+        'Install refrigerant pipework and insulation',
+        'Electrical wiring and control cabling',
+        'Pressure test and vacuum dehydrate',
+        'Commissioning and performance test'
+      ]
+    }
+  },
   currentUser: { id: 'U1', username: 'admin', role: 'administrator' }, // Mock logged-in user
   // Helper to add a customer
   addCustomer(customer) {
@@ -286,6 +338,25 @@ export const store = reactive({
     const index = this.users.findIndex(u => u.id === id)
     if (index !== -1) {
       this.users.splice(index, 1)
+    }
+  },
+  // Team Management Helpers
+  addTeam(team) {
+    this.teams.push({
+      id: 'T' + Date.now(),
+      ...team
+    })
+  },
+  updateTeam(id, updatedTeam) {
+    const index = this.teams.findIndex(t => t.id === id)
+    if (index !== -1) {
+      this.teams[index] = { ...this.teams[index], ...updatedTeam }
+    }
+  },
+  deleteTeam(id) {
+    const index = this.teams.findIndex(t => t.id === id)
+    if (index !== -1) {
+      this.teams.splice(index, 1)
     }
   }
 })

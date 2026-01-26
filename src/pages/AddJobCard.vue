@@ -15,90 +15,141 @@
 
           <q-card-section class="q-pa-lg">
             <q-form @submit="onSubmit" class="q-gutter-y-lg">
+              <!-- Section: Job Context & Timing -->
               <div class="row q-col-gutter-md">
-                <div class="col-12 col-sm-6">
-                  <q-input 
-                    v-model="form.date" 
-                    label="Service Date" 
-                    type="date" 
-                    outlined 
-                    dense 
-                    stack-label 
-                    required 
-                    bg-color="white"
-                  >
+                <div class="col-12 col-sm-4">
+                  <q-input v-model="form.date" label="Service Date" type="date" outlined dense stack-label required bg-color="white">
                     <template v-slot:prepend><q-icon name="fas fa-calendar" size="xs" /></template>
                   </q-input>
                 </div>
-                
+                <div class="col-12 col-sm-4">
+                  <q-input v-model="form.checkInTime" label="Check-In Time" type="time" outlined dense stack-label bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-clock" size="xs" color="positive" /></template>
+                  </q-input>
+                </div>
+                <div class="col-12 col-sm-4">
+                  <q-input v-model="form.checkOutTime" label="Check-Out Time" type="time" outlined dense stack-label bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-clock-rotate-left" size="xs" color="negative" /></template>
+                  </q-input>
+                </div>
+
                 <div class="col-12 col-sm-6">
-                  <q-select 
-                    v-model="form.techId" 
-                    :options="technicians" 
-                    label="Assign Technician" 
-                    outlined 
-                    dense 
-                    emit-value
-                    map-options
-                    required
-                    bg-color="white"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="fas fa-user-gear" size="xs" color="secondary" />
-                    </template>
+                  <q-select v-model="form.techId" :options="technicians" label="Assign Technician" outlined dense emit-value map-options required bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-user-gear" size="xs" color="secondary" /></template>
+                  </q-select>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <q-select v-model="form.workType" :options="workTypeOptions" label="Job Type" outlined dense required bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-toolbox" size="xs" color="primary" /></template>
                   </q-select>
                 </div>
 
                 <div class="col-12">
-                  <q-select 
-                    v-model="form.assetId" 
-                    :options="allAssets" 
-                    label="Select Target Asset" 
-                    outlined 
-                    dense 
-                    emit-value
-                    map-options
-                    required
-                    use-input
-                    @filter="filterAssets"
-                    bg-color="white"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="fas fa-snowflake" size="xs" color="primary" />
-                    </template>
+                  <q-select v-model="form.assetId" :options="allAssets" label="Select Target Asset" outlined dense emit-value map-options required use-input @filter="filterAssets" bg-color="white">
+                    <template v-slot:prepend><q-icon name="fas fa-snowflake" size="xs" color="primary" /></template>
                   </q-select>
                 </div>
+              </div>
 
+              <q-separator />
+
+              <!-- Section: Fault Analysis -->
+              <div class="text-subtitle1 text-weight-bold row items-center">
+                <q-icon name="fas fa-magnifying-glass-chart" color="orange-9" class="q-mr-sm" />
+                Fault Analysis & Diagnostics
+              </div>
+              <div class="row q-col-gutter-md">
                 <div class="col-12">
-                  <div class="q-pa-md bg-grey-1 rounded-borders border-dashed">
-                    <q-toggle 
-                      v-model="form.faultFound" 
-                      label="Was a fault discovered during this site visit?" 
-                      color="negative" 
-                      class="text-weight-bold"
-                    />
+                  <div class="q-pa-md bg-orange-1 rounded-borders border-dashed">
+                    <q-toggle v-model="form.faultFound" label="Was a fault discovered during this site visit?" color="negative" class="text-weight-bold" />
                   </div>
                 </div>
 
-                <div class="col-12">
-                  <q-input 
-                    v-model="form.comments" 
-                    label="Work Performed & Technician Observations" 
-                    type="textarea" 
-                    outlined 
-                    dense 
-                    placeholder="Provide a detailed description of the service, repair or findings..."
-                    rows="6"
-                    bg-color="white"
-                  >
-                    <template v-slot:prepend><q-icon name="fas fa-comment-dots" size="xs" /></template>
-                  </q-input>
+                <template v-if="form.faultFound">
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="form.faultReported" label="Fault Reported" outlined dense bg-color="white" placeholder="Client's complaint..." />
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="form.rootCause" label="Root Cause Found" outlined dense bg-color="white" placeholder="What failed and why?" />
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="form.remedy" label="Remedy / Action Taken" outlined dense bg-color="white" placeholder="What did you do to fix it?" />
+                  </div>
+                </template>
+              </div>
+
+              <q-separator />
+
+              <!-- Section: Technical Readings -->
+              <div class="text-subtitle1 text-weight-bold row items-center">
+                <q-icon name="fas fa-gauge-high" color="blue-9" class="q-mr-sm" />
+                Technical Performance Readings
+              </div>
+              <div class="row q-col-gutter-sm bg-blue-50 q-pa-md rounded-borders">
+                <div class="col-6 col-sm-2">
+                  <q-input v-model="form.readings.suctionPressure" label="Suction (kPa)" outlined dense bg-color="white" type="number" />
                 </div>
+                <div class="col-6 col-sm-2">
+                  <q-input v-model="form.readings.dischargePressure" label="Disch. (kPa)" outlined dense bg-color="white" type="number" />
+                </div>
+                <div class="col-6 col-sm-2">
+                  <q-input v-model="form.readings.supplyTemp" label="Supply Temp (°C)" outlined dense bg-color="white" type="number" />
+                </div>
+                <div class="col-6 col-sm-2">
+                  <q-input v-model="form.readings.returnTemp" label="Return Temp (°C)" outlined dense bg-color="white" type="number" />
+                </div>
+                <div class="col-6 col-sm-2">
+                  <q-input v-model="form.readings.amps" label="Current (Amps)" outlined dense bg-color="white" type="number" />
+                </div>
+              </div>
+
+              <q-separator />
+
+              <!-- Section: Materials & Parts -->
+              <div class="text-subtitle1 text-weight-bold row items-center">
+                <q-icon name="fas fa-box-open" color="brown-9" class="q-mr-sm" />
+                Materials & Parts Consumed
+              </div>
+              <div class="bg-grey-2 q-pa-md rounded-borders">
+                <div class="row q-col-gutter-sm items-center q-mb-md">
+                  <div class="col-8">
+                    <q-input v-model="newPart.description" label="Part Description" outlined dense bg-color="white" @keyup.enter="addPart" />
+                  </div>
+                  <div class="col-2">
+                    <q-input v-model.number="newPart.quantity" label="Qty" type="number" outlined dense bg-color="white" />
+                  </div>
+                  <div class="col-2">
+                    <q-btn color="brown-7" icon="fas fa-plus" @click="addPart" class="full-width" />
+                  </div>
+                </div>
+
+                <q-list separator bordered class="bg-white rounded-borders" v-if="form.partsUsed.length > 0">
+                  <q-item v-for="(part, index) in form.partsUsed" :key="index">
+                    <q-item-section avatar>
+                      <q-avatar color="brown-1" text-color="brown" icon="fas fa-gears" size="30px" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ part.description }}</q-item-label>
+                      <q-item-label caption>Quantity: {{ part.quantity }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-btn flat round color="red-5" icon="fas fa-trash-can" size="sm" @click="removePart(index)" />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <div v-else class="text-center text-grey-6 q-pa-sm italic">No parts recorded yet</div>
+              </div>
+
+              <!-- Section: Final Comments -->
+              <div class="col-12">
+                <q-input v-model="form.comments" label="General Work Performed & Technician Observations" type="textarea" outlined dense placeholder="Provide any additional comments or future recommendations..." rows="4" bg-color="white">
+                  <template v-slot:prepend><q-icon name="fas fa-comment-dots" size="xs" /></template>
+                </q-input>
               </div>
 
               <div class="row justify-between q-mt-xl">
                 <q-btn label="Discard & Return" flat color="grey-7" @click="$router.back()" />
-                <q-btn :label="isEdit ? 'Update Job Card' : 'Confirm & Save Job Card'" type="submit" color="secondary" unelevated class="q-px-lg" icon="fas fa-cloud-arrow-up" />
+                <q-btn :label="isEdit ? 'Update Job Card' : 'Confirm & Finalize Job Card'" type="submit" color="secondary" unelevated class="q-px-lg" icon="fas fa-cloud-arrow-up" />
               </div>
             </q-form>
           </q-card-section>
@@ -126,11 +177,40 @@ export default defineComponent({
 
     const form = reactive({
       date: new Date().toISOString().substr(0, 10),
+      checkInTime: '',
+      checkOutTime: '',
       assetId: null,
       techId: null,
+      workType: 'Maintenance',
       faultFound: false,
-      comments: ''
+      faultReported: '',
+      rootCause: '',
+      remedy: '',
+      comments: '',
+      partsUsed: [],
+      readings: {
+        suctionPressure: '',
+        dischargePressure: '',
+        supplyTemp: '',
+        returnTemp: '',
+        amps: ''
+      }
     })
+
+    const workTypeOptions = ['Maintenance', 'Repair', 'Installation', 'Emergency Callout', 'Warranty']
+    const newPart = reactive({ description: '', quantity: 1 })
+
+    const addPart = () => {
+      if (newPart.description) {
+        form.partsUsed.push({ ...newPart })
+        newPart.description = ''
+        newPart.quantity = 1
+      }
+    }
+
+    const removePart = (index) => {
+      form.partsUsed.splice(index, 1)
+    }
 
     const allAssetsOptions = computed(() => {
       const assets = []
@@ -160,8 +240,22 @@ export default defineComponent({
       const existingJob = store.jobCards.find(j => j.id === jobId)
       if (existingJob) {
         form.date = existingJob.date.replace(/\//g, '-')
+        form.checkInTime = existingJob.checkInTime || ''
+        form.checkOutTime = existingJob.checkOutTime || ''
+        form.workType = existingJob.workType || 'Maintenance'
         form.faultFound = existingJob.faultFound
+        form.faultReported = existingJob.faultReported || ''
+        form.rootCause = existingJob.rootCause || ''
+        form.remedy = existingJob.remedy || ''
         form.comments = existingJob.comments || ''
+        form.partsUsed = JSON.parse(JSON.stringify(existingJob.partsUsed || []))
+        form.readings = JSON.parse(JSON.stringify(existingJob.readings || {
+          suctionPressure: '',
+          dischargePressure: '',
+          supplyTemp: '',
+          returnTemp: '',
+          amps: ''
+        }))
         
         // Find asset ID by matching unitRef and customer
         const asset = allAssetsOptions.value.find(a => 
@@ -204,11 +298,19 @@ export default defineComponent({
 
       const jobData = {
         date: form.date.replace(/-/g, '/'),
+        checkInTime: form.checkInTime,
+        checkOutTime: form.checkOutTime,
         unitRef: selectedAsset.unitRef,
         customer: selectedAsset.customer,
         tech: selectedTech.label,
+        workType: form.workType,
         faultFound: form.faultFound,
-        comments: form.comments
+        faultReported: form.faultReported,
+        rootCause: form.rootCause,
+        remedy: form.remedy,
+        comments: form.comments,
+        partsUsed: [...form.partsUsed],
+        readings: { ...form.readings }
       }
 
       if (isEdit) {
@@ -223,20 +325,11 @@ export default defineComponent({
         store.addJobCard(jobData)
         $q.notify({
           color: 'positive',
-          message: 'New job card created successfully',
+          message: 'New job card finalized and saved',
           icon: 'fas fa-check-circle',
           position: 'top'
         })
       }
-
-      // Clear form
-      Object.assign(form, {
-        date: new Date().toISOString().substr(0, 10),
-        assetId: null,
-        techId: null,
-        faultFound: false,
-        comments: ''
-      })
 
       router.push('/job-cards')
     }
@@ -247,7 +340,11 @@ export default defineComponent({
       technicians,
       isEdit,
       filterAssets,
-      onSubmit
+      onSubmit,
+      workTypeOptions,
+      newPart,
+      addPart,
+      removePart
     }
   }
 })

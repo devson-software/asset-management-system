@@ -111,6 +111,16 @@
               <q-item-label caption>Roles & Access</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item clickable to="/admin/teams" class="navigation-item" active-class="navigation-item-active">
+            <q-item-section avatar>
+              <q-icon name="fas fa-users-rectangle" size="14px" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">Team Management</q-item-label>
+              <q-item-label caption>Technician Teams</q-item-label>
+            </q-item-section>
+          </q-item>
         </template>
 
 

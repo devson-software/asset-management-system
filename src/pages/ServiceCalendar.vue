@@ -27,7 +27,7 @@
       <div class="col-12">
         <q-card flat bordered class="rounded-borders q-pa-md bg-grey-1">
           <div class="row q-col-gutter-md items-center">
-            <div class="col-12 col-sm-5">
+            <div class="col-12 col-sm-3">
               <q-select
                 v-model="customerFilter"
                 :options="customerOptions"
@@ -42,7 +42,7 @@
                 <template v-slot:prepend><q-icon name="fas fa-business-time" size="xs" color="primary" /></template>
               </q-select>
             </div>
-            <div class="col-12 col-sm-5">
+            <div class="col-12 col-sm-3">
               <q-select
                 v-model="projectFilter"
                 :options="filterProjectOptions"
@@ -58,14 +58,41 @@
                 <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" color="primary" /></template>
               </q-select>
             </div>
-            <div class="col-12 col-sm-2 flex justify-end">
+            <div class="col-12 col-sm-3">
+              <q-select
+                v-model="teamFilter"
+                :options="teams"
+                option-label="name"
+                option-value="id"
+                label="Filter by Team"
+                outlined
+                dense
+                clearable
+                emit-value
+                map-options
+                bg-color="white"
+              >
+                <template v-slot:prepend><q-icon name="fas fa-people-group" size="xs" color="primary" /></template>
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <div :style="{ backgroundColor: scope.opt.color, width: '12px', height: '12px', borderRadius: '50%' }"></div>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.name }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+            <div class="col-12 col-sm-3 flex justify-end">
               <q-btn 
                 flat 
                 color="grey-7" 
                 icon="fas fa-filter-circle-xmark" 
                 label="Reset" 
                 @click="clearFilters" 
-                v-if="customerFilter || projectFilter" 
+                v-if="customerFilter || projectFilter || teamFilter" 
               />
             </div>
           </div>
@@ -76,23 +103,30 @@
         <div class="row q-col-gutter-xl">
           <!-- Left Column: Calendar -->
           <div class="col-12 col-md-5">
-            <q-card flat bordered class="calendar-card overflow-hidden">
-              <q-date
-                v-model="selectedDate"
-                :events="events"
-                event-color="primary"
-                class="full-width no-border"
-                flat
-                today-btn
-              />
-              <q-separator />
-              <q-card-section class="bg-grey-1">
-                <div class="row items-center no-wrap">
-                  <div class="q-badge bg-primary q-mr-sm" style="width: 10px; height: 10px; border-radius: 50%"></div>
-                  <div class="text-caption text-grey-8">Indicates dates with scheduled services</div>
+          <q-card flat bordered class="calendar-card overflow-hidden">
+            <q-date
+              v-model="selectedDate"
+              :events="events"
+              :event-color="date => getEventColor(date)"
+              class="full-width no-border"
+              flat
+              today-btn
+            />
+            <q-separator />
+            <q-card-section class="bg-grey-1">
+              <div class="text-subtitle2 q-mb-sm">Operational Teams</div>
+              <div class="row q-gutter-sm">
+                <div v-for="team in teams" :key="team.id" class="row items-center no-wrap bg-white q-pa-xs rounded-borders shadow-1 border-light">
+                  <div class="q-badge q-mr-xs" :style="{ backgroundColor: team.color, width: '12px', height: '12px', borderRadius: '50%' }"></div>
+                  <div class="text-caption text-weight-medium">{{ team.name }}</div>
+                  <q-tooltip>
+                    Lead: {{ getUserName(team.leaderId) }}<br>
+                    Asst: {{ getUserName(team.assistantId) }}
+                  </q-tooltip>
                 </div>
-              </q-card-section>
-            </q-card>
+              </div>
+            </q-card-section>
+          </q-card>
           </div>
 
           <!-- Right Column: Service List -->
@@ -128,10 +162,51 @@
                       {{ service.unitRef }}
                     </q-item-label>
                     <q-item-label class="text-grey-9">{{ service.customer }}</q-item-label>
-                    <q-item-label caption class="row items-center">
-                      <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
-                      {{ service.project }}
-                    </q-item-label>
+                    <div class="row items-center q-gutter-x-md q-mt-xs">
+                      <div class="text-caption text-grey-7 row items-center">
+                        <q-icon name="fas fa-location-dot" size="10px" class="q-mr-xs" />
+                        {{ service.project }}
+                      </div>
+                      <div class="text-caption text-grey-7 row items-center" v-if="service.duration">
+                        <q-icon name="fas fa-hourglass-half" size="10px" class="q-mr-xs" />
+                        {{ service.duration }}
+                      </div>
+                      <div v-if="service.teamId" class="text-caption row items-center" :style="{ color: getTeamColor(service.teamId) }">
+                        <q-icon name="fas fa-people-group" size="10px" class="q-mr-xs" />
+                        {{ getTeamName(service.teamId) }}
+                        <q-tooltip>
+                          Team: {{ getTeamName(service.teamId) }}<br>
+                          Lead: {{ getUserName(getTeam(service.teamId)?.leaderId) }}<br>
+                          Asst: {{ getUserName(getTeam(service.teamId)?.assistantId) }}
+                        </q-tooltip>
+                      </div>
+                    </div>
+                    
+                    <!-- Tasks Preview in List -->
+                    <div v-if="store.serviceDefinitions && store.serviceDefinitions[service.type]" class="q-mt-sm">
+                      <div class="row q-gutter-x-xs no-wrap overflow-hidden">
+                        <q-chip 
+                          v-for="(task, idx) in store.serviceDefinitions[service.type].tasks.slice(0, 2)" 
+                          :key="idx" 
+                          outline 
+                          dense 
+                          size="9px" 
+                          color="blue-grey-3" 
+                          text-color="blue-grey-7"
+                          icon="fas fa-check"
+                        >
+                          {{ task }}
+                        </q-chip>
+                        <div v-if="store.serviceDefinitions[service.type].tasks.length > 2" class="text-caption text-grey-5" style="font-size: 10px; align-self: center;">
+                          +{{ store.serviceDefinitions[service.type].tasks.length - 2 }} more
+                          <q-tooltip>
+                            <div v-for="(task, idx) in store.serviceDefinitions[service.type].tasks" :key="idx" class="q-mb-xs">
+                              • {{ task }}
+                            </div>
+                          </q-tooltip>
+                        </div>
+                      </div>
+                    </div>
                   </q-item-section>
 
                   <q-item-section side>
@@ -230,7 +305,7 @@
 
             <q-select
               v-model="form.type"
-              :options="['Monthly Service', 'Quarterly Service', 'Annual Maintenance', 'Breakdown Callout']"
+              :options="store.serviceDefinitions ? Object.keys(store.serviceDefinitions) : []"
               label="Service Type"
               outlined
               dense
@@ -239,26 +314,100 @@
               <template v-slot:prepend><q-icon name="category" /></template>
             </q-select>
 
-            <q-input 
-              v-model="form.date" 
-              label="Scheduled Date" 
-              outlined 
-              dense 
-              mask="####/##/##" 
+            <!-- Service Tasks Preview -->
+            <div v-if="form.type && store.serviceDefinitions && store.serviceDefinitions[form.type]" class="bg-blue-50 q-pa-sm rounded-borders border-blue-1">
+              <div class="text-caption text-weight-bold text-primary q-mb-xs">Standard Tasks for {{ form.type }}:</div>
+              <div v-for="(task, idx) in store.serviceDefinitions[form.type].tasks" :key="idx" class="text-caption row no-wrap q-mb-xs">
+                <q-icon name="check_circle" color="primary" size="14px" class="q-mr-xs" />
+                <div class="col">{{ task }}</div>
+              </div>
+            </div>
+
+            <q-select
+              v-model="form.teamId"
+              :options="teams"
+              option-label="name"
+              option-value="id"
+              label="Allocate Team"
+              outlined
+              dense
+              emit-value
+              map-options
               required
             >
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="form.date" mask="YYYY/MM/DD">
-                      <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
-                      </div>
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
+              <template v-slot:prepend><q-icon name="fas fa-people-group" /></template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section avatar>
+                    <div :style="{ backgroundColor: scope.opt.color, width: '12px', height: '12px', borderRadius: '50%' }"></div>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.name }}</q-item-label>
+                    <q-item-label caption>Lead: {{ getUserName(scope.opt.leaderId) }}</q-item-label>
+                  </q-item-section>
+                </q-item>
               </template>
-            </q-input>
+            </q-select>
+
+            <div class="row q-col-gutter-sm">
+              <div class="col-6">
+                <q-input 
+                  v-model="form.date" 
+                  label="Start Date" 
+                  outlined 
+                  dense 
+                  mask="####/##/##" 
+                  required
+                >
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-date v-model="form.date" mask="YYYY/MM/DD">
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Close" color="primary" flat />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-6">
+                <q-input 
+                  v-model="form.endDate" 
+                  label="End Date" 
+                  outlined 
+                  dense 
+                  mask="####/##/##" 
+                  required
+                >
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-date v-model="form.endDate" mask="YYYY/MM/DD">
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Close" color="primary" flat />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+            </div>
+
+            <div class="row q-col-gutter-sm">
+              <div class="col-6">
+                <q-input v-model="form.time" label="Start Time" type="time" outlined dense required>
+                  <template v-slot:prepend><q-icon name="access_time" /></template>
+                </q-input>
+              </div>
+              <div class="col-6">
+                <q-input v-model="form.duration" label="Duration" outlined dense placeholder="e.g. 2.5 weeks" required>
+                  <template v-slot:prepend><q-icon name="hourglass_empty" /></template>
+                </q-input>
+              </div>
+            </div>
 
             <div class="row justify-end q-mt-lg">
               <q-btn label="Cancel" flat color="grey-7" v-close-popup class="q-mr-sm" />
@@ -286,31 +435,64 @@ export default defineComponent({
     const currentServiceId = ref(null)
     const customerFilter = ref(null)
     const projectFilter = ref(null)
+    const teamFilter = ref(null)
 
     const form = reactive({
       customerId: null,
       projectId: null,
       unitRef: null,
       type: 'Monthly Service',
-      date: selectedDate.value
+      date: selectedDate.value,
+      endDate: selectedDate.value,
+      time: '08:00',
+      duration: '2 hours',
+      teamId: null
     })
 
+    const teams = computed(() => store.teams)
+
+    const getTeam = (teamId) => {
+      return store.teams.find(t => t.id === teamId)
+    }
+
     const events = computed(() => {
-      return store.services
-        .filter(s => {
-          const matchCustomer = !customerFilter.value || s.customer === store.customers.find(c => c.id === customerFilter.value)?.name
-          const matchProject = !projectFilter.value || s.project === store.customers.find(c => c.id === customerFilter.value)?.projects.find(p => p.id === projectFilter.value)?.name
-          return matchCustomer && matchProject
-        })
-        .map(s => s.date)
+      const dates = []
+      store.services.forEach(s => {
+        const matchCustomer = !customerFilter.value || s.customer === store.customers.find(c => c.id === customerFilter.value)?.name
+        const matchProject = !projectFilter.value || s.project === store.customers.find(c => c.id === customerFilter.value)?.projects.find(p => p.id === projectFilter.value)?.name
+        const matchTeam = !teamFilter.value || s.teamId === teamFilter.value
+        
+        if (matchCustomer && matchProject && matchTeam) {
+          // If it's a multi-day event
+          if (s.endDate && s.endDate !== s.date) {
+            let current = new Date(s.date)
+            const end = new Date(s.endDate)
+            while (current <= end) {
+              dates.push(current.toISOString().split('T')[0].replace(/-/g, '/'))
+              current.setDate(current.getDate() + 1)
+            }
+          } else {
+            dates.push(s.date)
+          }
+        }
+      })
+      return [...new Set(dates)] // Unique dates
     })
 
     const filteredServices = computed(() => {
       return store.services.filter(s => {
-        const matchDate = s.date === selectedDate.value
+        let matchDate = false
+        if (s.endDate && s.endDate !== s.date) {
+          const selDate = new Date(selectedDate.value)
+          matchDate = selDate >= new Date(s.date) && selDate <= new Date(s.endDate)
+        } else {
+          matchDate = s.date === selectedDate.value
+        }
+        
         const matchCustomer = !customerFilter.value || s.customer === store.customers.find(c => c.id === customerFilter.value)?.name
         const matchProject = !projectFilter.value || s.project === store.customers.find(c => c.id === customerFilter.value)?.projects.find(p => p.id === projectFilter.value)?.name
-        return matchDate && matchCustomer && matchProject
+        const matchTeam = !teamFilter.value || s.teamId === teamFilter.value
+        return matchDate && matchCustomer && matchProject && matchTeam
       })
     })
 
@@ -343,7 +525,13 @@ export default defineComponent({
       return options
     })
 
-    // Watchers to clear nested selections
+    // Watchers to clear nested selections and auto-fill duration
+    watch(() => form.type, (newType) => {
+      if (store.serviceDefinitions[newType]) {
+        form.duration = store.serviceDefinitions[newType].duration
+      }
+    })
+
     watch(() => form.customerId, () => {
       if (!isEditing.value) {
         form.projectId = null
@@ -363,6 +551,7 @@ export default defineComponent({
     const clearFilters = () => {
       customerFilter.value = null
       projectFilter.value = null
+      teamFilter.value = null
     }
 
     const openAddDialog = () => {
@@ -373,7 +562,11 @@ export default defineComponent({
         projectId: null,
         unitRef: null,
         type: 'Monthly Service',
-        date: selectedDate.value
+        date: selectedDate.value,
+        endDate: selectedDate.value,
+        time: '08:00',
+        duration: '2 hours',
+        teamId: null
       })
       showDialog.value = true
     }
@@ -400,7 +593,11 @@ export default defineComponent({
         projectId: foundProjectId,
         unitRef: service.unitRef,
         type: service.type,
-        date: service.date
+        date: service.date,
+        endDate: service.endDate || service.date,
+        time: service.time || '08:00',
+        duration: service.duration || '2 hours',
+        teamId: service.teamId || null
       })
       showDialog.value = true
     }
@@ -411,10 +608,14 @@ export default defineComponent({
 
       const serviceData = {
         date: form.date,
+        endDate: form.endDate,
+        time: form.time,
+        duration: form.duration,
         unitRef: form.unitRef,
         customer: customer.name,
         project: project.name,
-        type: form.type
+        type: form.type,
+        teamId: form.teamId
       }
 
       if (isEditing.value) {
@@ -449,6 +650,36 @@ export default defineComponent({
       })
     }
 
+    const getEventColor = (date) => {
+      const service = store.services.find(s => {
+        if (s.endDate && s.endDate !== s.date) {
+          const d = new Date(date)
+          return d >= new Date(s.date) && d <= new Date(s.endDate)
+        }
+        return s.date === date
+      })
+      if (service && service.teamId) {
+        const team = store.teams.find(t => t.id === service.teamId)
+        return team ? team.color : 'primary'
+      }
+      return 'primary'
+    }
+
+    const getUserName = (id) => {
+      const user = store.users.find(u => u.id === id)
+      return user ? user.fullName : 'Not Assigned'
+    }
+
+    const getTeamName = (teamId) => {
+      const team = store.teams.find(t => t.id === teamId)
+      return team ? team.name : 'No Team Assigned'
+    }
+
+    const getTeamColor = (teamId) => {
+      const team = store.teams.find(t => t.id === teamId)
+      return team ? team.color : 'grey-7'
+    }
+
     return {
       selectedDate,
       events,
@@ -462,12 +693,20 @@ export default defineComponent({
       assetOptions,
       customerFilter,
       projectFilter,
+      teamFilter,
+      teams,
+      getUserName,
+      getTeamName,
+      getTeamColor,
+      getEventColor,
+      getTeam,
       clearFilters,
       openAddDialog,
       editService,
       saveService,
       confirmDelete,
-      mailAll
+      mailAll,
+      store
     }
   }
 })
