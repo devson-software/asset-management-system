@@ -57,11 +57,46 @@
 
           <q-form @submit="onSubmit" class="q-gutter-y-lg">
             <!-- Project Context -->
-            <div class="bg-green-1 q-pa-md rounded-borders flex items-center border-green">
+            <div v-if="project && !isEdit" class="bg-green-1 q-pa-md rounded-borders flex items-center border-green">
               <q-avatar color="green-2" text-color="positive" icon="fas fa-location-dot" size="sm" class="q-mr-sm" />
               <div>
                 <span class="text-grey-7">Adding to project:</span>
                 <span class="text-weight-bold text-positive q-ml-xs">{{ projectName }}</span>
+              </div>
+            </div>
+
+            <!-- Manual Project Selection if not provided -->
+            <div v-if="!project && !isEdit" class="row q-col-gutter-md">
+              <div class="col-12 col-md-6">
+                <q-select
+                  v-model="manualSelection.customerId"
+                  :options="customerOptions"
+                  label="Select Customer"
+                  outlined
+                  dense
+                  required
+                  bg-color="white"
+                  emit-value
+                  map-options
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-business-time" size="xs" /></template>
+                </q-select>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-select
+                  v-model="manualSelection.projectId"
+                  :options="projectOptions"
+                  label="Select Project"
+                  outlined
+                  dense
+                  required
+                  :disable="!manualSelection.customerId"
+                  bg-color="white"
+                  emit-value
+                  map-options
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-building" size="xs" /></template>
+                </q-select>
               </div>
             </div>
 
@@ -266,7 +301,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, computed, ref } from 'vue'
+import { defineComponent, reactive, computed, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store } from '../store'
 import { useQuasar } from 'quasar'
@@ -287,6 +322,11 @@ export default defineComponent({
     const entryTab = ref('manual')
     const selectedLibraryItem = ref(null)
 
+    const manualSelection = reactive({
+      customerId: customerId || null,
+      projectId: projectId || null
+    })
+
     const asset = reactive({ 
       unitRef: '', 
       plantCategory: '',
@@ -306,9 +346,25 @@ export default defineComponent({
       vendorAddress: ''
     })
 
+    const customerOptions = computed(() => {
+      return store.customers.map(c => ({ label: c.name, value: c.id }))
+    })
+
+    const projectOptions = computed(() => {
+      if (!manualSelection.customerId) return []
+      const c = store.customers.find(cust => cust.id === manualSelection.customerId)
+      return c ? c.projects.map(p => ({ label: p.name, value: p.id })) : []
+    })
+
     const unitTypeOptions = computed(() => {
       if (!asset.plantCategory) return []
       return store.plantHierachy[asset.plantCategory] || []
+    })
+
+    watch(() => manualSelection.customerId, () => {
+      if (!isEdit) {
+        manualSelection.projectId = null
+      }
     })
 
     const filterLibrary = (val, update) => {
@@ -355,18 +411,26 @@ export default defineComponent({
     }
 
     const onSubmit = () => {
+      const finalCustomerId = manualSelection.customerId
+      const finalProjectId = manualSelection.projectId
+
+      if (!finalCustomerId || !finalProjectId) {
+        $q.notify({ color: 'negative', message: 'Please select a customer and project' })
+        return
+      }
+
       if (isEdit) {
-        store.updateAsset(customerId, projectId, assetId, { ...asset })
+        store.updateAsset(finalCustomerId, finalProjectId, assetId, { ...asset })
         $q.notify({ color: 'positive', message: 'Asset updated successfully' })
       } else {
-      store.addAsset(customerId, projectId, { ...asset })
-      $q.notify({ color: 'positive', message: 'Asset registered successfully' })
+        store.addAsset(finalCustomerId, finalProjectId, { ...asset })
+        $q.notify({ color: 'positive', message: 'Asset registered successfully' })
       }
 
       // Clear form
       Object.keys(asset).forEach(key => asset[key] = '')
 
-      router.push({ path: '/assets', query: { projectId } })
+      router.push({ path: '/assets', query: { projectId: finalProjectId } })
     }
 
     return { 
@@ -378,6 +442,10 @@ export default defineComponent({
       entryTab, 
       selectedLibraryItem, 
       unitTypeOptions,
+      manualSelection,
+      customerOptions,
+      projectOptions,
+      project,
       filterLibrary,
       importFromLibrary,
       createValue

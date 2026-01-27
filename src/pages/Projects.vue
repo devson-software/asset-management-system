@@ -86,29 +86,29 @@
                 </q-th>
               </q-tr>
             </template>
-          <template v-slot:top-right>
-            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Projects...">
+            <template v-slot:top-right>
+              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Projects...">
               <template v-slot:append>
                 <q-icon name="fas fa-magnifying-glass" size="xs" />
               </template>
-            </q-input>
-          </template>
+              </q-input>
+            </template>
 
-          <!-- Custom Project Name / Customer Cell -->
-          <template v-slot:body-cell-name="props">
-            <q-td :props="props">
+            <!-- Custom Project Name / Customer Cell -->
+            <template v-slot:body-cell-name="props">
+              <q-td :props="props">
               <div class="row items-center no-wrap">
                 <q-avatar color="blue-1" text-color="primary" size="32px" class="q-mr-md shadow-1">
                   <img v-if="props.row.pictureUrl" :src="props.row.pictureUrl">
                   <q-icon v-else name="fas fa-map-location-dot" size="16px" />
                 </q-avatar>
                 <div>
-                  <div class="text-weight-bold text-primary">{{ props.row.name }}</div>
-                  <div class="text-caption text-grey-7">Client: {{ props.row.customerName }}</div>
+                <div class="text-weight-bold text-primary">{{ props.row.name }}</div>
+                <div class="text-caption text-grey-7">Client: {{ props.row.customerName }}</div>
                 </div>
               </div>
-            </q-td>
-          </template>
+              </q-td>
+            </template>
 
             <!-- Custom Site Address Cell -->
             <template v-slot:body-cell-siteAddress="props">

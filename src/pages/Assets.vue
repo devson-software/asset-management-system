@@ -20,7 +20,7 @@
       </div>
 
       <div class="col-12">
-        <q-card flat bordered class="rounded-borders">
+      <q-card flat bordered class="rounded-borders">
         <q-table
           :rows="filteredRows"
           :columns="columns"
@@ -216,7 +216,7 @@
         </q-table>
       </q-card>
     </div>
-  </div>
+    </div>
   </q-page>
 </template>
 
@@ -315,14 +315,7 @@ export default defineComponent({
       const projectId = route.query.projectId
       
       if (!projectId) {
-        $q.notify({
-          message: 'Please select a project first by viewing its assets',
-          color: 'warning',
-          icon: 'warning',
-          actions: [
-            { label: 'Go to Projects', color: 'white', handler: () => router.push('/projects') }
-          ]
-        })
+        router.push('/assets/add')
         return
       }
 

@@ -20,6 +20,7 @@ const routes = [
       { path: 'projects', component: () => import('pages/Projects.vue') },
       { path: 'projects/add', component: () => import('pages/AddProject.vue') },
       { path: 'assets', component: () => import('pages/Assets.vue') },
+      { path: 'assets/add', component: () => import('pages/AddAsset.vue') },
       { path: 'assets/:assetId', component: () => import('pages/AssetDetails.vue') },
       { path: 'assets/:assetId/history', component: () => import('pages/AssetServiceHistory.vue') },
       { path: 'customers/add', component: () => import('pages/AddCustomer.vue') },
