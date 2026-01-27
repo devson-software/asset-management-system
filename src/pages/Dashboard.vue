@@ -131,12 +131,16 @@
             />
             <q-btn 
               color="teal-6" 
-              icon="fas fa-building-circle-plus" 
+              icon="fas fa-plus-circle" 
               label="Add New Project" 
               class="full-width action-btn" 
               to="/projects/add" 
               unelevated 
-            />
+            >
+              <template v-slot:prepend>
+                <q-icon name="fas fa-building" class="q-mr-xs" />
+              </template>
+            </q-btn>
             <q-btn 
               color="indigo-6" 
               icon="fas fa-clipboard-check" 
@@ -209,7 +213,7 @@ export default defineComponent({
 
     const getTeamColor = (teamId) => {
       const team = store.teams.find(t => t.id === teamId)
-      return team ? team.color : '#grey'
+      return team ? team.color : '#9e9e9e'
     }
 
     return { store, allAssets, totalProjects, isAdmin, todaysServices, getTeamColor }

@@ -18,7 +18,20 @@ export const store = reactive({
           siteAddress: '123 Business Ave, Tech City',
           timeAllocation: '2 weeks',
           assets: [
-            { id: 'A1', unitRef: 'Ac1.01', unitType: 'Cassette Unit', indoorModel: 'AC200KNHPKH/EU', serialNumber: '55896331', refrigerantType: 'R410A', refrigerantKg: '4', status: 'Registered' }
+            { 
+              id: 'A1', 
+              unitRef: 'Ac1.01', 
+              unitType: 'Cassette Unit', 
+              manufacturer: 'Samsung',
+              indoorModel: 'AC200KNHPKH/EU', 
+              serialNumber: '55896331', 
+              outdoorModel: 'AC200KXAPKH/EU',
+              outdoorSerial: 'OUT-998877',
+              vendorArea: 'Office Block A',
+              refrigerantType: 'R410A', 
+              refrigerantKg: '4', 
+              status: 'Registered' 
+            }
           ]
         },
         {
@@ -27,7 +40,20 @@ export const store = reactive({
           vendorLocation: 'Server Room',
           siteAddress: '45 Industrial Way, North Tech',
           assets: [
-            { id: 'A4', unitRef: 'NB-01', unitType: 'Midwall Split', indoorModel: 'LG-V3', serialNumber: 'SN1122', refrigerantType: 'R32', refrigerantKg: '2', status: 'Registered' }
+            { 
+              id: 'A4', 
+              unitRef: 'NB-01', 
+              unitType: 'Midwall Split', 
+              manufacturer: 'LG',
+              indoorModel: 'LG-V3', 
+              serialNumber: 'SN1122', 
+              outdoorModel: 'LG-V3-OUT',
+              outdoorSerial: 'LG-OS-4433',
+              vendorArea: 'Server Wing',
+              refrigerantType: 'R32', 
+              refrigerantKg: '2', 
+              status: 'Registered' 
+            }
           ]
         }
       ]
@@ -48,7 +74,20 @@ export const store = reactive({
           siteAddress: '789 Terminal Way, Port District',
           timeAllocation: '10 days',
           assets: [
-            { id: 'A2', unitRef: 'WH-01', unitType: 'Hideaway Unit', indoorModel: 'LG-INDUSTRIAL-V2', serialNumber: 'SN992233', refrigerantType: 'R32', refrigerantKg: '12', status: 'Registered' }
+            { 
+              id: 'A2', 
+              unitRef: 'WH-01', 
+              unitType: 'Hideaway Unit', 
+              manufacturer: 'LG',
+              indoorModel: 'LG-INDUSTRIAL-V2', 
+              serialNumber: 'SN992233', 
+              outdoorModel: 'LG-IND-OUT-V2',
+              outdoorSerial: 'LG-OS-9988',
+              vendorArea: 'Warehouse Floor',
+              refrigerantType: 'R32', 
+              refrigerantKg: '12', 
+              status: 'Registered' 
+            }
           ]
         },
         {
@@ -64,7 +103,20 @@ export const store = reactive({
           vendorLocation: 'Section B',
           siteAddress: '789 Terminal Way, Port District',
           assets: [
-            { id: 'A5', unitRef: 'CS-01', unitType: 'Under Ceiling', indoorModel: 'CARRIER-MAX', serialNumber: 'SN5544', refrigerantType: 'R404A', refrigerantKg: '15', status: 'Registered' }
+            { 
+              id: 'A5', 
+              unitRef: 'CS-01', 
+              unitType: 'Under Ceiling', 
+              manufacturer: 'Carrier',
+              indoorModel: 'CARRIER-MAX', 
+              serialNumber: 'SN5544', 
+              outdoorModel: 'CARRIER-MAX-OUT',
+              outdoorSerial: 'CR-OS-5544',
+              vendorArea: 'Cold Storage Wing',
+              refrigerantType: 'R404A', 
+              refrigerantKg: '15', 
+              status: 'Registered' 
+            }
           ]
         }
       ]
@@ -85,7 +137,20 @@ export const store = reactive({
           siteAddress: '456 Retail Boulevard, Central',
           timeAllocation: '3 days',
           assets: [
-            { id: 'A3', unitRef: 'FC-AC-01', unitType: 'Cassette Unit', indoorModel: 'DAIKIN-CASSETTE-X', serialNumber: 'DK887711', refrigerantType: 'R410A', refrigerantKg: '2.5', status: 'Registered' }
+            { 
+              id: 'A3', 
+              unitRef: 'FC-AC-01', 
+              unitType: 'Cassette Unit', 
+              manufacturer: 'Daikin',
+              indoorModel: 'DAIKIN-CASSETTE-X', 
+              serialNumber: 'DK887711', 
+              outdoorModel: 'DAIKIN-OUTDOOR-X',
+              outdoorSerial: 'DK-OS-1122',
+              vendorArea: 'Food Court Area',
+              refrigerantType: 'R410A', 
+              refrigerantKg: '2.5', 
+              status: 'Registered' 
+            }
           ]
         }
       ]
@@ -112,7 +177,20 @@ export const store = reactive({
           vendorLocation: 'Ground Floor Lobby',
           siteAddress: '101 Healthcare Lane, North Side',
           assets: [
-            { id: 'A6', unitRef: 'EW-01', unitType: 'Rooftop Package', indoorModel: 'TRANE-XL', serialNumber: 'SN7788', refrigerantType: 'R410A', refrigerantKg: '5', status: 'Registered' }
+            { 
+              id: 'A6', 
+              unitRef: 'EW-01', 
+              unitType: 'Rooftop Package', 
+              manufacturer: 'Trane',
+              indoorModel: 'TRANE-XL', 
+              serialNumber: 'SN7788', 
+              outdoorModel: 'TRANE-XL-OUT',
+              outdoorSerial: 'TR-OS-7788',
+              vendorArea: 'ER Wing',
+              refrigerantType: 'R410A', 
+              refrigerantKg: '5', 
+              status: 'Registered' 
+            }
           ]
         }
       ]
@@ -126,7 +204,11 @@ export const store = reactive({
     { id: 5, date: '2026/01/20', endDate: '2026/02/06', time: '08:00', duration: '2.5 weeks', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service', teamId: 'T1' },
     { id: 6, date: '2026/01/26', endDate: '2026/01/26', time: '08:00', duration: '2 hours', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service', teamId: 'T1' },
     { id: 7, date: '2026/01/26', endDate: '2026/01/26', time: '10:30', duration: '4 hours', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Service', teamId: 'T2' },
-    { id: 8, date: '2026/01/26', endDate: '2026/01/26', time: '14:00', duration: '2 hours', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Monthly Service', teamId: 'T1' }
+    { id: 8, date: '2026/01/26', endDate: '2026/01/26', time: '14:00', duration: '2 hours', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Monthly Service', teamId: 'T1' },
+    { id: 9, date: '2026/01/27', endDate: '2026/01/27', time: '08:00', duration: '2 hours', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service', teamId: 'T1' },
+    { id: 10, date: '2026/01/27', endDate: '2026/01/27', time: '10:00', duration: '4 hours', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Service', teamId: 'T2' },
+    { id: 11, date: '2026/01/27', endDate: '2026/01/27', time: '13:30', duration: '3 hours', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Breakdown Callout', teamId: 'T1' },
+    { id: 12, date: '2026/01/28', endDate: '2026/01/28', time: '09:00', duration: '4 hours', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service', teamId: 'T1' }
   ],
   jobCards: [
     { id: 'JOB-2026-001', date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', tech: 'John Doe', faultFound: false },
@@ -149,7 +231,7 @@ export const store = reactive({
   ],
   teams: [
     { id: 'T1', name: 'Team Alpha', color: '#9C27B0', leaderId: 'U2', assistantId: 'U3' },
-    { id: 'T2', name: 'Team Beta', color: '#26A69A', leaderId: 'U3', assistantId: 'U2' }
+    { id: 'T2', name: 'Team Beta', color: '#009688', leaderId: 'U3', assistantId: 'U2' }
   ],
   serviceDefinitions: {
     'Monthly Service': {

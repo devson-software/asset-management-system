@@ -107,7 +107,7 @@
             <q-date
               v-model="selectedDate"
               :events="events"
-              :event-color="date => getEventColor(date)"
+              :event-color="getEventColor"
               class="full-width no-border"
               flat
               today-btn
@@ -458,15 +458,19 @@ export default defineComponent({
     const events = computed(() => {
       const dates = []
       store.services.forEach(s => {
-        const matchCustomer = !customerFilter.value || s.customer === store.customers.find(c => c.id === customerFilter.value)?.name
-        const matchProject = !projectFilter.value || s.project === store.customers.find(c => c.id === customerFilter.value)?.projects.find(p => p.id === projectFilter.value)?.name
+        const customer = customerFilter.value ? store.customers.find(c => c.id === customerFilter.value) : null
+        const matchCustomer = !customerFilter.value || s.customer === customer?.name
+        
+        const project = (customer && projectFilter.value) ? customer.projects.find(p => p.id === projectFilter.value) : null
+        const matchProject = !projectFilter.value || s.project === project?.name
+        
         const matchTeam = !teamFilter.value || s.teamId === teamFilter.value
         
         if (matchCustomer && matchProject && matchTeam) {
           // If it's a multi-day event
           if (s.endDate && s.endDate !== s.date) {
-            let current = new Date(s.date)
-            const end = new Date(s.endDate)
+            let current = new Date(s.date.replace(/\//g, '-'))
+            const end = new Date(s.endDate.replace(/\//g, '-'))
             while (current <= end) {
               dates.push(current.toISOString().split('T')[0].replace(/-/g, '/'))
               current.setDate(current.getDate() + 1)
@@ -483,14 +487,20 @@ export default defineComponent({
       return store.services.filter(s => {
         let matchDate = false
         if (s.endDate && s.endDate !== s.date) {
-          const selDate = new Date(selectedDate.value)
-          matchDate = selDate >= new Date(s.date) && selDate <= new Date(s.endDate)
+          const selDate = new Date(selectedDate.value.replace(/\//g, '-')).setHours(0,0,0,0)
+          const startDate = new Date(s.date.replace(/\//g, '-')).setHours(0,0,0,0)
+          const endDate = new Date(s.endDate.replace(/\//g, '-')).setHours(0,0,0,0)
+          matchDate = selDate >= startDate && selDate <= endDate
         } else {
           matchDate = s.date === selectedDate.value
         }
         
-        const matchCustomer = !customerFilter.value || s.customer === store.customers.find(c => c.id === customerFilter.value)?.name
-        const matchProject = !projectFilter.value || s.project === store.customers.find(c => c.id === customerFilter.value)?.projects.find(p => p.id === projectFilter.value)?.name
+        const customer = customerFilter.value ? store.customers.find(c => c.id === customerFilter.value) : null
+        const matchCustomer = !customerFilter.value || s.customer === customer?.name
+        
+        const project = (customer && projectFilter.value) ? customer.projects.find(p => p.id === projectFilter.value) : null
+        const matchProject = !projectFilter.value || s.project === project?.name
+        
         const matchTeam = !teamFilter.value || s.teamId === teamFilter.value
         return matchDate && matchCustomer && matchProject && matchTeam
       })
@@ -651,17 +661,46 @@ export default defineComponent({
     }
 
     const getEventColor = (date) => {
-      const service = store.services.find(s => {
-        if (s.endDate && s.endDate !== s.date) {
-          const d = new Date(date)
-          return d >= new Date(s.date) && d <= new Date(s.endDate)
-        }
-        return s.date === date
-      })
-      if (service && service.teamId) {
-        const team = store.teams.find(t => t.id === service.teamId)
-        return team ? team.color : 'primary'
+      const isDateMatch = (s, dStr) => {
+        const d = dStr.replace(/\//g, '')
+        const start = s.date.replace(/\//g, '')
+        const end = (s.endDate || s.date).replace(/\//g, '')
+        return d >= start && d <= end
       }
+
+      // Find all services on this date that match active filters
+      const servicesOnDate = store.services.filter(s => {
+        const customer = customerFilter.value ? store.customers.find(c => c.id === customerFilter.value) : null
+        const matchCustomer = !customerFilter.value || s.customer === customer?.name
+        
+        const project = (customer && projectFilter.value) ? customer.projects.find(p => p.id === projectFilter.value) : null
+        const matchProject = !projectFilter.value || s.project === project?.name
+        
+        const matchTeam = !teamFilter.value || s.teamId === teamFilter.value
+
+        return matchCustomer && matchProject && matchTeam && isDateMatch(s, date)
+      })
+
+      if (servicesOnDate.length > 0) {
+        // If team filter is active, show that team's color
+        if (teamFilter.value) {
+          const team = store.teams.find(t => t.id === teamFilter.value)
+          return team ? team.color : 'primary'
+        }
+        
+        // Otherwise, prioritize the team with color #9C27B0 (Team Alpha) if they are scheduled
+        const alphaService = servicesOnDate.find(s => {
+          const t = store.teams.find(team => team.id === s.teamId)
+          return t && t.color === '#9C27B0'
+        })
+        
+        if (alphaService) return '#9C27B0'
+
+        // Fallback to the first service's team color
+        const firstTeam = store.teams.find(t => t.id === servicesOnDate[0].teamId)
+        return firstTeam ? firstTeam.color : 'primary'
+      }
+      
       return 'primary'
     }
 

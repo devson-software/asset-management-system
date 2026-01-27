@@ -3,7 +3,9 @@
     <div class="row q-col-gutter-lg">
       <div class="col-12 flex justify-between items-center">
         <div>
-          <div class="text-h4 text-primary text-weight-bold">Technical Data Sheet</div>
+          <div class="text-h4 text-primary text-weight-bold">
+            {{ form.unitType ? form.unitType : 'Technical Data Sheet' }}
+          </div>
           <div class="text-subtitle1 text-grey-7" v-if="targetAsset">
             Configuring specifications for: <span class="text-weight-bold text-primary">{{ targetAsset.unitRef }}</span>
           </div>
@@ -137,6 +139,45 @@
             icon="fas fa-fingerprint"
             :done="step > 1"
           >
+            <q-tabs v-model="entryTab" dense class="text-grey q-mb-md" active-color="primary" indicator-color="primary" align="left" narrow-indicator>
+              <q-tab name="manual" label="Manual Entry" icon="fas fa-keyboard" />
+              <q-tab name="library" label="Import from Library" icon="fas fa-book" />
+            </q-tabs>
+
+            <q-tab-panels v-model="entryTab" animated class="q-mb-md bg-transparent">
+              <q-tab-panel name="library" class="q-pa-none">
+                <div class="row q-col-gutter-md items-center">
+                  <div class="col-12 col-md-8">
+                    <q-select
+                      v-model="selectedLibraryItem"
+                      :options="store.unitLibrary"
+                      label="Search Equipment Library..."
+                      outlined
+                      dense
+                      use-input
+                      bg-color="blue-0"
+                    >
+                      <template v-slot:option="scope">
+                        <q-item v-bind="scope.itemProps" @click="importFromLibrary(scope.opt)">
+                          <q-item-section avatar>
+                            <q-icon name="fas fa-snowflake" color="primary" />
+                          </q-item-section>
+                          <q-item-section>
+                            <q-item-label>{{ scope.opt.manufacturer }} - {{ scope.opt.unitType }}</q-item-label>
+                            <q-item-label caption>{{ scope.opt.indoorModel }} / {{ scope.opt.outdoorModel }}</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                  </div>
+                  <div class="col-12 col-md-4 text-caption text-grey-7">
+                    <q-icon name="fas fa-info-circle" class="q-mr-xs" />
+                    Auto-fills tech specs from database
+                  </div>
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
+
             <div class="row items-center q-mb-lg">
               <q-avatar color="blue-1" text-color="primary" icon="fas fa-gear" size="48px" class="q-mr-md" />
               <div>
@@ -174,12 +215,12 @@
                 <q-input v-model="form.unitRefNumber" label="Unit Reference Number" outlined dense hint="e.g. Ac1.01" />
               </div>
               <div class="col-12 col-md-4">
-                <q-input v-model="form.vendorArea" label="Area" outlined dense placeholder="e.g. North Wing">
+                <q-input v-model="form.vendorArea" label="Area" outlined dense placeholder="e.g. First floor">
                   <template v-slot:prepend><q-icon name="fas fa-map" color="grey-6" /></template>
                 </q-input>
               </div>
               <div class="col-12 col-md-4">
-                <q-input v-model="form.vendorLocation" label="Location" outlined dense placeholder="e.g. Office 12">
+                <q-input v-model="form.vendorLocation" label="Location" outlined dense placeholder="e.g. Foschini">
                   <template v-slot:prepend><q-icon name="fas fa-location-dot" color="grey-6" /></template>
                 </q-input>
               </div>
@@ -229,7 +270,23 @@
                 <q-input v-model="form.mfa" label="MFA (Amps)" outlined dense />
               </div>
               <div class="col-12 col-md-6">
-                <q-select v-model="form.mode" :options="['Heat Pump', 'Cooling Only', 'Inverter']" label="Operational Mode" outlined dense />
+                <q-select 
+                  v-model="form.mode" 
+                  :options="['Heat pump', 'Cooling only', 'Inverter heat pump', 'Inverter cooling only']" 
+                  label="Operational Mode" 
+                  outlined 
+                  dense 
+                />
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input v-model="form.powerSupplyEvap" label="Power (Indoor)" outlined dense>
+                  <template v-slot:prepend><q-icon name="fas fa-plug" color="grey-6" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input v-model="form.powerSupplyCond" label="Power (Outdoor)" outlined dense>
+                  <template v-slot:prepend><q-icon name="fas fa-plug" color="grey-6" /></template>
+                </q-input>
               </div>
             </div>
           </q-step>
@@ -262,18 +319,35 @@
                   <template v-slot:prepend><q-icon name="fas fa-fire-burner" color="teal" /></template>
                 </q-input>
               </div>
-              <div class="col-6 col-md-6">
+              <div class="col-6 col-md-4">
                 <q-input v-model="form.refrigerantKg" label="Factory Charge (kg)" type="number" outlined dense />
               </div>
-              <div class="col-6 col-md-6">
-                <q-input v-model="form.maxPipeLength" label="Max Vertical Pipe (m)" type="number" outlined dense />
+              <div class="col-6 col-md-4">
+                <q-input v-model="form.maxVerticalPipe" label="Max Vertical Pipe (m)" type="number" outlined dense />
               </div>
-              <q-separator class="col-12 q-my-sm" />
-              <div class="col-12 col-md-6">
-                <q-input v-model="form.powerSupplyEvap" label="Power (Indoor)" outlined dense />
+              <div class="col-6 col-md-4">
+                <q-input v-model="form.maxPipeLength" label="Max Pipe Length (m)" type="number" outlined dense>
+                  <template v-slot:prepend><q-icon name="fas fa-arrows-left-right" size="xs" color="teal" /></template>
+                </q-input>
               </div>
-              <div class="col-12 col-md-6">
-                <q-input v-model="form.powerSupplyCond" label="Power (Outdoor)" outlined dense />
+
+              <q-separator class="col-12 q-my-md" />
+              
+              <div class="col-12">
+                <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center">
+                  <q-icon name="fas fa-filter" color="primary" class="q-mr-sm" size="xs" />
+                  Filters
+                </div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <q-input v-model="form.filterType" label="Filter Type" outlined dense placeholder="e.g. Washable, HEPA" />
+              </div>
+              <div class="col-12 col-md-4">
+                <q-input v-model="form.filterSize" label="Filter Size" outlined dense placeholder="e.g. 500x500x25" />
+              </div>
+              <div class="col-12 col-md-4">
+                <q-input v-model="form.filterQty" label="Filter Qty" type="number" outlined dense />
               </div>
             </div>
           </q-step>
@@ -375,6 +449,9 @@ export default defineComponent({
     const assetId = computed(() => route.params.assetId)
     const showForm = computed(() => !!assetId.value || isNew.value)
 
+    const entryTab = ref('manual')
+    const selectedLibraryItem = ref(null)
+
     const step = ref(1)
     const filter = ref('')
     const columnFilters = reactive({
@@ -387,9 +464,27 @@ export default defineComponent({
     const startNewSheet = () => {
       isNew.value = true
       step.value = 1
+      entryTab.value = 'manual'
       Object.keys(form).forEach(key => {
         if (typeof form[key] === 'string') form[key] = ''
         else if (typeof form[key] === 'number') form[key] = null
+      })
+    }
+
+    const importFromLibrary = (item) => {
+      form.manufacturer = item.manufacturer
+      form.unitType = item.unitType
+      form.indoorUnit = item.indoorModel
+      form.outdoorUnit = item.outdoorModel
+      form.refrigerantType = item.refrigerantType
+      form.refrigerantKg = item.refrigerantCharge
+      form.serviceTime = item.serviceDuration
+      
+      entryTab.value = 'manual'
+      $q.notify({
+        color: 'info',
+        message: `Imported specs for ${item.manufacturer} ${item.unitType}`,
+        icon: 'fas fa-file-import'
       })
     }
 
@@ -443,7 +538,6 @@ export default defineComponent({
       unitRefNumber: '',
       outdoorUnit: '',
       outdoorSerial: '',
-      areaLocation: '',
       vendorArea: '',
       vendorLocation: '',
       dateInstalled: '',
@@ -453,16 +547,20 @@ export default defineComponent({
       heatingBtu: '',
       mca: '',
       mfa: '',
-      mode: 'Heat Pump',
+      mode: 'Heat pump',
       liquidPipe: '',
       gasPipe: '',
       refrigerantType: '',
       refrigerantKg: '',
+      maxVerticalPipe: '',
       maxPipeLength: '',
       powerSupplyEvap: '',
       powerSupplyCond: '',
       evapAirFlow: '',
       condAirFlow: '',
+      filterType: '',
+      filterSize: '',
+      filterQty: '',
       serviceResponsibility: 'Owner',
       ownership: 'Landlord',
       serviceProvider: 'Default Service Co.',
@@ -484,6 +582,13 @@ export default defineComponent({
         form.outdoorSerial = targetAsset.value.outdoorSerial || ''
         form.refrigerantType = targetAsset.value.refrigerantType || ''
         form.refrigerantKg = targetAsset.value.refrigerantKg || ''
+        form.maxVerticalPipe = targetAsset.value.maxVerticalPipe || ''
+        form.maxPipeLength = targetAsset.value.maxPipeLength || ''
+        form.powerSupplyEvap = targetAsset.value.powerSupplyEvap || ''
+        form.powerSupplyCond = targetAsset.value.powerSupplyCond || ''
+        form.filterType = targetAsset.value.filterType || ''
+        form.filterSize = targetAsset.value.filterSize || ''
+        form.filterQty = targetAsset.value.filterQty || ''
         form.serviceSchedule = targetAsset.value.serviceSchedule || 'Monthly'
         form.serviceTime = targetAsset.value.serviceTime || ''
         form.vendorLocation = targetAsset.value.vendorLocation || ''
@@ -513,7 +618,14 @@ export default defineComponent({
                 serialNumber: form.indoorSerial,
                 outdoorModel: form.outdoorUnit,
                 outdoorSerial: form.outdoorSerial,
-                unitRef: form.unitRefNumber
+                unitRef: form.unitRefNumber,
+                maxVerticalPipe: form.maxVerticalPipe,
+                maxPipeLength: form.maxPipeLength,
+                powerSupplyEvap: form.powerSupplyEvap,
+                powerSupplyCond: form.powerSupplyCond,
+                filterType: form.filterType,
+                filterSize: form.filterSize,
+                filterQty: form.filterQty
               }
               store.updateAsset(c.id, p.id, assetId.value, updatedAsset)
             }
@@ -542,7 +654,11 @@ export default defineComponent({
       filteredAssets,
       form,
       targetAsset,
-      onSubmit
+      onSubmit,
+      entryTab,
+      selectedLibraryItem,
+      importFromLibrary,
+      store
     }
   }
 })

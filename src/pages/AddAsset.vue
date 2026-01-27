@@ -185,6 +185,12 @@
             <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-mt-md">
               <q-icon name="fas fa-calendar-check" size="xs" class="q-mr-sm" />
               Service & Maintenance Plan
+              <q-space />
+              <span class="text-caption text-primary bg-blue-1 q-px-sm q-py-xs rounded-borders">
+                <q-icon name="fas fa-robot" size="10px" class="q-mr-xs" />
+                Should we automatically create a service Schedule?
+                <q-toggle v-model="asset.autoSchedule" size="sm" dense class="q-ml-sm" />
+              </span>
             </div>
 
             <div class="row q-col-gutter-md">
@@ -294,6 +300,7 @@ export default defineComponent({
       refrigerantKg: '',
       serviceSchedule: 'Monthly',
       serviceTime: '',
+      autoSchedule: true,
       vendorLocation: '',
       vendorArea: '',
       vendorAddress: ''

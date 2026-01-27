@@ -123,11 +123,23 @@
             </q-td>
           </template>
 
+          <template v-slot:body-cell-vendorArea="props">
+            <q-td :props="props">
+              <div class="text-weight-medium text-grey-9">{{ props.value }}</div>
+            </q-td>
+          </template>
+
           <template v-slot:body-cell-vendorLocation="props">
             <q-td :props="props">
               <q-chip dense color="blue-grey-1" text-color="blue-grey-9" size="sm">
                 {{ props.value }}
               </q-chip>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-outdoorModel="props">
+            <q-td :props="props">
+              <div class="text-caption text-grey-7">{{ props.value || 'N/A' }}</div>
             </q-td>
           </template>
 
@@ -266,7 +278,8 @@ export default defineComponent({
               customerName: customer.name,
               projectName: project.name,
               siteAddress: project.siteAddress || 'N/A',
-              vendorLocation: project.vendorLocation || 'N/A',
+              vendorArea: asset.vendorArea || 'N/A',
+              vendorLocation: asset.vendorLocation || project.vendorLocation || 'N/A',
               customerId: customer.id,
               projectId: project.id,
               serviceCount
