@@ -16,19 +16,65 @@
 
     <q-card flat bordered class="rounded-borders shadow-2">
       <q-table
-        :rows="teams"
+        :rows="filteredTeams"
         :columns="columns"
         row-key="id"
         flat
         :pagination="{ rowsPerPage: 10 }"
         class="team-table"
       >
-        <template v-slot:header-cell="props">
-          <q-th :props="props" class="text-weight-bold text-uppercase bg-grey-1">
-            <div class="row items-center no-wrap">
-              {{ props.col.label }}
-            </div>
-          </q-th>
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+              :class="'text-' + col.align"
+            >
+              <div class="row items-center no-wrap" :class="col.align === 'center' ? 'justify-center' : (col.align === 'right' ? 'justify-end' : '')">
+                <!-- Modern Sort Icon on the Left -->
+                <q-icon
+                  v-if="col.sortable"
+                  :name="props.pagination && props.pagination.sortBy === col.name ? (props.pagination.descending ? 'fas fa-arrow-down-long' : 'fas fa-arrow-up-long') : 'fas fa-arrow-up-long'"
+                  size="12px"
+                  class="q-mr-xs cursor-pointer sort-icon"
+                  :class="{ 'active': props.pagination && props.pagination.sortBy === col.name }"
+                  @click="props.sort(col)"
+                />
+                <span class="cursor-pointer" @click="col.sortable && props.sort(col)">{{ col.label }}</span>
+                <q-btn
+                  v-if="col.name !== 'actions'"
+                  flat
+                  round
+                  dense
+                  size="xs"
+                  icon="fas fa-filter"
+                  class="q-ml-xs filter-btn"
+                  :class="{ 'active': columnFilters[col.name] }"
+                  :color="columnFilters[col.name] ? 'primary' : 'grey-5'"
+                >
+                  <q-menu cover anchor="top middle">
+                    <q-list style="min-width: 200px">
+                      <q-item>
+                        <q-input
+                          v-model="columnFilters[col.name]"
+                          :label="'Filter ' + col.label"
+                          outlined
+                          dense
+                          autofocus
+                          clearable
+                        >
+                          <template v-slot:append>
+                            <q-icon name="fas fa-magnifying-glass" size="xs" />
+                          </template>
+                        </q-input>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
+              </div>
+            </q-th>
+          </q-tr>
         </template>
 
         <template v-slot:body-cell-color="props">
@@ -40,24 +86,34 @@
           </q-td>
         </template>
 
-        <template v-slot:body-cell-leaderId="props">
+        <template v-slot:body-cell-leaderIds="props">
           <q-td :props="props">
-            <div class="row items-center no-wrap">
-              <q-avatar size="sm" color="primary" text-color="white" class="q-mr-sm">
-                {{ getInitials(getUserName(props.value)) }}
-              </q-avatar>
-              {{ getUserName(props.value) }}
+            <div class="row items-center q-gutter-xs">
+              <template v-if="props.value && props.value.length">
+                <q-chip v-for="id in props.value" :key="id" dense color="primary" text-color="white" class="q-ma-none">
+                  <q-avatar size="18px" color="white" text-color="primary">
+                    {{ getInitials(getUserName(id)) }}
+                  </q-avatar>
+                  <span class="q-ml-xs" style="font-size: 10px">{{ getUserName(id) }}</span>
+                </q-chip>
+              </template>
+              <div v-else class="text-grey-5 italic">None</div>
             </div>
           </q-td>
         </template>
 
-        <template v-slot:body-cell-assistantId="props">
+        <template v-slot:body-cell-assistantIds="props">
           <q-td :props="props">
-            <div class="row items-center no-wrap">
-              <q-avatar size="sm" color="secondary" text-color="white" class="q-mr-sm">
-                {{ getInitials(getUserName(props.value)) }}
-              </q-avatar>
-              {{ getUserName(props.value) }}
+            <div class="row items-center q-gutter-xs">
+              <template v-if="props.value && props.value.length">
+                <q-chip v-for="id in props.value" :key="id" dense color="secondary" text-color="white" class="q-ma-none">
+                  <q-avatar size="18px" color="white" text-color="secondary">
+                    {{ getInitials(getUserName(id)) }}
+                  </q-avatar>
+                  <span class="q-ml-xs" style="font-size: 10px">{{ getUserName(id) }}</span>
+                </q-chip>
+              </template>
+              <div v-else class="text-grey-5 italic">None</div>
             </div>
           </q-td>
         </template>
@@ -130,26 +186,30 @@
             </div>
 
             <q-select 
-              v-model="form.leaderId" 
+              v-model="form.leaderIds" 
               :options="technicianOptions" 
-              label="Lead Technician" 
+              label="Lead Technicians" 
               outlined 
               dense 
               emit-value 
               map-options 
+              multiple
+              use-chips
               required
             >
               <template v-slot:prepend><q-icon name="fas fa-user-tie" size="xs" /></template>
             </q-select>
 
             <q-select 
-              v-model="form.assistantId" 
+              v-model="form.assistantIds" 
               :options="technicianOptions" 
-              label="Assistant Technician" 
+              label="Assistant Technicians" 
               outlined 
               dense 
               emit-value 
               map-options 
+              multiple
+              use-chips
               required
             >
               <template v-slot:prepend><q-icon name="fas fa-user-gear" size="xs" /></template>
@@ -188,11 +248,34 @@ export default defineComponent({
     const form = reactive({
       name: '',
       color: '#1976D2',
-      leaderId: null,
-      assistantId: null
+      leaderIds: [],
+      assistantIds: []
     })
 
     const teams = computed(() => store.teams)
+    
+    const columnFilters = reactive({
+      name: '',
+      leaderIds: '',
+      assistantIds: ''
+    })
+
+    const filteredTeams = computed(() => {
+      return store.teams.filter(team => {
+        return Object.keys(columnFilters).every(key => {
+          if (!columnFilters[key]) return true
+          
+          if (key === 'leaderIds' || key === 'assistantIds') {
+            const ids = team[key] || []
+            const names = ids.map(id => getUserName(id).toLowerCase())
+            return names.some(name => name.includes(columnFilters[key].toLowerCase()))
+          }
+          
+          const val = team[key] || ''
+          return String(val).toLowerCase().includes(columnFilters[key].toLowerCase())
+        })
+      })
+    })
     
     const technicianOptions = computed(() => {
       return store.users
@@ -203,8 +286,8 @@ export default defineComponent({
     const columns = [
       { name: 'color', label: 'ID', field: 'color', align: 'left', style: 'width: 50px' },
       { name: 'name', label: 'Team Name', field: 'name', align: 'left', sortable: true },
-      { name: 'leaderId', label: 'Lead Tech', field: 'leaderId', align: 'left' },
-      { name: 'assistantId', label: 'Assistant', field: 'assistantId', align: 'left' },
+      { name: 'leaderIds', label: 'Lead Techs', field: 'leaderIds', align: 'left' },
+      { name: 'assistantIds', label: 'Assistants', field: 'assistantIds', align: 'left' },
       { name: 'actions', label: '', field: 'actions', align: 'right' }
     ]
 
@@ -224,15 +307,15 @@ export default defineComponent({
         editingId.value = team.id
         form.name = team.name
         form.color = team.color
-        form.leaderId = team.leaderId
-        form.assistantId = team.assistantId
+        form.leaderIds = Array.isArray(team.leaderIds) ? [...team.leaderIds] : (team.leaderId ? [team.leaderId] : [])
+        form.assistantIds = Array.isArray(team.assistantIds) ? [...team.assistantIds] : (team.assistantId ? [team.assistantId] : [])
       } else {
         isEditing.value = false
         editingId.value = null
         form.name = ''
         form.color = '#1976D2'
-        form.leaderId = null
-        form.assistantId = null
+        form.leaderIds = []
+        form.assistantIds = []
       }
       showDialog.value = true
     }
@@ -263,6 +346,8 @@ export default defineComponent({
 
     return {
       teams,
+      filteredTeams,
+      columnFilters,
       columns,
       showDialog,
       isEditing,
@@ -298,5 +383,20 @@ export default defineComponent({
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+.sort-icon {
+  opacity: 0.2;
+  transition: all 0.3s ease;
+}
+.sort-icon.active {
+  opacity: 1;
+  color: var(--q-primary);
+}
+.filter-btn {
+  transition: all 0.3s ease;
+}
+.filter-btn.active {
+  background: rgba(25, 118, 210, 0.1);
 }
 </style>

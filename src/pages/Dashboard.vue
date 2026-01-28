@@ -158,14 +158,6 @@
               unelevated 
             />
             <q-btn 
-              color="positive" 
-              icon="fas fa-snowflake" 
-              label="Register New Asset" 
-              class="full-width action-btn" 
-              to="/assets/add" 
-              unelevated 
-            />
-            <q-btn 
               color="orange-8" 
               icon="fas fa-file-invoice-dollar" 
               label="Add Quotation" 
