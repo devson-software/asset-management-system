@@ -208,7 +208,10 @@ export const store = reactive({
     { id: 9, date: '2026/01/27', endDate: '2026/01/27', time: '08:00', duration: '2 hours', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Monthly Service', teamId: 'T1' },
     { id: 10, date: '2026/01/27', endDate: '2026/01/27', time: '10:00', duration: '4 hours', unitRef: 'WH-01', customer: 'Global Logistics Hub', project: 'Main Warehouse', type: 'Quarterly Service', teamId: 'T2' },
     { id: 11, date: '2026/01/27', endDate: '2026/01/27', time: '13:30', duration: '3 hours', unitRef: 'FC-AC-01', customer: 'City Mall Plaza', project: 'Food Court', type: 'Breakdown Callout', teamId: 'T1' },
-    { id: 12, date: '2026/01/28', endDate: '2026/01/28', time: '09:00', duration: '4 hours', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service', teamId: 'T1' }
+    { id: 12, date: '2026/01/28', endDate: '2026/01/28', time: '09:00', duration: '4 hours', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service', teamId: 'T1' },
+    { id: 13, date: '2026/01/28', endDate: '2026/01/28', time: '11:00', duration: '2 hours', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Quarterly Service', teamId: 'T3' },
+    { id: 14, date: '2026/01/28', endDate: '2026/01/28', time: '13:30', duration: '3 hours', unitRef: 'CS-01', customer: 'Global Logistics Hub', project: 'Cold Storage', type: 'Monthly Service', teamId: 'T4' },
+    { id: 15, date: '2026/01/28', endDate: '2026/01/28', time: '15:00', duration: '2 hours', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Breakdown Callout', teamId: 'T5' }
   ],
   jobCards: [
     { id: 'JOB-2026-001', date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', tech: 'John Doe', faultFound: false },
@@ -227,11 +230,17 @@ export const store = reactive({
     { id: 'U1', username: 'admin', fullName: 'System Administrator', email: 'admin@jeramhvac.co.za', role: 'administrator', active: true, invitationStatus: 'Completed' },
     { id: 'U2', username: 'tech1', fullName: 'John Doe', email: 'john@jeramhvac.co.za', role: 'technician', active: true, invitationStatus: 'Completed' },
     { id: 'U3', username: 'tech2', fullName: 'Sarah Jenkins', email: 'sarah@jeramhvac.co.za', role: 'technician', active: true, invitationStatus: 'Pending' },
-    { id: 'U4', username: 'client_manager', fullName: 'Alpha Corp Manager', email: 'manager@alphacorp.com', role: 'customer', active: true, invitationStatus: 'Completed' }
+    { id: 'U4', username: 'tech3', fullName: 'Michael van Wyk', email: 'michael@jeramhvac.co.za', role: 'technician', active: true, invitationStatus: 'Completed' },
+    { id: 'U5', username: 'tech4', fullName: 'David Ndlovu', email: 'david@jeramhvac.co.za', role: 'technician', active: true, invitationStatus: 'Completed' },
+    { id: 'U6', username: 'tech5', fullName: 'Kevin Peterson', email: 'kevin@jeramhvac.co.za', role: 'technician', active: true, invitationStatus: 'Pending' },
+    { id: 'U7', username: 'client_manager', fullName: 'Alpha Corp Manager', email: 'manager@alphacorp.com', role: 'customer', active: true, invitationStatus: 'Completed' }
   ],
   teams: [
-    { id: 'T1', name: 'Team Alpha', color: '#9C27B0', leaderId: 'U2', assistantId: 'U3' },
-    { id: 'T2', name: 'Team Beta', color: '#009688', leaderId: 'U3', assistantId: 'U2' }
+    { id: 'T1', name: 'Team Alpha', color: '#9C27B0', leaderIds: ['U2', 'U4'], assistantIds: ['U3'] },
+    { id: 'T2', name: 'Team Beta', color: '#009688', leaderIds: ['U3', 'U5'], assistantIds: ['U2', 'U6'] },
+    { id: 'T3', name: 'Team Gamma', color: '#E91E63', leaderIds: ['U4'], assistantIds: ['U5'] },
+    { id: 'T4', name: 'Team Delta', color: '#FF9800', leaderIds: ['U5'], assistantIds: ['U6'] },
+    { id: 'T5', name: 'Team Sigma', color: '#4CAF50', leaderIds: ['U6'], assistantIds: ['U4'] }
   ],
   serviceDefinitions: {
     'Monthly Service': {

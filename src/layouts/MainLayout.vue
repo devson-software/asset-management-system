@@ -158,6 +158,16 @@
           </q-item-section>
         </q-item>
 
+        <q-item clickable to="/quotations" class="navigation-item" active-class="navigation-item-active">
+          <q-item-section avatar>
+            <q-icon name="fas fa-file-invoice-dollar" size="14px" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-weight-bold">Quotation</q-item-label>
+            <q-item-label caption>Cost Estimations</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-item-label header class="text-overline text-weight-bold text-grey-8 q-pt-lg q-pb-md">
           MAINTENANCE
         </q-item-label>

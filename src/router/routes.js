@@ -23,6 +23,7 @@ const routes = [
       { path: 'assets/add', component: () => import('pages/AddAsset.vue') },
       { path: 'assets/:assetId', component: () => import('pages/AssetDetails.vue') },
       { path: 'assets/:assetId/history', component: () => import('pages/AssetServiceHistory.vue') },
+      { path: 'quotations', component: () => import('pages/Quotations.vue') },
       { path: 'customers/add', component: () => import('pages/AddCustomer.vue') },
       { path: 'customers/edit/:customerId', component: () => import('pages/AddCustomer.vue') },
       { path: 'customers/:customerId/add-project', component: () => import('pages/AddProject.vue') },

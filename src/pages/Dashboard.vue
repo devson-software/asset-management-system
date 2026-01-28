@@ -162,7 +162,7 @@
               icon="fas fa-file-invoice-dollar" 
               label="Add Quotation" 
               class="full-width action-btn" 
-              to="/dashboard" 
+              to="/quotations" 
               unelevated 
             />
           </q-card-section>

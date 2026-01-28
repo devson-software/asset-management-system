@@ -17,6 +17,7 @@
             row-key="id"
             flat
             :filter="filter"
+            :pagination="{ rowsPerPage: 10 }"
             class="users-table"
           >
             <template v-slot:header="props">
