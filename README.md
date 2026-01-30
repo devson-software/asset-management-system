@@ -3,10 +3,11 @@
 A professional HVAC management tool built with Quasar.js for tracking HVAC units, service schedules, and maintenance records.
 
 ## Features
+
 - **Customer Registration**: Manage clients and their logos.
 - **Project & Unit Tracking**: Detailed asset specifications and technical drawings.
 - **Technical Data Sheets**: Deep technical specs for indoor/outdoor units.
-- **Service Management**: 
+- **Service Management**:
   - Dynamic checklists based on service frequency (Monthly to Annual).
   - Automatic next service scheduling.
   - Job card generation with electronic signatures and fault photos.
@@ -14,6 +15,7 @@ A professional HVAC management tool built with Quasar.js for tracking HVAC units
 - **Asset Register**: Full inventory overview with Excel export and QR label printing.
 
 ## Setup
+
 1. Install dependencies:
    ```bash
    npm install
@@ -28,6 +30,7 @@ A professional HVAC management tool built with Quasar.js for tracking HVAC units
    ```
 
 ## Workflow
+
 1. **Login**: Access the technician portal.
 2. **Register**: Add a customer and their specific project/site.
 3. **Capture**: Fill in the technical data sheet for the equipment.

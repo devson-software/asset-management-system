@@ -5,21 +5,39 @@
         <div>
           <div class="text-h4 text-weight-bold text-primary">Projects Explorer</div>
           <div class="text-subtitle1 text-grey-7" v-if="activeCustomerName">
-            Managing sites for: <span class="text-weight-bold text-primary">{{ activeCustomerName }}</span>
+            Managing sites for:
+            <span class="text-weight-bold text-primary">{{ activeCustomerName }}</span>
           </div>
           <div class="text-subtitle1 text-grey-7" v-else>
             Complete directory of all managed customer sites
           </div>
         </div>
         <div class="q-gutter-sm">
-          <q-btn v-if="$route.query.customerId" flat color="primary" icon="fas fa-arrow-left" label="Show All Customers" :to="{ path: '/projects', query: {} }" />
-          <q-btn color="green-7" icon="fas fa-file-excel" label="Export XLSX" @click="exportToExcel" class="shadow-2" />
-          <q-btn 
-            color="primary" 
-            icon="fas fa-plus" 
-            label="Add New Project" 
-            :to="$route.query.customerId ? '/customers/' + $route.query.customerId + '/add-project' : '/projects/add'" 
-            class="shadow-2" 
+          <q-btn
+            v-if="$route.query.customerId"
+            flat
+            color="primary"
+            icon="fas fa-arrow-left"
+            label="Show All Customers"
+            :to="{ path: '/projects', query: {} }"
+          />
+          <q-btn
+            color="green-7"
+            icon="fas fa-file-excel"
+            label="Export XLSX"
+            @click="exportToExcel"
+            class="shadow-2"
+          />
+          <q-btn
+            color="primary"
+            icon="fas fa-plus"
+            label="Add New Project"
+            :to="
+              $route.query.customerId
+                ? '/customers/' + $route.query.customerId + '/add-project'
+                : '/projects/add'
+            "
+            class="shadow-2"
           />
         </div>
       </div>
@@ -41,17 +59,34 @@
                   :props="props"
                   :class="'text-' + col.align"
                 >
-                  <div class="row items-center no-wrap" :class="col.align === 'center' ? 'justify-center' : (col.align === 'right' ? 'justify-end' : '')">
+                  <div
+                    class="row items-center no-wrap"
+                    :class="
+                      col.align === 'center'
+                        ? 'justify-center'
+                        : col.align === 'right'
+                          ? 'justify-end'
+                          : ''
+                    "
+                  >
                     <!-- Modern Sort Icon on the Left -->
                     <q-icon
                       v-if="col.sortable"
-                      :name="props.pagination && props.pagination.sortBy === col.name ? (props.pagination.descending ? 'fas fa-arrow-down-long' : 'fas fa-arrow-up-long') : 'fas fa-arrow-up-long'"
+                      :name="
+                        props.pagination && props.pagination.sortBy === col.name
+                          ? props.pagination.descending
+                            ? 'fas fa-arrow-down-long'
+                            : 'fas fa-arrow-up-long'
+                          : 'fas fa-arrow-up-long'
+                      "
                       size="12px"
                       class="q-mr-xs cursor-pointer sort-icon"
-                      :class="{ 'active': props.pagination && props.pagination.sortBy === col.name }"
+                      :class="{ active: props.pagination && props.pagination.sortBy === col.name }"
                       @click="props.sort(col)"
                     />
-                    <span class="cursor-pointer" @click="col.sortable && props.sort(col)">{{ col.label }}</span>
+                    <span class="cursor-pointer" @click="col.sortable && props.sort(col)">{{
+                      col.label
+                    }}</span>
                     <q-btn
                       v-if="col.name !== 'actions'"
                       flat
@@ -60,7 +95,7 @@
                       size="xs"
                       icon="fas fa-filter"
                       class="q-ml-xs filter-btn"
-                      :class="{ 'active': columnFilters[col.name] }"
+                      :class="{ active: columnFilters[col.name] }"
                       :color="columnFilters[col.name] ? 'primary' : 'grey-5'"
                     >
                       <q-menu cover anchor="top middle">
@@ -87,26 +122,37 @@
               </q-tr>
             </template>
             <template v-slot:top-right>
-              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search Projects...">
-              <template v-slot:append>
-                <q-icon name="fas fa-magnifying-glass" size="xs" />
-              </template>
+              <q-input
+                borderless
+                dense
+                debounce="300"
+                v-model="filter"
+                placeholder="Search Projects..."
+              >
+                <template v-slot:append>
+                  <q-icon name="fas fa-magnifying-glass" size="xs" />
+                </template>
               </q-input>
             </template>
 
             <!-- Custom Project Name / Customer Cell -->
             <template v-slot:body-cell-name="props">
               <q-td :props="props">
-              <div class="row items-center no-wrap">
-                <q-avatar color="blue-1" text-color="primary" size="32px" class="q-mr-md shadow-1">
-                  <img v-if="props.row.pictureUrl" :src="props.row.pictureUrl">
-                  <q-icon v-else name="fas fa-map-location-dot" size="16px" />
-                </q-avatar>
-                <div>
-                <div class="text-weight-bold text-primary">{{ props.row.name }}</div>
-                <div class="text-caption text-grey-7">Client: {{ props.row.customerName }}</div>
+                <div class="row items-center no-wrap">
+                  <q-avatar
+                    color="blue-1"
+                    text-color="primary"
+                    size="32px"
+                    class="q-mr-md shadow-1"
+                  >
+                    <img v-if="props.row.pictureUrl" :src="props.row.pictureUrl" />
+                    <q-icon v-else name="fas fa-map-location-dot" size="16px" />
+                  </q-avatar>
+                  <div>
+                    <div class="text-weight-bold text-primary">{{ props.row.name }}</div>
+                    <div class="text-caption text-grey-7">Client: {{ props.row.customerName }}</div>
+                  </div>
                 </div>
-              </div>
               </q-td>
             </template>
 
@@ -121,7 +167,14 @@
             <!-- Time Allocation Cell -->
             <template v-slot:body-cell-timeAllocation="props">
               <q-td :props="props">
-                <q-chip dense color="orange-1" text-color="orange-9" icon="fas fa-hourglass-half" size="sm" v-if="props.value">
+                <q-chip
+                  dense
+                  color="orange-1"
+                  text-color="orange-9"
+                  icon="fas fa-hourglass-half"
+                  size="sm"
+                  v-if="props.value"
+                >
                   {{ props.value }}
                 </q-chip>
                 <span v-else class="text-grey-4 italic">Not set</span>
@@ -131,15 +184,15 @@
             <!-- Assets Count Badge Cell -->
             <template v-slot:body-cell-assetsCount="props">
               <q-td :props="props" align="center">
-                <q-chip 
-                  clickable 
+                <q-chip
+                  clickable
                   @click="$router.push({ path: '/assets', query: { projectId: props.row.id } })"
-                  color="blue-1" 
-                  text-color="blue-9" 
-                  icon="ac_unit" 
+                  color="blue-1"
+                  text-color="blue-9"
+                  icon="fas fa-box"
                   size="sm"
                 >
-                  {{ props.row.assets.length }} Units
+                  {{ props.row.assets.length }} Unit{{ props.row.assets.length === 1 ? '' : 's' }}
                   <q-tooltip>View Assets for this Project</q-tooltip>
                 </q-chip>
               </q-td>
@@ -148,19 +201,36 @@
             <!-- Actions Cell -->
             <template v-slot:body-cell-actions="props">
               <q-td :props="props">
-                <q-btn flat round color="grey-7" icon="more_vert">
-                  <q-menu auto-close transition-show="scale" transition-hide="scale" class="rounded-borders shadow-2">
+                <q-btn flat round color="grey-7" icon="fa fas fa-ellipsis-v">
+                  <q-menu
+                    auto-close
+                    transition-show="scale"
+                    transition-hide="scale"
+                    class="rounded-borders shadow-2"
+                  >
                     <q-list style="min-width: 150px">
-                      <q-item clickable :to="{ path: '/assets', query: { projectId: props.row.id } }">
+                      <q-item
+                        clickable
+                        :to="{ path: '/assets', query: { projectId: props.row.id } }"
+                      >
                         <q-item-section avatar>
-                          <q-icon name="ac_unit" color="primary" size="sm" />
+                          <q-icon name="fas fa-box" color="primary" size="sm" />
                         </q-item-section>
                         <q-item-section>View Assets</q-item-section>
                       </q-item>
                       <q-separator />
-                      <q-item clickable :to="'/customers/' + props.row.customerId + '/projects/' + props.row.id + '/edit'">
+                      <q-item
+                        clickable
+                        :to="
+                          '/customers/' +
+                          props.row.customerId +
+                          '/projects/' +
+                          props.row.id +
+                          '/edit'
+                        "
+                      >
                         <q-item-section avatar>
-                          <q-icon name="edit" color="grey-7" size="sm" />
+                          <q-icon name="fas fa-edit" color="grey-7" size="sm" />
                         </q-item-section>
                         <q-item-section>Edit Project</q-item-section>
                       </q-item>
@@ -185,7 +255,7 @@ import * as XLSX from 'xlsx'
 
 export default defineComponent({
   name: 'ProjectsPage',
-  setup () {
+  setup() {
     const route = useRoute()
     const $q = useQuasar()
     const filter = ref('')
@@ -193,21 +263,21 @@ export default defineComponent({
       name: '',
       siteAddress: '',
       timeAllocation: '',
-      assetsCount: ''
+      assetsCount: '',
     })
 
     const allProjects = computed(() => {
       const projects = []
       const customerIdQuery = route.query.customerId
 
-      store.customers.forEach(customer => {
+      store.customers.forEach((customer) => {
         if (customerIdQuery && customer.id !== customerIdQuery) return
 
-        customer.projects.forEach(project => {
+        customer.projects.forEach((project) => {
           projects.push({
             ...project,
             customerName: customer.name,
-            customerId: customer.id
+            customerId: customer.id,
           })
         })
       })
@@ -215,12 +285,10 @@ export default defineComponent({
     })
 
     const filteredRows = computed(() => {
-      return allProjects.value.filter(row => {
-        return Object.keys(columnFilters).every(key => {
+      return allProjects.value.filter((row) => {
+        return Object.keys(columnFilters).every((key) => {
           if (!columnFilters[key]) return true
-          const val = key === 'assetsCount'
-            ? row.assets.length.toString()
-            : row[key] || ''
+          const val = key === 'assetsCount' ? row.assets.length.toString() : row[key] || ''
           return String(val).toLowerCase().includes(columnFilters[key].toLowerCase())
         })
       })
@@ -229,28 +297,50 @@ export default defineComponent({
     const activeCustomerName = computed(() => {
       const customerId = route.query.customerId
       if (!customerId) return null
-      const customer = store.customers.find(c => c.id === customerId)
+      const customer = store.customers.find((c) => c.id === customerId)
       return customer ? customer.name : null
     })
 
     const projectColumns = [
       { name: 'name', label: 'Project Name', align: 'left', field: 'name', sortable: true },
-      { name: 'siteAddress', label: 'Location', align: 'left', field: 'siteAddress', sortable: true },
-      { name: 'timeAllocation', label: 'Time Allocation', align: 'left', field: 'timeAllocation', sortable: true },
-      { name: 'assetsCount', label: 'Assets', align: 'center', field: row => row.assets.length, sortable: true },
-      { name: 'actions', label: '', align: 'right' }
+      {
+        name: 'siteAddress',
+        label: 'Location',
+        align: 'left',
+        field: 'siteAddress',
+        sortable: true,
+      },
+      {
+        name: 'timeAllocation',
+        label: 'Time Allocation',
+        align: 'left',
+        field: 'timeAllocation',
+        sortable: true,
+      },
+      {
+        name: 'assetsCount',
+        label: 'Assets',
+        align: 'center',
+        field: (row) => row.assets.length,
+        sortable: true,
+      },
+      { name: 'actions', label: '', align: 'right' },
     ]
 
     const exportToExcel = () => {
-      $q.notify({ message: 'Exporting projects register to Excel...', color: 'green-7', icon: 'file_download' })
-      
-      const exportData = filteredRows.value.map(r => ({
+      $q.notify({
+        message: 'Exporting projects register to Excel...',
+        color: 'green-7',
+        icon: 'file_download',
+      })
+
+      const exportData = filteredRows.value.map((r) => ({
         'Project Name': r.name,
-        'Customer': r.customerName,
-        'Location': r.siteAddress,
+        Customer: r.customerName,
+        Location: r.siteAddress,
         'Specific Location': r.vendorLocation,
         'Time Allocation': r.timeAllocation || 'N/A',
-        'Assets Count': r.assets.length
+        'Assets Count': r.assets.length,
       }))
 
       const worksheet = XLSX.utils.json_to_sheet(exportData)
@@ -268,9 +358,9 @@ export default defineComponent({
       filteredRows,
       activeCustomerName,
       projectColumns,
-      exportToExcel
+      exportToExcel,
     }
-  }
+  },
 })
 </script>
 
