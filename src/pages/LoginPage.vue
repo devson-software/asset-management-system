@@ -109,11 +109,28 @@ export default defineComponent({
         store.currentUser = store.users.find(u => u.username === 'admin')
         $q.notify({
           color: 'positive',
-          message: 'Login successful',
-          icon: 'fas fa-lock-open'
+          message: 'Login successful (Admin)',
+          icon: 'fas fa-user-shield'
+        })
+        router.push('/dashboard')
+      } else if (username.value === 'tech1' && password.value === 'HVAC@Tech2026!') {
+        store.currentUser = store.users.find(u => u.username === 'tech1')
+        $q.notify({
+          color: 'positive',
+          message: 'Login successful (Technician)',
+          icon: 'fas fa-screwdriver-wrench'
+        })
+        router.push('/dashboard')
+      } else if (username.value === 'tech2' && password.value === 'HVAC@Tech2026!') {
+        store.currentUser = store.users.find(u => u.username === 'tech2')
+        $q.notify({
+          color: 'positive',
+          message: 'Login successful (Technician)',
+          icon: 'fas fa-screwdriver-wrench'
         })
         router.push('/dashboard')
       } else if (username.value === 'tech' && password.value === 'tech') {
+        // Legacy simple login for testing
         store.currentUser = store.users.find(u => u.username === 'tech1')
         $q.notify({
           color: 'positive',
