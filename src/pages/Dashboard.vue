@@ -174,14 +174,34 @@
               to="/commissioning"
               unelevated
             />
-            <q-btn
+            <q-btn-dropdown
               color="blue-6"
               icon="fas fa-file-circle-plus"
               label="Create New Job Card"
               class="full-width action-btn"
-              to="/job-cards/add"
               unelevated
-            />
+            >
+              <q-list>
+                <q-item clickable v-close-popup to="/qr-scanner">
+                  <q-item-section avatar>
+                    <q-icon name="fas fa-qrcode" color="primary" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label class="text-weight-bold">Scan QR Code</q-item-label>
+                    <q-item-label caption>Quick identification</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup to="/job-cards/add">
+                  <q-item-section avatar>
+                    <q-icon name="fas fa-keyboard" color="grey-7" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label class="text-weight-bold">Add Manually</q-item-label>
+                    <q-item-label caption>Manual unit search</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
             <q-btn
               color="orange-8"
               icon="fas fa-file-invoice-dollar"

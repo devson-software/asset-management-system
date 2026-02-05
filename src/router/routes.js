@@ -42,6 +42,7 @@ const routes = [
       },
       { path: 'project-details', component: () => import('pages/ProjectUnitDetails.vue') },
       { path: 'technical-data/:assetId?', component: () => import('pages/TechnicalDataSheet.vue') },
+      { path: 'qr-scanner', component: () => import('pages/QRScanner.vue') },
       { path: 'service-calendar', component: () => import('pages/ServiceCalendar.vue') },
       { path: 'service-entry/:assetId?', component: () => import('pages/ServiceForm.vue') },
       { path: 'job-cards', component: () => import('pages/JobCardHistory.vue') },

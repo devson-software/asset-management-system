@@ -35,7 +35,7 @@
           >
             <div class="column items-end q-mr-md gt-xs">
               <div class="text-weight-bold text-subtitle2 line-height-1">
-                {{ store.currentUser.fullName || store.currentUser.username }}
+                {{ store.currentUser.name || store.currentUser.username }}
               </div>
               <div class="text-caption text-grey-6 line-height-1 text-capitalize">
                 {{ store.currentUser.role }}
@@ -61,10 +61,10 @@
                   </q-item-section>
                   <q-item-section>
                     <q-item-label class="text-weight-bold">{{
-                      store.currentUser.fullName || store.currentUser.username
+                      store.currentUser.name || store.currentUser.username
                     }}</q-item-label>
                     <q-item-label caption>{{
-                      store.currentUser.email || 'user@example.com'
+                      store.currentUser.email || 'user@jeramhvac.co.za'
                     }}</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -105,7 +105,7 @@
 
 <script>
 import { defineComponent, ref, computed } from 'vue'
-import { store } from '../store'
+import { useMainStore } from '../stores/main'
 import NavigationDrawer from '../components/EssentialLink.vue'
 
 export default defineComponent({
@@ -114,8 +114,9 @@ export default defineComponent({
     NavigationDrawer,
   },
   setup() {
+    const store = useMainStore()
     const leftDrawerOpen = ref(false)
-    const isAdmin = computed(() => store.currentUser?.role === 'administrator')
+    const isAdmin = computed(() => store.isAdmin)
 
     return {
       store,

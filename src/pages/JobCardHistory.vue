@@ -9,13 +9,34 @@
           </div>
         </div>
         <div class="q-gutter-sm">
-          <q-btn
+          <q-btn-dropdown
             color="secondary"
             icon="fas fa-plus"
             label="Create Job Card"
-            to="/job-cards/add"
             class="shadow-2"
-          />
+          >
+            <q-list>
+              <q-item clickable v-close-popup to="/qr-scanner">
+                <q-item-section avatar>
+                  <q-icon name="fas fa-qrcode" color="primary" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold">Scan QR Code</q-item-label>
+                  <q-item-label caption>Quick identification</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item clickable v-close-popup to="/job-cards/add">
+                <q-item-section avatar>
+                  <q-icon name="fas fa-keyboard" color="grey-7" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold">Add Manually</q-item-label>
+                  <q-item-label caption>Search for unit manually</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
           <q-btn
             color="green-7"
             icon="fas fa-file-excel"

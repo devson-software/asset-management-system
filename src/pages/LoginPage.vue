@@ -70,22 +70,20 @@
 import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { store } from '../store'
+import { useMainStore } from '../stores/main'
 
 export default defineComponent({
   name: 'LoginPage',
   setup () {
     const router = useRouter()
     const $q = useQuasar()
+    const mainStore = useMainStore()
     const username = ref('')
     const password = ref('')
 
     const images = [
       'https://images.unsplash.com/photo-1621905251918-48416bd8575a?q=80&w=1920',
-      // 'https://images.unsplash.com/photo-1581094288338-2314dddb7bc3?q=80&w=1920',
       'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=1920',
-      // 'https://images.unsplash.com/photo-1631548675611-d072f886164e?q=80&w=1920',
-      // 'https://images.unsplash.com/photo-1599806112334-d007ec532958?q=80&w=1920'
     ]
 
     const currentBgIndex = ref(0)
@@ -96,7 +94,7 @@ export default defineComponent({
       interval = setInterval(() => {
         currentBgIndex.value = (currentBgIndex.value + 1) % images.length
         currentBg.value = images[currentBgIndex.value]
-      }, 5000) // Rotate every 5 seconds
+      }, 5000)
     })
 
     onUnmounted(() => {
@@ -104,38 +102,24 @@ export default defineComponent({
     })
 
     const onLogin = () => {
-      // Hard-coded login check
+      let foundUser = null
+
       if (username.value === 'admin' && password.value === 'HVAC@Admin2026!') {
-        store.currentUser = store.users.find(u => u.username === 'admin')
-        $q.notify({
-          color: 'positive',
-          message: 'Login successful (Admin)',
-          icon: 'fas fa-user-shield'
-        })
-        router.push('/dashboard')
+        foundUser = mainStore.users.find(u => u.username === 'admin')
       } else if (username.value === 'tech1' && password.value === 'HVAC@Tech2026!') {
-        store.currentUser = store.users.find(u => u.username === 'tech1')
-        $q.notify({
-          color: 'positive',
-          message: 'Login successful (Technician)',
-          icon: 'fas fa-screwdriver-wrench'
-        })
-        router.push('/dashboard')
+        foundUser = mainStore.users.find(u => u.username === 'tech1')
       } else if (username.value === 'tech2' && password.value === 'HVAC@Tech2026!') {
-        store.currentUser = store.users.find(u => u.username === 'tech2')
-        $q.notify({
-          color: 'positive',
-          message: 'Login successful (Technician)',
-          icon: 'fas fa-screwdriver-wrench'
-        })
-        router.push('/dashboard')
+        foundUser = mainStore.users.find(u => u.username === 'tech2')
       } else if (username.value === 'tech' && password.value === 'tech') {
-        // Legacy simple login for testing
-        store.currentUser = store.users.find(u => u.username === 'tech1')
+        foundUser = mainStore.users.find(u => u.username === 'tech1')
+      }
+
+      if (foundUser) {
+        mainStore.currentUser = foundUser
         $q.notify({
           color: 'positive',
-          message: 'Login successful',
-          icon: 'fas fa-lock-open'
+          message: `Login successful (${foundUser.role})`,
+          icon: foundUser.role === 'administrator' ? 'fas fa-user-shield' : 'fas fa-screwdriver-wrench'
         })
         router.push('/dashboard')
       } else {
