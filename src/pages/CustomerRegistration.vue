@@ -35,9 +35,10 @@
             flat
             :filter="filter"
             class="customers-table"
+            @row-click="goToProjects"
           >
             <template v-slot:header="props">
-              <q-tr :props="props">
+              <q-tr :props="props" class="cursor-pointer">
                 <q-th
                   v-for="col in props.cols"
                   :key="col.name"
@@ -230,12 +231,14 @@
 import { defineComponent, ref, reactive, computed } from 'vue'
 import { store } from '../store'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 import * as XLSX from 'xlsx'
 
 export default defineComponent({
   name: 'CustomerRegistration',
   setup() {
     const $q = useQuasar()
+    const router = useRouter()
     const filter = ref('')
     const columnFilters = reactive({
       name: '',
@@ -307,12 +310,18 @@ export default defineComponent({
       XLSX.writeFile(workbook, `customer_directory_${new Date().toISOString().split('T')[0]}.xlsx`)
     }
 
+    const goToProjects = (evt, row) => {
+      if (!row?.id) return
+      router.push({ path: '/projects', query: { customerId: row.id } })
+    }
+
     return {
       store,
       filter,
       columnFilters,
       columns,
       filteredRows,
+      goToProjects,
       exportToExcel,
     }
   },

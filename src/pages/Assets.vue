@@ -231,6 +231,12 @@
               </q-td>
             </template>
 
+            <template v-slot:body-cell-installationDate="props">
+              <q-td :props="props">
+                <div class="text-caption text-grey-7">{{ props.value || 'N/A' }}</div>
+              </q-td>
+            </template>
+
             <template v-slot:body-cell-status="props">
               <q-td :props="props">
                 <q-badge
@@ -331,6 +337,7 @@ export default defineComponent({
       unitRef: '',
       manufacturer: '',
       unitType: '',
+      installationDate: '',
       indoorModel: '',
       outdoorModel: '',
       vendorArea: '',
@@ -346,6 +353,13 @@ export default defineComponent({
         label: 'Manufacturer',
         align: 'left',
         field: 'manufacturer',
+        sortable: true,
+      },
+      {
+        name: 'installationDate',
+        label: 'Installation Date',
+        align: 'left',
+        field: 'installationDate',
         sortable: true,
       },
       { name: 'unitType', label: 'Type of Unit', align: 'left', field: 'unitType', sortable: true },
@@ -481,6 +495,7 @@ export default defineComponent({
         { label: 'Project', field: 'projectName' },
         { label: 'Unit Ref #', field: 'unitRef' },
         { label: 'Manufacturer', field: 'manufacturer' },
+        { label: 'Installation Date', field: 'installationDate' },
         { label: 'Type of Unit', field: 'unitType' },
         { label: 'Indoor Model', field: 'indoorModel' },
         { label: 'Indoor Serial', field: 'serialNumber' },

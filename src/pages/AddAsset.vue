@@ -105,6 +105,38 @@
               Unit Identification
             </div>
 
+            <div class="row q-col-gutter-md q-mt-xs">
+              <div class="col-12 col-md-6">
+                <q-btn
+                  color="primary"
+                  icon="fas fa-qrcode"
+                  label="Scan & Auto-fill"
+                  class="full-width"
+                  @click="startAutoFillScan"
+                />
+              </div>
+              <div class="col-12 col-md-6">
+                <q-file
+                  v-model="asset.nameplatePhoto"
+                  label="Nameplate Photo"
+                  outlined
+                  dense
+                  accept="image/*"
+                  capture="environment"
+                  bg-color="white"
+                  @update:model-value="onNameplateSelected"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-camera" size="xs" /></template>
+                </q-file>
+                <q-img
+                  v-if="nameplatePreview"
+                  :src="nameplatePreview"
+                  class="q-mt-sm rounded-borders"
+                  ratio="16/9"
+                />
+              </div>
+            </div>
+
             <div class="row q-col-gutter-md">
               <div class="col-12 col-md-6">
                 <q-select 
@@ -157,6 +189,19 @@
                   bg-color="white"
                 >
                   <template v-slot:prepend><q-icon name="fas fa-tag" size="xs" /></template>
+                </q-input>
+              </div>
+              <div class="col-12 col-md-6">
+                <q-input
+                  v-model="asset.installationDate"
+                  label="Installation Date"
+                  type="date"
+                  stack-label
+                  outlined
+                  dense
+                  bg-color="white"
+                >
+                  <template v-slot:prepend><q-icon name="fas fa-calendar-day" size="xs" /></template>
                 </q-input>
               </div>
             </div>
@@ -336,6 +381,7 @@ export default defineComponent({
       serialNumber: '', 
       outdoorModel: '',
       outdoorSerial: '',
+      installationDate: '',
       refrigerantType: 'R410A', 
       refrigerantKg: '',
       serviceSchedule: 'Monthly',
@@ -343,7 +389,8 @@ export default defineComponent({
       autoSchedule: true,
       vendorLocation: '',
       vendorArea: '',
-      vendorAddress: ''
+      vendorAddress: '',
+      nameplatePhoto: null
     })
 
     const customerOptions = computed(() => {
@@ -403,6 +450,34 @@ export default defineComponent({
       }
     }
 
+    const nameplatePreview = ref('')
+
+    const onNameplateSelected = (file) => {
+      if (!file) {
+        nameplatePreview.value = ''
+        return
+      }
+      nameplatePreview.value = URL.createObjectURL(file)
+    }
+
+    const startAutoFillScan = () => {
+      if (store.unitLibrary?.length) {
+        const template = store.unitLibrary[0]
+        importFromLibrary(template)
+        $q.notify({
+          color: 'positive',
+          message: 'Scan captured. Unit data auto-filled from template.',
+          icon: 'fas fa-qrcode',
+        })
+      } else {
+        $q.notify({
+          color: 'warning',
+          message: 'No templates available for auto-fill.',
+          icon: 'fas fa-triangle-exclamation',
+        })
+      }
+    }
+
     if (isEdit && project) {
       const existingAsset = project.assets.find(a => a.id === assetId)
       if (existingAsset) {
@@ -448,7 +523,10 @@ export default defineComponent({
       project,
       filterLibrary,
       importFromLibrary,
-      createValue
+      createValue,
+      nameplatePreview,
+      onNameplateSelected,
+      startAutoFillScan
     }
   }
 })

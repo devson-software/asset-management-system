@@ -104,9 +104,9 @@
                   <div
                     class="q-pa-sm bg-blue-1 rounded-borders border-primary flex items-center full-height"
                   >
-                    <q-icon name="fas fa-paper-plane" color="primary" class="q-mr-sm" />
+                    <q-icon name="fas fa-key" color="primary" class="q-mr-sm" />
                     <div class="text-caption text-grey-9">
-                      An invitation email will be sent to the user to set their password.
+                      Set the user's password during registration.
                     </div>
                   </div>
                 </div>
@@ -122,6 +122,30 @@
                     bg-color="white"
                   >
                     <template v-slot:prepend><q-icon name="fas fa-envelope" size="xs" /></template>
+                  </q-input>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <q-input
+                    v-model="userForm.password"
+                    :type="showPassword ? 'text' : 'password'"
+                    label="Password"
+                    outlined
+                    dense
+                    :required="!isEdit"
+                    bg-color="white"
+                    hint="Minimum 6 characters"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="fas fa-lock" size="xs" />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        :name="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+                        class="cursor-pointer"
+                        @click="showPassword = !showPassword"
+                      />
+                    </template>
                   </q-input>
                 </div>
 

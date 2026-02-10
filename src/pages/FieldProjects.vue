@@ -1,0 +1,251 @@
+<template>
+  <q-page padding class="bg-grey-1">
+    <div class="row q-col-gutter-lg">
+      <div class="col-12 flex justify-between items-center">
+        <div class="row items-center no-wrap">
+          <q-btn flat round icon="fas fa-arrow-left" @click="$router.push('/field/customers')" />
+          <div class="q-ml-sm">
+            <div class="text-h5 text-weight-bold text-primary">Select Project</div>
+            <div class="text-subtitle2 text-grey-7">Choose a site to view schedule</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <q-banner v-if="!customer" rounded class="bg-orange-1 text-orange-9 q-mb-md">
+          <template v-slot:avatar><q-icon name="fas fa-circle-exclamation" /></template>
+          Please select a customer first.
+        </q-banner>
+
+        <q-card v-if="customer" flat bordered class="rounded-borders bg-white q-mb-md">
+          <q-card-section>
+            <div class="text-subtitle1 text-weight-bold">{{ customer.name }}</div>
+            <div class="text-caption text-grey-7">{{ customer.address || 'No address on file' }}</div>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <div class="col-12">
+        <q-card flat bordered class="rounded-borders">
+          <q-table
+            :rows="filteredRows"
+            :columns="columns"
+            row-key="id"
+            flat
+            :filter="filter"
+            :pagination="{ rowsPerPage: 10 }"
+            class="projects-table"
+            @row-click="goToSchedule"
+          >
+            <template v-slot:header="props">
+              <q-tr :props="props" class="cursor-pointer">
+                <q-th
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                  :class="'text-' + col.align"
+                >
+                  <div
+                    class="row items-center no-wrap"
+                    :class="
+                      col.align === 'center'
+                        ? 'justify-center'
+                        : col.align === 'right'
+                          ? 'justify-end'
+                          : ''
+                    "
+                  >
+                    <q-icon
+                      v-if="col.sortable"
+                      :name="
+                        props.pagination && props.pagination.sortBy === col.name
+                          ? props.pagination.descending
+                            ? 'fas fa-arrow-down-long'
+                            : 'fas fa-arrow-up-long'
+                          : 'fas fa-arrow-up-long'
+                      "
+                      size="12px"
+                      class="q-mr-xs cursor-pointer sort-icon"
+                      :class="{ active: props.pagination && props.pagination.sortBy === col.name }"
+                      @click="props.sort(col)"
+                    />
+                    <span class="cursor-pointer" @click="col.sortable && props.sort(col)">{{
+                      col.label
+                    }}</span>
+                    <q-btn
+                      v-if="col.name !== 'actions'"
+                      flat
+                      round
+                      dense
+                      size="xs"
+                      icon="fas fa-filter"
+                      class="q-ml-xs filter-btn"
+                      :class="{ active: columnFilters[col.name] }"
+                      :color="columnFilters[col.name] ? 'primary' : 'grey-5'"
+                    >
+                      <q-menu cover anchor="top middle">
+                        <q-list style="min-width: 200px">
+                          <q-item>
+                            <q-input
+                              v-model="columnFilters[col.name]"
+                              :label="'Filter ' + col.label"
+                              outlined
+                              dense
+                              autofocus
+                              clearable
+                            >
+                              <template v-slot:append>
+                                <q-icon name="fas fa-magnifying-glass" size="xs" />
+                              </template>
+                            </q-input>
+                          </q-item>
+                        </q-list>
+                      </q-menu>
+                    </q-btn>
+                  </div>
+                </q-th>
+              </q-tr>
+            </template>
+
+            <template v-slot:top-right>
+              <q-input
+                borderless
+                dense
+                debounce="300"
+                v-model="filter"
+                placeholder="Search Projects..."
+              >
+                <template v-slot:append>
+                  <q-icon name="fas fa-magnifying-glass" size="xs" />
+                </template>
+              </q-input>
+            </template>
+
+            <template v-slot:body-cell-name="props">
+              <q-td :props="props">
+                <div class="row items-center no-wrap">
+                  <q-avatar size="32px" class="q-mr-md shadow-1">
+                    <q-icon name="fas fa-location-dot" color="primary" />
+                  </q-avatar>
+                  <div>
+                    <div class="text-weight-bold">{{ props.row.name }}</div>
+                    <div class="text-caption text-grey-7">{{ props.row.vendorLocation || 'N/A' }}</div>
+                  </div>
+                </div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-siteAddress="props">
+              <q-td :props="props">
+                <div class="text-caption text-grey-7">{{ props.value || 'No site address' }}</div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-assetsCount="props">
+              <q-td :props="props" class="text-center">
+                <q-chip dense color="blue-1" text-color="primary" class="text-weight-bold">
+                  {{ props.value }}
+                </q-chip>
+              </q-td>
+            </template>
+
+          </q-table>
+        </q-card>
+      </div>
+    </div>
+  </q-page>
+</template>
+
+<script>
+import { defineComponent, computed, ref, reactive } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useMainStore } from '../stores/main'
+
+export default defineComponent({
+  name: 'FieldProjects',
+  setup() {
+    const route = useRoute()
+    const router = useRouter()
+    const store = useMainStore()
+    const customerId = computed(() => route.query.customerId || '')
+    const filter = ref('')
+    const columnFilters = reactive({
+      name: '',
+      siteAddress: '',
+      assetsCount: '',
+    })
+
+    const customer = computed(() => {
+      return store.customers.find((c) => c.id === customerId.value) || null
+    })
+
+    const projects = computed(() => {
+      return customer.value?.projects || []
+    })
+
+    const columns = [
+      { name: 'name', label: 'Project', align: 'left', field: 'name', sortable: true },
+      {
+        name: 'siteAddress',
+        label: 'Site Address',
+        align: 'left',
+        field: 'siteAddress',
+        sortable: true,
+      },
+      {
+        name: 'assetsCount',
+        label: 'Assets',
+        align: 'center',
+        field: 'assetsCount',
+        sortable: true,
+      },
+    ]
+
+    const rows = computed(() => {
+      return projects.value.map((p) => ({
+        id: p.id,
+        name: p.name,
+        siteAddress: p.siteAddress || '',
+        vendorLocation: p.vendorLocation || '',
+        assetsCount: p.assets?.length || 0,
+      }))
+    })
+
+    const filteredRows = computed(() => {
+      return rows.value.filter((row) => {
+        return Object.keys(columnFilters).every((key) => {
+          if (!columnFilters[key]) return true
+          const val = row[key] || ''
+          return String(val).toLowerCase().includes(columnFilters[key].toLowerCase())
+        })
+      })
+    })
+
+    const goToSchedule = (evt, row) => {
+      if (!row?.id) return
+      router.push({
+        path: '/field/service-schedule',
+        query: { customerId: customerId.value, projectId: row.id },
+      })
+    }
+
+    return {
+      customer,
+      filter,
+      columnFilters,
+      columns,
+      filteredRows,
+      goToSchedule,
+    }
+  },
+})
+</script>
+
+<style scoped>
+.rounded-borders {
+  border-radius: 12px;
+}
+.projects-table {
+  background: transparent;
+}
+</style>

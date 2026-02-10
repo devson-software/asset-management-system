@@ -529,6 +529,7 @@
 
 <script>
 import { defineComponent, ref, computed, reactive, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { store } from '../store'
 
@@ -536,6 +537,7 @@ export default defineComponent({
   name: 'ServiceCalendar',
   setup() {
     const $q = useQuasar()
+    const route = useRoute()
     const selectedDate = ref(new Date().toISOString().substr(0, 10).replace(/-/g, '/'))
     const showDialog = ref(false)
     const isEditing = ref(false)
@@ -683,6 +685,31 @@ export default defineComponent({
     watch(customerFilter, () => {
       projectFilter.value = null
     })
+
+    const applyRouteFilters = () => {
+      const queryCustomerId = route.query.customerId ? String(route.query.customerId) : null
+      const queryProjectId = route.query.projectId ? String(route.query.projectId) : null
+
+      if (queryProjectId && !queryCustomerId) {
+        store.customers.forEach((c) => {
+          if (c.projects.some((p) => p.id === queryProjectId)) {
+            customerFilter.value = c.id
+          }
+        })
+      } else if (queryCustomerId) {
+        customerFilter.value = queryCustomerId
+      }
+
+      if (queryProjectId) {
+        projectFilter.value = queryProjectId
+      }
+    }
+
+    watch(
+      () => route.query,
+      () => applyRouteFilters(),
+      { immediate: true },
+    )
 
     const clearFilters = () => {
       customerFilter.value = null

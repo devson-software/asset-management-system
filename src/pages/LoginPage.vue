@@ -121,7 +121,7 @@ export default defineComponent({
           message: `Login successful (${foundUser.role})`,
           icon: foundUser.role === 'administrator' ? 'fas fa-user-shield' : 'fas fa-screwdriver-wrench'
         })
-        router.push('/dashboard')
+        router.push(foundUser.role === 'technician' ? '/field/customers' : '/dashboard')
       } else {
         $q.notify({
           color: 'negative',

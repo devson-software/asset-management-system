@@ -84,6 +84,12 @@
                 >
               </q-item-section>
             </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Installation Date</q-item-label>
+                <q-item-label class="text-weight-bold">{{ asset.installationDate || 'N/A' }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item v-if="asset.serviceTime">
               <q-item-section>
                 <q-item-label caption>Service Schedule / Duration</q-item-label>
