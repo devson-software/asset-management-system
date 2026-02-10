@@ -38,369 +38,520 @@
 
         <q-card-section class="q-pa-lg">
           <q-form @submit="onSubmit" class="q-gutter-y-lg">
-            <!-- Service Header Info -->
-            <div class="section-container bg-white">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="fas fa-info-circle" class="q-mr-sm" /> Schedule Information
-              </div>
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-4">
-                  <q-input
-                    v-model="service.lastServiceDate"
-                    label="Date of Last Service"
-                    outlined
-                    dense
-                    readonly
-                    bg-color="grey-1"
-                  />
-                </div>
-                <div class="col-12 col-md-4">
-                  <q-select
-                    v-model="service.frequency"
-                    :options="frequencyOptions"
-                    label="Service Frequency"
-                    outlined
-                    dense
-                    @update:model-value="calculateNextService"
-                  />
-                </div>
-                <div class="col-12 col-md-4">
-                  <q-select
-                    v-model="service.checklistType"
-                    :options="[
-                      'Standard HVAC',
-                      'Cooling Tower',
-                      'Chiller',
-                      'Fan / FCU',
-                      'Electrical Panel',
-                    ]"
-                    label="Checklist Template"
-                    outlined
-                    dense
-                  />
-                </div>
-                <div class="col-12 col-md-4">
-                  <q-input
-                    v-model="service.nextScheduleDate"
-                    label="Planned Next Service"
-                    outlined
-                    dense
-                    readonly
-                    bg-color="blue-1"
-                  />
-                </div>
-                <div class="col-12 col-md-6">
-                  <q-input
-                    v-model="service.currentServiceDate"
-                    label="Today's Service Date"
-                    outlined
-                    dense
-                    type="date"
-                    stack-label
-                  />
-                </div>
-                <div class="col-12 col-md-6">
-                  <q-input
-                    v-model="service.timeArrived"
-                    label="Site Arrival Time"
-                    outlined
-                    dense
-                    readonly
-                    bg-color="grey-1"
-                  >
-                    <template v-slot:prepend><q-icon name="fas fa-sign-in-alt" /></template>
-                  </q-input>
-                </div>
-              </div>
-            </div>
-
-            <!-- Checklist -->
-            <div class="section-container">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="fas fa-check-square" class="q-mr-sm" /> Maintenance Checklist ({{
-                  service.frequency
-                }})
-              </div>
-              <div class="checklist-container overflow-hidden rounded-borders border-grey">
-                <q-list separator>
-                  <q-item
-                    v-for="(task, index) in checklist"
-                    :key="index"
-                    tag="label"
-                    v-ripple
-                    class="q-py-md"
-                  >
-                    <q-item-section side top>
-                      <q-checkbox
-                        v-model="task.status"
-                        true-value="completed"
-                        false-value="not_completed"
-                        color="positive"
-                        size="lg"
+            <q-stepper v-model="currentStep" vertical animated>
+              <q-step :name="1" title="Start Scan" icon="fas fa-qrcode" :done="!!service.timeArrived">
+                <div class="section-container bg-white">
+                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
+                    <q-icon name="fas fa-qrcode" class="q-mr-sm" /> Start Scan
+                  </div>
+                  <div class="row items-center justify-between">
+                    <div>
+                      <q-btn
+                        :color="service.timeArrived ? 'positive' : 'primary'"
+                        :label="service.timeArrived ? 'Start QR Scanned' : 'Scan Start QR'"
+                        icon="fas fa-qrcode"
+                        @click="openScanner('start')"
+                        class="q-px-lg"
+                        :disable="!!service.timeArrived"
                       />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label class="text-weight-bold text-grey-9">{{
-                        task.label
-                      }}</q-item-label>
-                      <q-item-label caption class="text-grey-7">{{ task.desc }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section side class="gt-xs">
-                      <q-badge :color="task.status === 'completed' ? 'positive' : 'grey-4'" rounded>
-                        {{ task.status === 'completed' ? 'Done' : 'Pending' }}
-                      </q-badge>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </div>
-            </div>
+                      <div
+                        v-if="service.timeArrived"
+                        class="text-caption text-positive text-weight-bold q-mt-xs"
+                      >
+                        Time Recorded: {{ service.timeArrived }}
+                      </div>
+                    </div>
+                    <q-btn
+                      flat
+                      color="primary"
+                      label="Continue"
+                      @click="goToStep(2)"
+                      :disable="!service.timeArrived"
+                    />
+                  </div>
+                  <div class="row q-mt-md">
+                    <q-btn
+                      outline
+                      color="primary"
+                      icon="fas fa-bolt"
+                      label="Simulate Start Scan"
+                      @click="simulateScan('start')"
+                      :disable="!!service.timeArrived"
+                    />
+                  </div>
+                </div>
+              </q-step>
 
-            <!-- Technical Measurements -->
-            <div class="section-container bg-white">
-              <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                <q-icon name="fas fa-thermometer-half" class="q-mr-sm" /> Performance Verification
-                (ASHRAE 180)
-              </div>
+              <q-step :name="2" title="Unit J/C" icon="fas fa-file-invoice" :done="service.unitJobCardDone">
+                <div class="section-container bg-white">
+                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
+                    <q-icon name="fas fa-file-invoice" class="q-mr-sm" /> Unit Job Card
+                  </div>
+                  <div class="row items-center justify-between">
+                    <q-toggle
+                      v-model="service.unitJobCardDone"
+                      label="Unit job card checked"
+                      color="primary"
+                      class="text-weight-bold"
+                    />
+                    <q-btn
+                      flat
+                      color="primary"
+                      label="Continue"
+                      @click="goToStep(3)"
+                      :disable="!service.unitJobCardDone"
+                    />
+                  </div>
+                </div>
+              </q-step>
 
-              <!-- Dynamic Fields Based on Equipment Type -->
-              <div class="row q-col-gutter-md">
-                <!-- Standard / VRF / FCU -->
-                <template
-                  v-if="
-                    service.checklistType === 'Standard HVAC' ||
-                    service.checklistType === 'Fan / FCU'
-                  "
-                >
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.onCoilTemp"
-                      label="Return Air Temp (°C)"
-                      outlined
-                      dense
-                    />
+              <q-step :name="3" title="Input Info" icon="fas fa-pen-to-square">
+                <div class="section-container bg-white">
+                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
+                    <q-icon name="fas fa-info-circle" class="q-mr-sm" /> Schedule Information
                   </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.offCoilTemp"
-                      label="Supply Air Temp (°C)"
-                      outlined
-                      dense
-                    />
+                  <div class="row q-col-gutter-md">
+                    <div class="col-12 col-md-4">
+                      <q-input
+                        v-model="service.lastServiceDate"
+                        label="Date of Last Service"
+                        outlined
+                        dense
+                        readonly
+                        bg-color="grey-1"
+                      />
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <q-select
+                        v-model="service.frequency"
+                        :options="frequencyOptions"
+                        label="Service Frequency"
+                        outlined
+                        dense
+                        @update:model-value="calculateNextService"
+                      />
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <q-select
+                        v-model="service.checklistType"
+                        :options="[
+                          'Standard HVAC',
+                          'Cooling Tower',
+                          'Chiller',
+                          'Fan / FCU',
+                          'Electrical Panel',
+                        ]"
+                        label="Checklist Template"
+                        outlined
+                        dense
+                      />
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <q-input
+                        v-model="service.nextScheduleDate"
+                        label="Planned Next Service"
+                        outlined
+                        dense
+                        readonly
+                        bg-color="blue-1"
+                      />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <q-input
+                        v-model="service.currentServiceDate"
+                        label="Today's Service Date"
+                        outlined
+                        dense
+                        type="date"
+                        stack-label
+                      />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <q-input
+                        v-model="service.timeArrived"
+                        label="Site Arrival Time"
+                        outlined
+                        dense
+                        readonly
+                        bg-color="grey-1"
+                      >
+                        <template v-slot:prepend><q-icon name="fas fa-sign-in-alt" /></template>
+                      </q-input>
+                    </div>
                   </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.suctionPressure"
-                      label="Suction Pressure (kPa)"
-                      outlined
-                      dense
-                    />
-                  </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.dischargePressure"
-                      label="Discharge Pressure (kPa)"
-                      outlined
-                      dense
-                    />
-                  </div>
-                </template>
+                </div>
 
-                <!-- Cooling Tower -->
-                <template v-if="service.checklistType === 'Cooling Tower'">
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.hotWaterIn"
-                      label="Hot Water Inlet Temp (°C)"
-                      outlined
-                      dense
-                    />
+                <div class="section-container">
+                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
+                    <q-icon name="fas fa-check-square" class="q-mr-sm" /> Maintenance Checklist ({{
+                      service.frequency
+                    }})
                   </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.coldWaterOut"
-                      label="Cold Water Outlet Temp (°C)"
-                      outlined
-                      dense
-                    />
+                  <div class="checklist-container overflow-hidden rounded-borders border-grey">
+                    <q-list separator>
+                      <q-item
+                        v-for="(task, index) in checklist"
+                        :key="index"
+                        tag="label"
+                        v-ripple
+                        class="q-py-md"
+                      >
+                        <q-item-section side top>
+                          <q-checkbox
+                            v-model="task.status"
+                            true-value="completed"
+                            false-value="not_completed"
+                            color="positive"
+                            size="lg"
+                          />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label class="text-weight-bold text-grey-9">{{
+                            task.label
+                          }}</q-item-label>
+                          <q-item-label caption class="text-grey-7">{{ task.desc }}</q-item-label>
+                        </q-item-section>
+                        <q-item-section side class="gt-xs">
+                          <q-badge :color="task.status === 'completed' ? 'positive' : 'grey-4'" rounded>
+                            {{ task.status === 'completed' ? 'Done' : 'Pending' }}
+                          </q-badge>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
                   </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.fanCurrent"
-                      label="Fan Motor Current (A)"
-                      outlined
-                      dense
-                    />
-                  </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.waterLevel"
-                      label="Water Level Stability"
-                      outlined
-                      dense
-                    />
-                  </div>
-                </template>
+                </div>
 
-                <!-- Chiller -->
-                <template v-if="service.checklistType === 'Chiller'">
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.chilledWaterIn"
-                      label="Chilled Water Return Temp (°C)"
-                      outlined
-                      dense
-                    />
+                <div class="section-container bg-white">
+                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
+                    <q-icon name="fas fa-thermometer-half" class="q-mr-sm" /> Performance Verification
+                    (ASHRAE 180)
                   </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.chilledWaterOut"
-                      label="Chilled Water Supply Temp (°C)"
-                      outlined
-                      dense
-                    />
-                  </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.compCurrent"
-                      label="Compressor Current (A)"
-                      outlined
-                      dense
-                    />
-                  </div>
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="service.approachTemp"
-                      label="Condenser Approach (°C)"
-                      outlined
-                      dense
-                    />
-                  </div>
-                </template>
-              </div>
-            </div>
 
-            <!-- Faults and Comments -->
-            <div class="section-container">
-              <div class="text-subtitle1 text-primary q-mb-sm">Status & Repairs</div>
-              <q-input
-                v-model="service.generalComments"
-                label="Technician's general comments"
-                type="textarea"
-                outlined
-                dense
-                placeholder="Describe the overall condition of the unit..."
-              />
+                  <div class="row q-col-gutter-md">
+                    <template
+                      v-if="
+                        service.checklistType === 'Standard HVAC' ||
+                        service.checklistType === 'Fan / FCU'
+                      "
+                    >
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.onCoilTemp"
+                          label="Return Air Temp (°C)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.offCoilTemp"
+                          label="Supply Air Temp (°C)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.suctionPressure"
+                          label="Suction Pressure (kPa)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.dischargePressure"
+                          label="Discharge Pressure (kPa)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                    </template>
 
-              <div class="row items-center q-mt-md">
-                <q-toggle
-                  v-model="service.faultFound"
-                  label="Any Faults Discovered?"
-                  color="negative"
-                />
-              </div>
+                    <template v-if="service.checklistType === 'Cooling Tower'">
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.hotWaterIn"
+                          label="Hot Water Inlet Temp (°C)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.coldWaterOut"
+                          label="Cold Water Outlet Temp (°C)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.fanCurrent"
+                          label="Fan Motor Current (A)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.waterLevel"
+                          label="Water Level Stability"
+                          outlined
+                          dense
+                        />
+                      </div>
+                    </template>
 
-              <transition appear enter-active-class="animated slideInDown">
-                <div
-                  v-if="service.faultFound"
-                  class="q-mt-md q-gutter-y-sm bg-red-1 q-pa-md rounded-borders"
-                >
+                    <template v-if="service.checklistType === 'Chiller'">
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.chilledWaterIn"
+                          label="Chilled Water Return Temp (°C)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.chilledWaterOut"
+                          label="Chilled Water Supply Temp (°C)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.compCurrent"
+                          label="Compressor Current (A)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <q-input
+                          v-model="service.approachTemp"
+                          label="Condenser Approach (°C)"
+                          outlined
+                          dense
+                        />
+                      </div>
+                    </template>
+                  </div>
+                </div>
+
+                <div class="section-container">
+                  <div class="text-subtitle1 text-primary q-mb-sm">Status & Repairs</div>
                   <q-input
-                    v-model="service.faultDetails"
-                    label="Specify the fault details"
+                    v-model="service.generalComments"
+                    label="Technician's general comments"
                     type="textarea"
                     outlined
                     dense
-                    bg-color="white"
+                    placeholder="Describe the overall condition of the unit..."
                   />
-                  <q-file
-                    v-model="service.faultPictures"
-                    label="Capture / Upload Evidence"
-                    outlined
-                    dense
-                    multiple
-                    accept="image/*"
-                    use-chips
-                    bg-color="white"
-                  >
-                    <template v-slot:prepend><q-icon name="fas fa-camera" /></template>
-                  </q-file>
-                </div>
-              </transition>
-            </div>
 
-            <!-- Service Completion -->
-            <div class="section-container bg-blue-1">
-              <div class="text-subtitle1 text-blue-9 q-mb-md row items-center">
-                <q-icon name="fas fa-qrcode" class="q-mr-sm" /> Service Validation
-              </div>
-              <div class="row items-center justify-between">
-                <div>
-                  <q-btn
-                    :color="service.timeEnded ? 'positive' : 'primary'"
-                    :label="service.timeEnded ? 'Exit QR Scanned' : 'Scan Exit QR'"
-                    icon="fas fa-qrcode"
-                    @click="showScanner = true"
-                    class="q-px-lg"
-                    :disable="!!service.timeEnded"
-                  />
-                  <div
-                    v-if="service.timeEnded"
-                    class="text-caption text-positive text-weight-bold q-mt-xs"
-                  >
-                    Time Recorded: {{ service.timeEnded }}
+                  <div class="row items-center q-mt-md">
+                    <q-toggle
+                      v-model="service.faultFound"
+                      label="Any Faults Discovered?"
+                      color="negative"
+                    />
                   </div>
+
+                  <transition appear enter-active-class="animated slideInDown">
+                    <div
+                      v-if="service.faultFound"
+                      class="q-mt-md q-gutter-y-sm bg-red-1 q-pa-md rounded-borders"
+                    >
+                      <q-input
+                        v-model="service.faultDetails"
+                        label="Specify the fault details"
+                        type="textarea"
+                        outlined
+                        dense
+                        bg-color="white"
+                      />
+                      <q-file
+                        v-model="service.faultPictures"
+                        label="Capture / Upload Evidence"
+                        outlined
+                        dense
+                        multiple
+                        accept="image/*"
+                        use-chips
+                        bg-color="white"
+                      >
+                        <template v-slot:prepend><q-icon name="fas fa-camera" /></template>
+                      </q-file>
+                    </div>
+                  </transition>
                 </div>
 
-                <div class="column items-center">
-                  <div class="text-caption text-grey-8 q-mb-xs">Client Digital Sign-off</div>
-                  <div class="signature-box flex flex-center">
-                    <q-checkbox
-                      v-model="service.signed"
-                      label="Verify Signature"
-                      color="positive"
-                      size="lg"
+                <div class="row justify-end">
+                  <q-btn flat color="primary" label="Continue" @click="goToStep(4)" />
+                </div>
+              </q-step>
+
+              <q-step :name="4" title="Closing Scan" icon="fas fa-qrcode" :done="!!service.timeEnded">
+                <div class="section-container bg-blue-1">
+                  <div class="text-subtitle1 text-blue-9 q-mb-md row items-center">
+                    <q-icon name="fas fa-qrcode" class="q-mr-sm" /> Closing Scan
+                  </div>
+                  <div class="row items-center justify-between">
+                    <div>
+                      <q-btn
+                        :color="service.timeEnded ? 'positive' : 'primary'"
+                        :label="service.timeEnded ? 'Exit QR Scanned' : 'Scan Exit QR'"
+                        icon="fas fa-qrcode"
+                        @click="openScanner('end')"
+                        class="q-px-lg"
+                        :disable="!!service.timeEnded"
+                      />
+                      <div
+                        v-if="service.timeEnded"
+                        class="text-caption text-positive text-weight-bold q-mt-xs"
+                      >
+                        Time Recorded: {{ service.timeEnded }}
+                      </div>
+                    </div>
+                    <q-btn
+                      flat
+                      color="primary"
+                      label="Continue"
+                      @click="goToStep(5)"
+                      :disable="!service.timeEnded"
+                    />
+                  </div>
+                  <div class="row q-mt-md">
+                    <q-btn
+                      outline
+                      color="primary"
+                      icon="fas fa-bolt"
+                      label="Simulate Closing Scan"
+                      @click="simulateScan('end')"
+                      :disable="!!service.timeEnded"
                     />
                   </div>
                 </div>
-              </div>
+              </q-step>
 
-              <!-- QR Scanner Dialog -->
-              <q-dialog v-model="showScanner">
-                <q-card style="min-width: 350px">
-                  <q-card-section class="row items-center q-pb-none">
-                    <div class="text-h6">Scan Exit QR Code</div>
-                    <q-space />
-                    <q-btn icon="fas fa-times" flat round dense v-close-popup />
-                  </q-card-section>
+              <q-step :name="5" title="Signature" icon="fas fa-pen-fancy" :done="service.signed">
+                <div class="section-container bg-white">
+                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
+                    <q-icon name="fas fa-pen-fancy" class="q-mr-sm" /> Signature (Client / Tech)
+                  </div>
+                  <div class="row items-center justify-between">
+                    <q-btn-toggle
+                      v-model="service.signedBy"
+                      :options="signatureOptions"
+                      color="primary"
+                      toggle-color="primary"
+                      unelevated
+                      size="sm"
+                    />
+                    <q-checkbox
+                      v-model="service.signed"
+                      label="Signature Captured"
+                      color="positive"
+                      size="lg"
+                    />
+                    <q-btn
+                      flat
+                      color="primary"
+                      label="Continue"
+                      @click="goToStep(6)"
+                      :disable="!service.signed"
+                    />
+                  </div>
+                </div>
+              </q-step>
 
-                  <q-card-section class="q-pa-md">
-                    <div class="scanner-wrapper overflow-hidden rounded-borders border-grey">
-                      <qrcode-stream
-                        v-if="showScanner"
-                        @decode="onDecode"
-                        @error="onError"
-                        @init="onInit"
-                        class="full-width"
-                      />
+              <q-step :name="6" title="Capture Scan Unit Data" icon="fas fa-database" :done="service.captureScanData">
+                <div class="section-container bg-white">
+                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
+                    <q-icon name="fas fa-database" class="q-mr-sm" /> Capture Scan Unit Data
+                  </div>
+                  <div class="row items-center justify-between">
+                    <q-checkbox
+                      v-model="service.captureScanData"
+                      label="Unit data captured"
+                      color="primary"
+                      size="lg"
+                    />
+                    <q-btn
+                      flat
+                      color="primary"
+                      label="Continue"
+                      @click="goToStep(7)"
+                      :disable="!service.captureScanData"
+                    />
+                  </div>
+                </div>
+              </q-step>
+
+              <q-step :name="7" title="Generate QR" icon="fas fa-qrcode" :done="service.qrGenerated">
+                <div class="section-container bg-white">
+                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
+                    <q-icon name="fas fa-qrcode" class="q-mr-sm" /> Generate QR
+                  </div>
+                  <div class="row items-center justify-between">
+                    <q-btn
+                      color="secondary"
+                      icon="fas fa-qrcode"
+                      label="Generate QR"
+                      @click="generateQr"
+                      :disable="service.qrGenerated"
+                    />
+                    <q-btn
+                      type="submit"
+                      color="secondary"
+                      icon="fas fa-cloud-check"
+                      label="Complete & Save"
+                      :disable="!canSubmit"
+                    />
+                  </div>
+                </div>
+              </q-step>
+            </q-stepper>
+
+            <q-dialog v-model="showScanner">
+              <q-card style="min-width: 350px">
+                <q-card-section class="row items-center q-pb-none">
+                  <div class="text-h6">
+                    {{ scannerMode === 'start' ? 'Scan Start QR Code' : 'Scan Exit QR Code' }}
+                  </div>
+                  <q-space />
+                  <q-btn icon="fas fa-times" flat round dense v-close-popup />
+                </q-card-section>
+
+                <q-card-section class="q-pa-md">
+                  <div class="scanner-wrapper overflow-hidden rounded-borders border-grey">
+                    <div class="absolute-full flex flex-center text-grey-4">
+                      <div class="column items-center">
+                        <q-icon name="fas fa-qrcode" size="64px" class="q-mb-sm" />
+                        <div class="text-subtitle2">Dummy Scan Mode</div>
+                      </div>
                     </div>
-                    <div class="text-caption text-grey-7 q-mt-md text-center">
-                      Align the QR code within the camera frame
-                    </div>
-                  </q-card-section>
-                </q-card>
-              </q-dialog>
-            </div>
+                  </div>
+                  <div class="text-caption text-grey-7 q-mt-md text-center">
+                    Tap "Simulate Scan" to proceed.
+                  </div>
+                  <div class="row justify-center q-mt-sm">
+                    <q-btn
+                      color="primary"
+                      icon="fas fa-bolt"
+                      label="Simulate Scan"
+                      @click="simulateScan(scannerMode)"
+                    />
+                  </div>
+                </q-card-section>
+              </q-card>
+            </q-dialog>
 
-            <div class="row q-gutter-md justify-end q-mt-xl">
-              <q-btn label="Discard" flat color="grey-7" @click="$router.back()" />
-              <q-btn
-                label="Generate & Store Job Card"
-                type="submit"
-                color="secondary"
-                icon="fas fa-cloud-check"
-                class="q-px-lg"
-                :disable="!service.timeEnded || !service.signed"
-              />
+            <div class="row q-gutter-md justify-between q-mt-xl">
+              <q-btn label="Pause & Continue Later" flat color="primary" @click="pauseProgress" />
+              <q-btn label="Back to Schedule" flat color="grey-7" @click="goBackToSchedule" />
             </div>
           </q-form>
         </q-card-section>
@@ -410,23 +561,22 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref, computed } from 'vue'
+import { defineComponent, reactive, ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { store } from '../store'
-import { QrcodeStream } from 'qrcode-reader-vue3'
 
 export default defineComponent({
   name: 'ServiceForm',
-  components: {
-    QrcodeStream,
-  },
   setup() {
     const router = useRouter()
     const route = useRoute()
     const $q = useQuasar()
     const assetId = route.params.assetId
     const showScanner = ref(false)
+    const scannerMode = ref('start')
+    const currentStep = ref(1)
+    const serviceId = route.query.serviceId ? String(route.query.serviceId) : ''
 
     const targetAsset = computed(() => {
       if (!assetId) return null
@@ -464,7 +614,7 @@ export default defineComponent({
       checklistType: 'Standard HVAC',
       nextScheduleDate: '2026-01-14',
       currentServiceDate: new Date().toISOString().substr(0, 10),
-      timeArrived: new Date().toLocaleTimeString(),
+      timeArrived: null,
       timeEnded: null,
       travelDistance: '',
       onCoilTemp: '',
@@ -484,6 +634,10 @@ export default defineComponent({
       faultPictures: null,
       generalComments: '',
       signed: false,
+      signedBy: 'client',
+      unitJobCardDone: false,
+      captureScanData: false,
+      qrGenerated: false,
     })
 
     const frequencyOptions = ['Monthly', 'Quarterly', 'Semi-Annual', 'Annual', 'Every 3-5 Years']
@@ -762,57 +916,31 @@ export default defineComponent({
       service.nextScheduleDate = date.toISOString().substr(0, 10)
     }
 
-    const onDecode = (text) => {
-      if (text) {
-        showScanner.value = false
+    const simulateScan = (mode) => {
+      showScanner.value = false
+      if (mode === 'start') {
+        service.timeArrived = new Date().toLocaleTimeString()
+        $q.notify({
+          color: 'positive',
+          message: 'Start scan simulated.',
+          icon: 'fas fa-check-circle',
+        })
+      } else {
         service.timeEnded = new Date().toLocaleTimeString()
         $q.notify({
           color: 'positive',
-          message: 'Exit QR Scanned Successfully! Work completed.',
+          message: 'Closing scan simulated.',
           icon: 'fas fa-check-circle',
         })
       }
     }
 
-    const onError = (err) => {
-      console.error(err)
-      $q.notify({
-        color: 'negative',
-        message: 'Camera error or permission denied.',
-        icon: 'error',
-      })
-    }
-
-    const onInit = async (promise) => {
-      try {
-        await promise
-      } catch (error) {
-        if (error.name === 'NotAllowedError') {
-          $q.notify({
-            color: 'negative',
-            message: 'ERROR: you need to grant camera access permission',
-          })
-        } else if (error.name === 'NotFoundError') {
-          $q.notify({ color: 'negative', message: 'ERROR: no camera on this device' })
-        } else if (error.name === 'NotSupportedError') {
-          $q.notify({
-            color: 'negative',
-            message: 'ERROR: secure context required (HTTPS, localhost)',
-          })
-        } else if (error.name === 'NotReadableError') {
-          $q.notify({ color: 'negative', message: 'ERROR: is the camera already in use?' })
-        } else if (error.name === 'OverconstrainedError') {
-          $q.notify({ color: 'negative', message: 'ERROR: installed cameras are not suitable' })
-        } else if (error.name === 'StreamApiNotSupportedError') {
-          $q.notify({
-            color: 'negative',
-            message: 'ERROR: Stream API is not supported in this browser',
-          })
-        }
-      }
-    }
-
     const onSubmit = () => {
+      if (!canSubmit.value) {
+        $q.notify({ color: 'negative', message: 'Complete all steps before saving.' })
+        return
+      }
+
       const newJobCard = {
         id: `JOB-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000)}`,
         date: service.currentServiceDate,
@@ -829,8 +957,126 @@ export default defineComponent({
         icon: 'cloud_done',
         timeout: 3000,
       })
-      router.push('/job-cards')
+      clearProgress()
+      goBackToSchedule()
     }
+
+    const openScanner = (mode) => {
+      scannerMode.value = mode
+      showScanner.value = true
+    }
+
+    const goToStep = (step) => {
+      currentStep.value = step
+    }
+
+    const signatureOptions = [
+      { label: 'Client', value: 'client' },
+      { label: 'Technician', value: 'technician' },
+    ]
+
+    const generateQr = () => {
+      service.qrGenerated = true
+      $q.notify({
+        color: 'positive',
+        message: 'QR generated successfully.',
+        icon: 'fas fa-qrcode',
+      })
+    }
+
+    const progressKey = computed(() => {
+      const id = serviceId || assetId || 'manual'
+      return `service-progress:${id}`
+    })
+
+    const saveProgress = () => {
+      const payload = {
+        currentStep: currentStep.value,
+        service: {
+          lastServiceDate: service.lastServiceDate,
+          frequency: service.frequency,
+          checklistType: service.checklistType,
+          nextScheduleDate: service.nextScheduleDate,
+          currentServiceDate: service.currentServiceDate,
+          timeArrived: service.timeArrived,
+          timeEnded: service.timeEnded,
+          travelDistance: service.travelDistance,
+          onCoilTemp: service.onCoilTemp,
+          offCoilTemp: service.offCoilTemp,
+          suctionPressure: service.suctionPressure,
+          dischargePressure: service.dischargePressure,
+          hotWaterIn: service.hotWaterIn,
+          coldWaterOut: service.coldWaterOut,
+          fanCurrent: service.fanCurrent,
+          waterLevel: service.waterLevel,
+          chilledWaterIn: service.chilledWaterIn,
+          chilledWaterOut: service.chilledWaterOut,
+          compCurrent: service.compCurrent,
+          approachTemp: service.approachTemp,
+          faultFound: service.faultFound,
+          faultDetails: service.faultDetails,
+          generalComments: service.generalComments,
+          signed: service.signed,
+          signedBy: service.signedBy,
+          unitJobCardDone: service.unitJobCardDone,
+          captureScanData: service.captureScanData,
+          qrGenerated: service.qrGenerated,
+        },
+      }
+      localStorage.setItem(progressKey.value, JSON.stringify(payload))
+    }
+
+    const loadProgress = () => {
+      const raw = localStorage.getItem(progressKey.value)
+      if (!raw) return
+      try {
+        const parsed = JSON.parse(raw)
+        if (parsed?.service) {
+          Object.assign(service, parsed.service)
+        }
+        if (parsed?.currentStep) {
+          currentStep.value = parsed.currentStep
+        }
+      } catch (err) {
+        console.log(err)
+        localStorage.removeItem(progressKey.value)
+      }
+    }
+
+    const clearProgress = () => {
+      localStorage.removeItem(progressKey.value)
+    }
+
+    const pauseProgress = () => {
+      saveProgress()
+      $q.notify({ color: 'info', message: 'Progress saved. You can continue later.' })
+    }
+
+    const goBackToSchedule = () => {
+      const basePath = route.path.startsWith('/field') ? '/field/service-schedule' : '/service-calendar'
+      router.push(basePath)
+    }
+
+    const canSubmit = computed(() => {
+      return (
+        !!service.timeArrived &&
+        !!service.unitJobCardDone &&
+        !!service.timeEnded &&
+        !!service.signed &&
+        !!service.captureScanData &&
+        !!service.qrGenerated
+      )
+    })
+
+    onMounted(() => {
+      loadProgress()
+    })
+
+    watch(
+      () => ({ ...service, currentStep: currentStep.value }),
+      () => saveProgress(),
+      { deep: true },
+    )
 
     return {
       targetAsset,
@@ -840,9 +1086,16 @@ export default defineComponent({
       frequencyOptions,
       checklist,
       showScanner,
-      onDecode,
-      onError,
-      onInit,
+      scannerMode,
+      currentStep,
+      signatureOptions,
+      canSubmit,
+      openScanner,
+      goToStep,
+      generateQr,
+      pauseProgress,
+      goBackToSchedule,
+      simulateScan,
       calculateNextService,
       onSubmit,
     }

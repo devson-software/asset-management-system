@@ -74,6 +74,9 @@ const routes = [
       { path: 'customers', component: () => import('pages/FieldCustomers.vue') },
       { path: 'projects', component: () => import('pages/FieldProjects.vue') },
       { path: 'service-schedule', component: () => import('pages/ServiceCalendar.vue') },
+      { path: 'service-entry/:assetId?', component: () => import('pages/ServiceForm.vue') },
+      { path: 'qr-scan', component: () => import('pages/QRScanner.vue') },
+      { path: 'job-cards/add', component: () => import('pages/AddJobCard.vue') },
     ],
   },
   {

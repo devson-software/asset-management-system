@@ -296,7 +296,7 @@
                                 <q-item-section>Cancel Visit</q-item-section>
                               </q-item>
                               <q-separator />
-                              <q-item clickable :to="'/service-entry'">
+                              <q-item clickable @click="startService(service)">
                                 <q-item-section avatar
                                   ><q-icon name="fas fa-play" color="positive" size="sm"
                                 /></q-item-section>
@@ -529,7 +529,7 @@
 
 <script>
 import { defineComponent, ref, computed, reactive, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { store } from '../store'
 
@@ -538,6 +538,7 @@ export default defineComponent({
   setup() {
     const $q = useQuasar()
     const route = useRoute()
+    const router = useRouter()
     const selectedDate = ref(new Date().toISOString().substr(0, 10).replace(/-/g, '/'))
     const showDialog = ref(false)
     const isEditing = ref(false)
@@ -877,6 +878,27 @@ export default defineComponent({
       return team ? team.color : 'grey-7'
     }
 
+    const getAssetIdByUnitRef = (unitRef) => {
+      let foundId = null
+      store.customers.forEach((customer) => {
+        customer.projects.forEach((project) => {
+          const asset = project.assets.find((a) => a.unitRef === unitRef)
+          if (asset) foundId = asset.id
+        })
+      })
+      return foundId
+    }
+
+    const startService = (service) => {
+      const assetId = getAssetIdByUnitRef(service.unitRef)
+      const basePath = route.path.startsWith('/field') ? '/field/service-entry' : '/service-entry'
+      if (assetId) {
+        router.push({ path: `${basePath}/${assetId}`, query: { serviceId: service.id } })
+      } else {
+        router.push({ path: basePath, query: { serviceId: service.id } })
+      }
+    }
+
     return {
       selectedDate,
       events,
@@ -903,6 +925,7 @@ export default defineComponent({
       saveService,
       confirmDelete,
       mailAll,
+      startService,
       store,
     }
   },
