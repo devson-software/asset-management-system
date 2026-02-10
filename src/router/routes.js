@@ -67,6 +67,16 @@ const routes = [
     ],
   },
   {
+    path: '/field',
+    component: () => import('layouts/FieldLayout.vue'),
+    children: [
+      { path: '', redirect: '/field/customers' },
+      { path: 'customers', component: () => import('pages/FieldCustomers.vue') },
+      { path: 'projects', component: () => import('pages/FieldProjects.vue') },
+      { path: 'service-schedule', component: () => import('pages/ServiceCalendar.vue') },
+    ],
+  },
+  {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),
   },
