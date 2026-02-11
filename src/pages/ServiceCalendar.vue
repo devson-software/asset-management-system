@@ -1,7 +1,10 @@
 <template>
-  <q-page padding>
+  <q-page padding :class="isFieldView ? 'field-schedule-page' : ''">
     <div class="row q-col-gutter-lg">
-      <div class="col-12 flex justify-between items-center">
+      <div
+        class="col-12 flex justify-between items-center"
+        :class="isFieldView ? 'field-schedule-header' : ''"
+      >
         <div class="row items-center no-wrap">
           <q-btn
             v-if="isFieldView"
@@ -39,7 +42,12 @@
       </div>
 
       <div class="col-12">
-        <q-card flat bordered class="rounded-borders q-pa-md bg-grey-1">
+        <q-card
+          flat
+          bordered
+          class="rounded-borders q-pa-md bg-grey-1"
+          :class="isFieldView ? 'field-schedule-filters' : ''"
+        >
           <div class="row q-col-gutter-md items-center">
             <div v-if="!isFieldView" class="col-12 col-sm-3">
               <q-select
@@ -76,7 +84,7 @@
                 /></template>
               </q-select>
             </div>
-            <div :class="isFieldView ? 'col-12' : 'col-12 col-sm-3'">
+          <div :class="isFieldView ? 'col-12' : 'col-12 col-sm-3'">
               <q-select
                 v-model="teamFilter"
                 :options="teams"
@@ -112,7 +120,11 @@
                 </template>
               </q-select>
             </div>
-            <div :class="isFieldView ? 'col-12 flex justify-end' : 'col-12 col-sm-3 flex justify-end'">
+          <div
+            :class="
+              isFieldView ? 'col-12 flex justify-end field-filter-reset' : 'col-12 col-sm-3 flex justify-end'
+            "
+          >
               <q-btn
                 flat
                 color="grey-7"
@@ -193,7 +205,7 @@
                 bordered
                 class="q-mb-md service-item-card"
               >
-                <q-item class="q-py-md">
+                <q-item class="q-py-md service-item-content">
                   <q-item-section avatar>
                     <q-avatar
                       color="blue-1"
@@ -202,7 +214,7 @@
                     />
                   </q-item-section>
 
-                  <q-item-section>
+                  <q-item-section class="service-item-main">
                     <q-item-label class="text-weight-bold text-subtitle1">
                       {{ service.unitRef }}
                     </q-item-label>
@@ -262,7 +274,7 @@
                       v-if="store.serviceDefinitions && store.serviceDefinitions[service.type]"
                       class="q-mt-sm"
                     >
-                      <div class="row q-gutter-x-xs no-wrap overflow-hidden">
+                      <div class="column q-gutter-y-xs">
                         <q-chip
                           v-for="(task, idx) in store.serviceDefinitions[service.type].tasks.slice(
                             0,
@@ -298,7 +310,7 @@
                     </div>
                   </q-item-section>
 
-                  <q-item-section side>
+                  <q-item-section side class="service-item-meta">
                     <div class="column items-end">
                       <q-chip
                         dense
@@ -997,5 +1009,52 @@ export default defineComponent({
 
 .rounded-borders {
   border-radius: 12px;
+}
+
+.field-schedule-page {
+  padding: 12px;
+}
+
+.field-schedule-header .text-h4 {
+  font-size: 22px;
+}
+
+.field-schedule-header .text-subtitle1 {
+  font-size: 13px;
+}
+
+.field-schedule-filters {
+  padding: 10px 12px;
+}
+
+.field-schedule-filters .q-field__control {
+  border-radius: 12px;
+}
+
+.field-filter-reset .q-btn {
+  width: 100%;
+}
+
+.field-schedule-page .service-item-card {
+  border-radius: 16px;
+}
+
+.field-schedule-page .service-item-card .q-item {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field-schedule-page .service-item-main,
+.field-schedule-page .service-item-meta {
+  width: 100%;
+}
+
+.field-schedule-page .service-item-meta {
+  align-items: flex-start;
+}
+
+.field-schedule-page .service-item-meta .column {
+  align-items: flex-start;
 }
 </style>
