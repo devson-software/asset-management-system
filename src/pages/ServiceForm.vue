@@ -29,10 +29,6 @@
             <div class="col-6 col-md-3">
               <span class="text-weight-bold">Serial:</span> {{ targetAsset.serialNumber }}
             </div>
-            <div class="col-6 col-md-3">
-              <span class="text-weight-bold">Refrigerant:</span>
-              {{ targetAsset.refrigerantType }} ({{ targetAsset.refrigerantKg }}kg)
-            </div>
           </div>
         </q-card-section>
 

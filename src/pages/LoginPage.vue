@@ -2,13 +2,20 @@
   <q-page class="login-page flex flex-center" :style="{ backgroundImage: `url(${currentBg})` }">
     <div class="login-overlay"></div>
     <q-card class="login-card shadow-24" flat bordered>
-      <q-card-section class="text-center q-pt-xl">
-        <q-avatar size="100px" font-size="52px" color="primary" text-color="white" icon="fas fa-screwdriver-wrench" class="q-mb-md shadow-5" />
+      <q-card-section class="text-center q-pt-xl login-card-section-top">
+        <q-avatar
+          size="100px"
+          font-size="52px"
+          color="primary"
+          text-color="white"
+          icon="fas fa-screwdriver-wrench"
+          class="q-mb-md shadow-5 login-avatar"
+        />
         <div class="text-h4 text-weight-bolder text-primary q-mb-xs">QR service</div>
         <div class="text-subtitle2 text-grey-7">HVAC Management Tool</div>
       </q-card-section>
 
-      <q-card-section class="q-px-xl q-pb-xl">
+      <q-card-section class="q-px-xl q-pb-xl login-card-section-body">
         <q-form @submit="onLogin" class="q-gutter-md">
           <q-input
             v-model="username"
@@ -59,7 +66,7 @@
 
       <q-separator inset />
 
-      <q-card-section class="text-center text-caption q-py-md text-grey-6">
+      <q-card-section class="text-center text-caption q-py-md text-grey-6 login-card-section-footer">
         &copy; 2026 Devson Software - Secure Access Only
       </q-card-section>
     </q-card>
@@ -168,10 +175,39 @@ export default defineComponent({
   backdrop-filter: blur(10px);
   z-index: 2;
   border: none;
+  margin: 16px;
 }
 
 .full-width {
   width: 100%;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    max-width: 100%;
+    border-radius: 16px;
+  }
+
+  .login-card-section-top {
+    padding-top: 20px !important;
+  }
+
+  .login-card-section-body {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-bottom: 20px !important;
+  }
+
+  .login-card-section-footer {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .login-avatar {
+    width: 72px !important;
+    height: 72px !important;
+    font-size: 38px !important;
+  }
 }
 </style>
 
