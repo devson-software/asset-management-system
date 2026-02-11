@@ -38,7 +38,13 @@
 
         <q-card-section class="q-pa-lg">
           <q-form @submit="onSubmit" class="q-gutter-y-lg">
-            <q-stepper v-model="currentStep" vertical animated>
+            <q-stepper
+              v-model="currentStep"
+              vertical
+              animated
+              header-nav
+              @update:model-value="onStepperChange"
+            >
               <q-step :name="1" title="Start Scan" icon="fas fa-qrcode" :done="!!service.timeArrived">
                 <div class="section-container bg-white">
                   <div class="text-subtitle1 text-primary q-mb-md row items-center">
@@ -529,6 +535,7 @@ export default defineComponent({
     const showScanner = ref(false)
     const scannerMode = ref('start')
     const currentStep = ref(1)
+    const maxStepReached = ref(1)
     const serviceId = route.query.serviceId ? String(route.query.serviceId) : ''
 
     const targetAsset = computed(() => {
@@ -919,6 +926,17 @@ export default defineComponent({
 
     const goToStep = (step) => {
       currentStep.value = step
+      if (step > maxStepReached.value) {
+        maxStepReached.value = step
+      }
+    }
+
+    const onStepperChange = (nextStep) => {
+      if (nextStep <= maxStepReached.value) {
+        currentStep.value = nextStep
+      } else {
+        currentStep.value = maxStepReached.value
+      }
     }
 
     const signatureOptions = [
@@ -978,6 +996,7 @@ export default defineComponent({
         }
         if (parsed?.currentStep) {
           currentStep.value = parsed.currentStep
+          maxStepReached.value = Math.max(maxStepReached.value, parsed.currentStep)
         }
       } catch (err) {
         console.log(err)
@@ -1028,10 +1047,12 @@ export default defineComponent({
       showScanner,
       scannerMode,
       currentStep,
+      maxStepReached,
       signatureOptions,
       canSubmit,
       openScanner,
       goToStep,
+      onStepperChange,
       pauseProgress,
       goBackToSchedule,
       simulateScan,

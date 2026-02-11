@@ -87,8 +87,8 @@ export default defineComponent({
 }
 
 .field-bottom-nav {
-  height: 84px;
-  padding: 4px 0;
+  height: 74px;
+  padding: 6px 0;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -97,24 +97,24 @@ export default defineComponent({
 .field-bottom-nav .q-btn {
   flex: 0 0 33.3333%;
   min-width: 0;
-  padding: 8px 0;
+  padding: 6px 0;
   font-weight: 600;
 }
 
 .field-bottom-nav .q-icon {
-  font-size: 22px;
+  font-size: 19px;
 }
 
 .field-bottom-nav .q-btn__content {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.1;
   letter-spacing: 0.2px;
 }
 
 .field-bottom-nav .q-btn--active {
-  background: rgba(25, 118, 210, 0.08);
-  border-radius: 12px;
-  margin: 0 6px;
+  background: rgba(25, 118, 210, 0.1);
+  border-radius: 10px;
+  margin: 0 10px;
 }
 
 .field-page-container {
