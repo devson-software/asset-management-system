@@ -2,10 +2,20 @@
   <q-page padding>
     <div class="row q-col-gutter-lg">
       <div class="col-12 flex justify-between items-center">
-        <div>
-          <div class="text-h4 text-weight-bold text-primary">Service Schedule</div>
-          <div class="text-subtitle1 text-grey-7">
-            Plan and manage maintenance visits across all sites
+        <div class="row items-center no-wrap">
+          <q-btn
+            v-if="isFieldView"
+            flat
+            round
+            icon="fas fa-arrow-left"
+            class="q-mr-sm"
+            @click="$router.back()"
+          />
+          <div>
+            <div class="text-h4 text-weight-bold text-primary">Service Schedule</div>
+            <div class="text-subtitle1 text-grey-7">
+              Plan and manage maintenance visits across all sites
+            </div>
           </div>
         </div>
         <div class="q-gutter-sm">

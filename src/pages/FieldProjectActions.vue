@@ -1,118 +1,155 @@
 <template>
   <q-page padding class="bg-grey-1">
-    <div class="row items-center q-mb-md">
-      <q-btn flat round icon="fas fa-arrow-left" @click="$router.back()" />
-      <div class="q-ml-sm">
-        <div class="text-h5 text-weight-bold text-primary">Project Actions</div>
-        <div class="text-subtitle2 text-grey-7">
-          {{ projectName || 'Select an action below' }}
+    <div class="row q-col-gutter-lg">
+      <div class="col-12 flex justify-between items-center">
+        <div class="row items-center no-wrap">
+          <q-btn flat round icon="fas fa-arrow-left" @click="$router.back()" />
+          <div class="q-ml-sm">
+            <div class="text-h5 text-weight-bold text-primary">Project Actions</div>
+            <div class="text-subtitle2 text-grey-7">
+              {{  'Select an action below' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <q-card flat bordered class="rounded-borders bg-white q-mb-md">
+          <q-card-section>
+            <q-select
+              v-model="selectedProjectId"
+              :options="projectOptions"
+              label="Select Project/Building"
+              outlined
+              dense
+              emit-value
+              map-options
+              use-input
+              input-debounce="0"
+              @filter="filterProjects"
+              option-label="label"
+              option-value="value"
+              clearable
+              bg-color="white"
+            >
+              <template v-slot:prepend>
+                <q-icon name="fas fa-location-dot" size="xs" />
+              </template>
+            </q-select>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <div class="col-12">
+        <q-card v-if="projectDetails" flat bordered class="rounded-borders bg-white q-mb-md">
+          <q-card-section>
+            <div class="text-subtitle1 text-weight-bold">{{ projectDetails.name }}</div>
+            <div class="text-caption text-grey-7">
+              {{
+                projectDetails.siteAddress ||
+                projectDetails.vendorLocation ||
+                'No site address on file'
+              }}
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <div class="col-12">
+        <div class="row q-col-gutter-md">
+          <div class="col-12 col-sm-6">
+            <q-card flat bordered class="rounded-borders action-card full-height" @click="goToSchedule">
+              <q-card-section class="row items-center">
+                <q-avatar
+                  color="blue-1"
+                  text-color="primary"
+                  icon="fas fa-calendar-check"
+                  size="48px"
+                />
+                <div class="q-ml-md">
+                  <div class="text-subtitle1 text-weight-bold">Service</div>
+                  <div class="text-caption text-grey-7">View and start scheduled services</div>
+                </div>
+                <q-space />
+                <q-icon name="fas fa-chevron-right" color="grey-5" />
+              </q-card-section>
+            </q-card>
+          </div>
+
+          <div class="col-12 col-sm-6">
+            <q-card
+              flat
+              bordered
+              class="rounded-borders action-card full-height"
+              @click="goToCommissioning"
+            >
+              <q-card-section class="row items-center">
+                <q-avatar
+                  color="green-1"
+                  text-color="green-8"
+                  icon="fas fa-clipboard-check"
+                  size="48px"
+                />
+                <div class="q-ml-md">
+                  <div class="text-subtitle1 text-weight-bold">Commissioning</div>
+                  <div class="text-caption text-grey-7">Capture commissioning data</div>
+                </div>
+                <q-space />
+                <q-icon name="fas fa-chevron-right" color="grey-5" />
+              </q-card-section>
+            </q-card>
+          </div>
+
+          <div class="col-12 col-sm-6">
+            <q-card
+              flat
+              bordered
+              class="rounded-borders action-card full-height"
+              @click="goToAssets"
+            >
+              <q-card-section class="row items-center">
+                <q-avatar
+                  color="orange-1"
+                  text-color="orange-9"
+                  icon="fas fa-boxes-stacked"
+                  size="48px"
+                />
+                <div class="q-ml-md">
+                  <div class="text-subtitle1 text-weight-bold">Assets</div>
+                  <div class="text-caption text-grey-7">View assets for this project</div>
+                </div>
+                <q-space />
+                <q-icon name="fas fa-chevron-right" color="grey-5" />
+              </q-card-section>
+            </q-card>
+          </div>
+
+          <div class="col-12 col-sm-6">
+            <q-card
+              flat
+              bordered
+              class="rounded-borders action-card full-height"
+              @click="goToJobCards"
+            >
+              <q-card-section class="row items-center">
+                <q-avatar
+                  color="purple-1"
+                  text-color="purple-8"
+                  icon="fas fa-file-contract"
+                  size="48px"
+                />
+                <div class="q-ml-md">
+                  <div class="text-subtitle1 text-weight-bold">Job Card</div>
+                  <div class="text-caption text-grey-7">Create or review job cards</div>
+                </div>
+                <q-space />
+                <q-icon name="fas fa-chevron-right" color="grey-5" />
+              </q-card-section>
+            </q-card>
+          </div>
         </div>
       </div>
     </div>
-
-    <q-card flat bordered class="rounded-borders bg-white q-mb-md">
-      <q-card-section>
-        <q-select
-          v-model="selectedProjectId"
-          :options="projectOptions"
-          label="Select Project/Building"
-          outlined
-          dense
-          emit-value
-          map-options
-          use-input
-          input-debounce="0"
-          @filter="filterProjects"
-          option-label="label"
-          option-value="value"
-          clearable
-          bg-color="white"
-        >
-          <template v-slot:prepend>
-            <q-icon name="fas fa-location-dot" size="xs" />
-          </template>
-        </q-select>
-      </q-card-section>
-    </q-card>
-
-    <div class="row q-col-gutter-md">
-      <div class="col-12 col-sm-6">
-        <q-card flat bordered class="rounded-borders action-card full-height" @click="goToSchedule">
-          <q-card-section class="row items-center">
-            <q-avatar color="blue-1" text-color="primary" icon="fas fa-calendar-check" size="48px" />
-            <div class="q-ml-md">
-              <div class="text-subtitle1 text-weight-bold">Service</div>
-              <div class="text-caption text-grey-7">View and start scheduled services</div>
-            </div>
-            <q-space />
-            <q-icon name="fas fa-chevron-right" color="grey-5" />
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col-12 col-sm-6">
-        <q-card
-          flat
-          bordered
-          class="rounded-borders action-card full-height"
-          @click="goToCommissioning"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar color="green-1" text-color="green-8" icon="fas fa-clipboard-check" size="48px" />
-            <div class="q-ml-md">
-              <div class="text-subtitle1 text-weight-bold">Commissioning</div>
-              <div class="text-caption text-grey-7">Capture commissioning data</div>
-            </div>
-            <q-space />
-            <q-icon name="fas fa-chevron-right" color="grey-5" />
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col-12 col-sm-6">
-        <q-card
-          flat
-          bordered
-          class="rounded-borders action-card full-height"
-          @click="goToAssets"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar
-              color="orange-1"
-              text-color="orange-9"
-              icon="fas fa-boxes-stacked"
-              size="48px"
-            />
-            <div class="q-ml-md">
-              <div class="text-subtitle1 text-weight-bold">Assets</div>
-              <div class="text-caption text-grey-7">View assets for this project</div>
-            </div>
-            <q-space />
-            <q-icon name="fas fa-chevron-right" color="grey-5" />
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col-12 col-sm-6">
-        <q-card
-          flat
-          bordered
-          class="rounded-borders action-card full-height"
-          @click="goToJobCards"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar color="purple-1" text-color="purple-8" icon="fas fa-file-contract" size="48px" />
-            <div class="q-ml-md">
-              <div class="text-subtitle1 text-weight-bold">Job Card</div>
-              <div class="text-caption text-grey-7">Create or review job cards</div>
-            </div>
-            <q-space />
-            <q-icon name="fas fa-chevron-right" color="grey-5" />
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-
   </q-page>
 </template>
 
@@ -131,12 +168,13 @@ export default defineComponent({
     const projectId = computed(() => route.params.projectId || '')
     const selectedProjectId = ref(route.params.projectId || null)
 
-    const projectName = computed(() => {
-      if (!customerId.value || !selectedProjectId.value) return ''
+    const projectDetails = computed(() => {
+      if (!customerId.value || !selectedProjectId.value) return null
       const customer = store.customers.find((c) => c.id === customerId.value)
-      const project = customer?.projects.find((p) => p.id === selectedProjectId.value)
-      return project?.name || ''
+      return customer?.projects.find((p) => p.id === selectedProjectId.value) || null
     })
+
+    const projectName = computed(() => projectDetails.value?.name || '')
 
     const projectOptions = computed(() => {
       if (!customerId.value) return []
@@ -201,6 +239,7 @@ export default defineComponent({
 
     return {
       projectName,
+      projectDetails,
       selectedProjectId,
       projectOptions: projectOptionsFiltered,
       filterProjects,
