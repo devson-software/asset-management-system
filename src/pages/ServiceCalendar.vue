@@ -14,9 +14,9 @@
             class="q-mr-sm"
             @click="goToProjectActions"
           />
-          <div>
-            <div class="text-h4 text-weight-bold text-primary">Service Schedule</div>
-            <div class="text-subtitle1 text-grey-7">
+          <div class="q-ml-sm">
+            <div class="text-h5 text-weight-bold text-primary">Service Schedule</div>
+            <div class="text-subtitle2 text-grey-7">
               Plan and manage maintenance visits across all sites
             </div>
           </div>
@@ -1029,13 +1029,6 @@ export default defineComponent({
   padding: 12px;
 }
 
-.field-schedule-header .text-h4 {
-  font-size: 22px;
-}
-
-.field-schedule-header .text-subtitle1 {
-  font-size: 13px;
-}
 
 .field-schedule-filters {
   padding: 10px 12px;

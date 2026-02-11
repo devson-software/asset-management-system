@@ -3,6 +3,7 @@
     <q-header elevated class="bg-primary text-white field-header">
       <q-toolbar class="field-toolbar">
         <q-btn
+          v-if="showBack"
           flat
           round
           icon="fas fa-arrow-left"
@@ -39,16 +40,18 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-import { useRouter } from 'vue-router'
+import { defineComponent, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'FieldLayout',
   setup() {
+    const route = useRoute()
     const router = useRouter()
     const goToCustomers = () => router.push('/field/customers')
     const logout = () => router.push('/login')
-    return { goToCustomers, logout }
+    const showBack = computed(() => route.path !== '/field/customers')
+    return { goToCustomers, logout, showBack }
   },
 })
 </script>
