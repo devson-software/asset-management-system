@@ -139,20 +139,6 @@
               </q-tr>
             </template>
 
-            <template v-slot:top-right>
-              <q-input
-                borderless
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Search Customers..."
-              >
-                <template v-slot:append>
-                  <q-icon name="fas fa-magnifying-glass" size="xs" />
-                </template>
-              </q-input>
-            </template>
-
             <template v-slot:body-cell-fullName="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">

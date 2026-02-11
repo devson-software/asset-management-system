@@ -12,7 +12,7 @@
             round
             icon="fas fa-arrow-left"
             class="q-mr-sm"
-            @click="$router.back()"
+            @click="goToProjectActions"
           />
           <div>
             <div class="text-h4 text-weight-bold text-primary">Service Schedule</div>
@@ -948,6 +948,19 @@ export default defineComponent({
       }
     }
 
+    const goToProjectActions = () => {
+      const customerId = route.query.customerId ? String(route.query.customerId) : null
+      const projectId = route.query.projectId ? String(route.query.projectId) : null
+      if (customerId && projectId) {
+        router.push({
+          path: `/field/projects/${projectId}/actions`,
+          query: { customerId, projectId },
+        })
+        return
+      }
+      router.push('/field/projects')
+    }
+
     return {
       selectedDate,
       events,
@@ -977,6 +990,7 @@ export default defineComponent({
       confirmDelete,
       mailAll,
       startService,
+      goToProjectActions,
       store,
     }
   },

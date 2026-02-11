@@ -3,7 +3,7 @@
     <div class="row q-col-gutter-lg">
       <div class="col-12 flex justify-between items-center">
         <div class="row items-center no-wrap">
-          <q-btn flat round icon="fas fa-arrow-left" @click="$router.back()" />
+          <q-btn flat round icon="fas fa-arrow-left" @click="$router.push('/field/projects')" />
           <div class="q-ml-sm">
             <div class="text-h5 text-weight-bold text-primary">Project Actions</div>
             <div class="text-subtitle2 text-grey-7">
