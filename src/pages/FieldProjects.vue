@@ -13,29 +13,31 @@
       </div>
 
       <div class="col-12">
-        <q-card flat bordered class="rounded-borders bg-white q-mb-md">
-          <q-card-section>
-            <q-select
-              v-model="selectedCustomerId"
-              :options="customerOptions"
-              label="Search Customers"
-              outlined
-              dense
-              emit-value
-              map-options
-              use-input
-              input-debounce="0"
-              @filter="filterCustomers"
-              option-label="label"
-              option-value="value"
-              clearable
-              bg-color="white"
-            >
-              <template v-slot:prepend>
-                <q-icon name="fas fa-users" size="xs" />
-              </template>
-            </q-select>
-          </q-card-section>
+        <q-card flat bordered class="rounded-borders bg-white q-pa-md">
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select
+                v-model="selectedCustomerId"
+                :options="customerOptions"
+                label="Search Customers"
+                outlined
+                dense
+                emit-value
+                map-options
+                use-input
+                input-debounce="0"
+                @filter="filterCustomers"
+                option-label="label"
+                option-value="value"
+                clearable
+                bg-color="white"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="fas fa-users" size="xs" />
+                </template>
+              </q-select>
+            </div>
+          </div>
         </q-card>
 
         <q-banner v-if="!customer" rounded class="bg-orange-1 text-orange-9 q-mb-md">
@@ -43,12 +45,6 @@
           Please select a customer first.
         </q-banner>
 
-        <q-card v-if="customer" flat bordered class="rounded-borders bg-white q-mb-md">
-          <q-card-section>
-            <div class="text-subtitle1 text-weight-bold">{{ customer.name }}</div>
-            <div class="text-caption text-grey-7">{{ customer.address || 'No address on file' }}</div>
-          </q-card-section>
-        </q-card>
       </div>
 
       <div class="col-12">

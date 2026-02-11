@@ -14,44 +14,31 @@
       </div>
 
       <div class="col-12">
-        <q-card flat bordered class="rounded-borders bg-white q-mb-md">
-          <q-card-section>
-            <q-select
-              v-model="selectedProjectId"
-              :options="projectOptions"
-              label="Select Project/Building"
-              outlined
-              dense
-              emit-value
-              map-options
-              use-input
-              input-debounce="0"
-              @filter="filterProjects"
-              option-label="label"
-              option-value="value"
-              clearable
-              bg-color="white"
-            >
-              <template v-slot:prepend>
-                <q-icon name="fas fa-location-dot" size="xs" />
-              </template>
-            </q-select>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col-12">
-        <q-card v-if="projectDetails" flat bordered class="rounded-borders bg-white q-mb-md">
-          <q-card-section>
-            <div class="text-subtitle1 text-weight-bold">{{ projectDetails.name }}</div>
-            <div class="text-caption text-grey-7">
-              {{
-                projectDetails.siteAddress ||
-                projectDetails.vendorLocation ||
-                'No site address on file'
-              }}
+        <q-card flat bordered class="rounded-borders bg-white q-pa-md">
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select
+                v-model="selectedProjectId"
+                :options="projectOptions"
+                label="Select Project/Building"
+                outlined
+                dense
+                emit-value
+                map-options
+                use-input
+                input-debounce="0"
+                @filter="filterProjects"
+                option-label="label"
+                option-value="value"
+                clearable
+                bg-color="white"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="fas fa-location-dot" size="xs" />
+                </template>
+              </q-select>
             </div>
-          </q-card-section>
+          </div>
         </q-card>
       </div>
 
