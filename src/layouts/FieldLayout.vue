@@ -1,17 +1,16 @@
 <template>
-  <q-layout view="hHh Lpr lFf" class="bg-grey-1">
-    <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
+  <q-layout view="hHh Lpr lFf" class="bg-grey-1 field-layout">
+    <q-header elevated class="bg-primary text-white field-header">
+      <q-toolbar class="field-toolbar">
         <q-btn
           flat
-          dense
           round
           icon="fas fa-arrow-left"
           aria-label="Back"
           @click="$router.back()"
         />
         <q-toolbar-title class="text-weight-bold">Field Service</q-toolbar-title>
-        <q-avatar size="32px">
+        <q-avatar size="34px" class="shadow-1">
           <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
         </q-avatar>
       </q-toolbar>
@@ -21,7 +20,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer elevated class="bg-white field-footer">
+    <q-footer v-if="showFooter" elevated class="bg-white field-footer">
       <q-bottom-navigation
         v-model="activeTab"
         active-color="primary"
@@ -49,7 +48,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 export default defineComponent({
@@ -58,6 +57,7 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const activeTab = ref('customers')
+    const showFooter = computed(() => !route.path.includes('/field/service-schedule'))
 
     const updateTab = () => {
       if (route.path.includes('/field/profile')) activeTab.value = 'profile'
@@ -76,19 +76,37 @@ export default defineComponent({
       { immediate: true },
     )
 
-    return { activeTab, goTo }
+    return { activeTab, goTo, showFooter }
   },
 })
 </script>
 
 <style scoped>
+.field-layout {
+  min-height: 100vh;
+}
+
+.field-header {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.field-toolbar {
+  min-height: 56px;
+  padding: 6px 12px;
+}
+
+.field-page-container {
+  padding: 12px 12px 96px;
+}
+
 .field-footer {
-  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
 }
 
 .field-bottom-nav {
-  height: 74px;
-  padding: 6px 0;
+  height: 72px;
+  padding: 6px 8px;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -112,12 +130,30 @@ export default defineComponent({
 }
 
 .field-bottom-nav .q-btn--active {
-  background: rgba(25, 118, 210, 0.1);
-  border-radius: 10px;
-  margin: 0 10px;
+  background: rgba(25, 118, 210, 0.12);
+  border-radius: 12px;
+  margin: 0 8px;
 }
 
-.field-page-container {
-  padding-top: 10px;
+@media (max-width: 360px) {
+  .field-toolbar {
+    min-height: 52px;
+  }
+
+  .field-page-container {
+    padding: 10px 10px 90px;
+  }
+
+  .field-bottom-nav {
+    height: 66px;
+  }
+
+  .field-bottom-nav .q-icon {
+    font-size: 18px;
+  }
+
+  .field-bottom-nav .q-btn__content {
+    font-size: 10px;
+  }
 }
 </style>
