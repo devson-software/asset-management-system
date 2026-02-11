@@ -1,7 +1,11 @@
 <template>
-  <q-page padding>
-    <div class="q-pa-md">
-      <q-card flat bordered class="service-card shadow-2">
+  <q-page :padding="!isFieldView" :class="isFieldView ? 'field-service-page' : ''">
+    <div :class="isFieldView ? '' : 'q-pa-md'">
+      <q-card
+        flat
+        bordered
+        :class="['service-card', 'shadow-2', isFieldView ? 'service-card--field' : '']"
+      >
         <q-card-section :class="headerColor + ' text-white'">
           <div class="row items-center no-wrap">
             <q-icon :name="headerIcon" size="md" class="q-mr-md" />
@@ -533,6 +537,7 @@ export default defineComponent({
     const currentStep = ref(1)
     const maxStepReached = ref(1)
     const serviceId = route.query.serviceId ? String(route.query.serviceId) : ''
+    const isFieldView = computed(() => route.path.startsWith('/field'))
 
     const targetAsset = computed(() => {
       if (!assetId) return null
@@ -1054,6 +1059,7 @@ export default defineComponent({
       simulateScan,
       calculateNextService,
       onSubmit,
+      isFieldView,
     }
   },
 })
@@ -1110,5 +1116,16 @@ export default defineComponent({
   border-radius: 8px;
   background: #fafafa;
   min-height: 120px;
+}
+
+.field-service-page {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.field-service-page .service-card--field {
+  max-width: 100%;
+  margin: 0;
+  border-radius: 0;
 }
 </style>
