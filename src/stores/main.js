@@ -101,7 +101,59 @@ export const useMainStore = defineStore('main', () => {
         },
       ],
     },
+    {
+      id: 'C3',
+      name: 'City Mall Plaza',
+      contactName: 'Robert Chen',
+      email: 'management@citymall.com',
+      mobile: '+1 555-0303',
+      address: '456 Retail Boulevard, Central',
+      vatNumber: 'VAT445566',
+      projects: [
+        {
+          id: 'P4',
+          name: 'Food Court',
+          vendorLocation: 'Mezzanine Plant Room',
+          siteAddress: '456 Retail Boulevard, Central',
+          assets: [],
+        },
+        {
+          id: 'P5',
+          name: 'Cinema Complex',
+          vendorLocation: 'Roof Plant',
+          siteAddress: '456 Retail Boulevard, Central',
+          assets: [],
+        },
+      ],
+    },
+    {
+      id: 'C4',
+      name: 'St. Mary\'s Hospital',
+      contactName: 'Dr. Emily White',
+      email: 'e.white@hospital.org',
+      mobile: '+1 555-0404',
+      address: '101 Healthcare Lane, North Side',
+      vatNumber: 'VAT112233',
+      projects: [
+        {
+          id: 'P6',
+          name: 'Operating Theatre 1',
+          vendorLocation: 'Clean Room Filter Bank',
+          siteAddress: '101 Healthcare Lane, North Side',
+          assets: [],
+        },
+        {
+          id: 'P7',
+          name: 'Emergency Wing',
+          vendorLocation: 'Ground Floor Lobby',
+          siteAddress: '101 Healthcare Lane, North Side',
+          assets: [],
+        },
+      ],
+    },
   ])
+
+  const today = new Date().toISOString().split('T')[0].replace(/-/g, '/')
 
   const services = ref([
     {
@@ -127,6 +179,42 @@ export const useMainStore = defineStore('main', () => {
       projectName: 'Main Warehouse',
       customer: 'Global Logistics Hub',
       status: 'Scheduled',
+    },
+    {
+      id: 'S3',
+      unitRef: 'Ac1.01',
+      type: 'Monthly Service',
+      date: today,
+      time: '08:30',
+      duration: '2 hours',
+      teamId: 'T1',
+      projectName: 'Downtown Office',
+      customer: 'Alpha Corp',
+      status: 'Scheduled',
+    },
+    {
+      id: 'S4',
+      unitRef: 'WH-01',
+      type: 'Quarterly Service',
+      date: today,
+      time: '11:00',
+      duration: '4 hours',
+      teamId: 'T2',
+      projectName: 'Main Warehouse',
+      customer: 'Global Logistics Hub',
+      status: 'In Progress',
+    },
+    {
+      id: 'S5',
+      unitRef: 'NB-01',
+      type: 'Breakdown Callout',
+      date: today,
+      time: '15:00',
+      duration: '3 hours',
+      teamId: 'T1',
+      projectName: 'North Branch',
+      customer: 'Alpha Corp',
+      status: 'Pending',
     },
   ])
 

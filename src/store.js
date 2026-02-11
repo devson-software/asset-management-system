@@ -1,5 +1,7 @@
 import { reactive } from 'vue'
 
+const today = new Date().toISOString().split('T')[0].replace(/-/g, '/')
+
 export const store = reactive({
   customers: [
     {
@@ -211,7 +213,20 @@ export const store = reactive({
     { id: 12, date: '2026/01/28', endDate: '2026/01/28', time: '09:00', duration: '4 hours', unitRef: 'NB-01', customer: 'Alpha Corp', project: 'North Branch', type: 'Monthly Service', teamId: 'T1' },
     { id: 13, date: '2026/01/28', endDate: '2026/01/28', time: '11:00', duration: '2 hours', unitRef: 'Ac1.01', customer: 'Alpha Corp', project: 'Downtown Office', type: 'Quarterly Service', teamId: 'T3' },
     { id: 14, date: '2026/01/28', endDate: '2026/01/28', time: '13:30', duration: '3 hours', unitRef: 'CS-01', customer: 'Global Logistics Hub', project: 'Cold Storage', type: 'Monthly Service', teamId: 'T4' },
-    { id: 15, date: '2026/01/28', endDate: '2026/01/28', time: '15:00', duration: '2 hours', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Breakdown Callout', teamId: 'T5' }
+    { id: 15, date: '2026/01/28', endDate: '2026/01/28', time: '15:00', duration: '2 hours', unitRef: 'EW-01', customer: 'St. Mary\'s Hospital', project: 'Emergency Wing', type: 'Breakdown Callout', teamId: 'T5' },
+    {
+      id: 16,
+      date: today,
+      endDate: today,
+      time: '10:00',
+      duration: '2 hours',
+      unitRef: 'Ac1.01',
+      customer: 'Alpha Corp',
+      project: 'Downtown Office',
+      type: 'Monthly Service',
+      teamId: 'T1',
+      status: 'Scheduled'
+    }
   ],
   jobCards: [
     { id: 'JOB-2026-001', date: '2026/01/14', unitRef: 'Ac1.01', customer: 'Alpha Corp', tech: 'John Doe', faultFound: false },

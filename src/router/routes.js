@@ -73,10 +73,16 @@ const routes = [
       { path: '', redirect: '/field/customers' },
       { path: 'customers', component: () => import('pages/FieldCustomers.vue') },
       { path: 'projects', component: () => import('pages/FieldProjects.vue') },
+      { path: 'profile', component: () => import('pages/FieldProfile.vue') },
+      {
+        path: 'projects/:projectId/actions',
+        component: () => import('pages/FieldProjectActions.vue'),
+      },
       { path: 'service-schedule', component: () => import('pages/ServiceCalendar.vue') },
       { path: 'service-entry/:assetId?', component: () => import('pages/ServiceForm.vue') },
       { path: 'qr-scan', component: () => import('pages/QRScanner.vue') },
       { path: 'job-cards/add', component: () => import('pages/AddJobCard.vue') },
+      { path: 'commissioning', component: () => import('pages/CommissioningList.vue') },
     ],
   },
   {

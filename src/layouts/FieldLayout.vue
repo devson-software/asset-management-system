@@ -17,16 +17,16 @@
       </q-toolbar>
     </q-header>
 
-    <q-page-container>
+    <q-page-container class="field-page-container">
       <router-view />
     </q-page-container>
 
-    <q-footer elevated class="bg-white">
+    <q-footer elevated class="bg-white field-footer">
       <q-bottom-navigation
         v-model="activeTab"
         active-color="primary"
         indicator-color="primary"
-        class="text-grey-7"
+        class="text-grey-7 field-bottom-nav"
       >
         <q-btn
           label="Customers"
@@ -34,14 +34,14 @@
           @click="goTo('/field/customers')"
         />
         <q-btn
-          label="Projects"
-          icon="fas fa-building"
+          label="Search"
+          icon="fas fa-magnifying-glass"
           @click="goTo('/field/projects')"
         />
         <q-btn
-          label="Schedule"
-          icon="fas fa-calendar-check"
-          @click="goTo('/field/service-schedule')"
+          label="Profile"
+          icon="fas fa-user"
+          @click="goTo('/field/profile')"
         />
       </q-bottom-navigation>
     </q-footer>
@@ -60,8 +60,9 @@ export default defineComponent({
     const activeTab = ref('customers')
 
     const updateTab = () => {
-      if (route.path.includes('/field/projects')) activeTab.value = 'projects'
-      else if (route.path.includes('/field/service-schedule')) activeTab.value = 'schedule'
+      if (route.path.includes('/field/profile')) activeTab.value = 'profile'
+      else if (route.path.includes('/field/projects')) activeTab.value = 'search'
+      else if (route.path.includes('/field/service-schedule')) activeTab.value = 'search'
       else activeTab.value = 'customers'
     }
 
@@ -81,7 +82,42 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.q-bottom-navigation {
-  height: 64px;
+.field-footer {
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.field-bottom-nav {
+  height: 84px;
+  padding: 4px 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.field-bottom-nav .q-btn {
+  flex: 0 0 33.3333%;
+  min-width: 0;
+  padding: 8px 0;
+  font-weight: 600;
+}
+
+.field-bottom-nav .q-icon {
+  font-size: 22px;
+}
+
+.field-bottom-nav .q-btn__content {
+  font-size: 12px;
+  line-height: 1.1;
+  letter-spacing: 0.2px;
+}
+
+.field-bottom-nav .q-btn--active {
+  background: rgba(25, 118, 210, 0.08);
+  border-radius: 12px;
+  margin: 0 6px;
+}
+
+.field-page-container {
+  padding-top: 10px;
 }
 </style>

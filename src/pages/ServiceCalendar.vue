@@ -10,6 +10,7 @@
         </div>
         <div class="q-gutter-sm">
           <q-btn
+            v-if="!isFieldView"
             color="primary"
             icon="fas fa-plus"
             label="Schedule New Visit"
@@ -17,6 +18,7 @@
             class="shadow-2"
           />
           <q-btn
+            v-if="!isFieldView"
             flat
             color="primary"
             icon="fas fa-paper-plane"
@@ -29,7 +31,7 @@
       <div class="col-12">
         <q-card flat bordered class="rounded-borders q-pa-md bg-grey-1">
           <div class="row q-col-gutter-md items-center">
-            <div class="col-12 col-sm-3">
+            <div v-if="!isFieldView" class="col-12 col-sm-3">
               <q-select
                 v-model="customerFilter"
                 :options="customerOptions"
@@ -46,7 +48,7 @@
                 /></template>
               </q-select>
             </div>
-            <div class="col-12 col-sm-3">
+            <div v-if="!isFieldView" class="col-12 col-sm-3">
               <q-select
                 v-model="projectFilter"
                 :options="filterProjectOptions"
@@ -64,7 +66,7 @@
                 /></template>
               </q-select>
             </div>
-            <div class="col-12 col-sm-3">
+            <div :class="isFieldView ? 'col-12' : 'col-12 col-sm-3'">
               <q-select
                 v-model="teamFilter"
                 :options="teams"
@@ -100,14 +102,14 @@
                 </template>
               </q-select>
             </div>
-            <div class="col-12 col-sm-3 flex justify-end">
+            <div :class="isFieldView ? 'col-12 flex justify-end' : 'col-12 col-sm-3 flex justify-end'">
               <q-btn
                 flat
                 color="grey-7"
                 icon="fas fa-filter-circle-xmark"
                 label="Reset"
                 @click="clearFilters"
-                v-if="customerFilter || projectFilter || teamFilter"
+                v-if="(isFieldView && teamFilter) || (!isFieldView && (customerFilter || projectFilter || teamFilter))"
               />
             </div>
           </div>
@@ -117,7 +119,7 @@
       <div class="col-12">
         <div class="row q-col-gutter-xl">
           <!-- Left Column: Calendar -->
-          <div class="col-12 col-md-5">
+          <div v-if="!isFieldView" class="col-12 col-md-5">
             <q-card flat bordered class="calendar-card overflow-hidden">
               <q-date
                 v-model="selectedDate"
@@ -157,7 +159,7 @@
           </div>
 
           <!-- Right Column: Service List -->
-          <div class="col-12 col-md-7">
+          <div :class="isFieldView ? 'col-12' : 'col-12 col-md-7'">
             <div class="row items-center justify-between q-mb-md">
               <div class="text-h6 text-grey-8">
                 Services for <span class="text-primary text-weight-bold">{{ selectedDate }}</span>
@@ -222,6 +224,29 @@
                       </div>
                     </div>
 
+                    <div class="q-mt-sm">
+                      <q-chip
+                        dense
+                        :color="getStatusColor(service.status)"
+                        text-color="white"
+                        icon="fas fa-circle-check"
+                        size="sm"
+                        class="text-weight-bold"
+                      >
+                        {{ service.status || 'Scheduled' }}
+                      </q-chip>
+                    </div>
+
+                    <q-btn
+                      v-if="isFieldView"
+                      color="primary"
+                      icon="fas fa-play"
+                      label="Start Work"
+                      class="q-mt-md full-width"
+                      size="lg"
+                      @click="startService(service)"
+                    />
+
                     <!-- Tasks Preview in List -->
                     <div
                       v-if="store.serviceDefinitions && store.serviceDefinitions[service.type]"
@@ -276,16 +301,17 @@
                         {{ service.type }}
                       </q-chip>
                       <div class="row q-mt-sm">
-                        <q-btn flat round color="grey-7" icon="fas fa-ellipsis-vertical">
+                        <q-btn v-if="!isFieldView" flat round color="grey-7" icon="fas fa-ellipsis-vertical">
                           <q-menu auto-close class="rounded-borders shadow-2">
                             <q-list style="min-width: 150px">
-                              <q-item clickable @click="editService(service)">
+                              <q-item v-if="!isFieldView" clickable @click="editService(service)">
                                 <q-item-section avatar
                                   ><q-icon name="fas fa-edit" color="primary" size="sm"
                                 /></q-item-section>
                                 <q-item-section>Edit Visit</q-item-section>
                               </q-item>
                               <q-item
+                                v-if="!isFieldView"
                                 clickable
                                 @click="confirmDelete(service)"
                                 class="text-negative"
@@ -294,13 +320,6 @@
                                   ><q-icon name="fas fa-trash-can" color="negative" size="sm"
                                 /></q-item-section>
                                 <q-item-section>Cancel Visit</q-item-section>
-                              </q-item>
-                              <q-separator />
-                              <q-item clickable @click="startService(service)">
-                                <q-item-section avatar
-                                  ><q-icon name="fas fa-play" color="positive" size="sm"
-                                /></q-item-section>
-                                <q-item-section>Start Work</q-item-section>
                               </q-item>
                             </q-list>
                           </q-menu>
@@ -546,6 +565,7 @@ export default defineComponent({
     const customerFilter = ref(null)
     const projectFilter = ref(null)
     const teamFilter = ref(null)
+    const isFieldView = computed(() => route.path.startsWith('/field'))
 
     const form = reactive({
       customerId: null,
@@ -878,6 +898,13 @@ export default defineComponent({
       return team ? team.color : 'grey-7'
     }
 
+    const getStatusColor = (status) => {
+      if (status === 'Completed') return 'positive'
+      if (status === 'In Progress') return 'primary'
+      if (status === 'Awaiting Signature') return 'amber-8'
+      return 'grey-7'
+    }
+
     const getAssetIdByUnitRef = (unitRef) => {
       let foundId = null
       store.customers.forEach((customer) => {
@@ -914,9 +941,11 @@ export default defineComponent({
       projectFilter,
       teamFilter,
       teams,
+      isFieldView,
       getUserName,
       getTeamName,
       getTeamColor,
+      getStatusColor,
       getEventColor,
       getTeam,
       clearFilters,

@@ -457,53 +457,6 @@
                       size="lg"
                     />
                     <q-btn
-                      flat
-                      color="primary"
-                      label="Continue"
-                      @click="goToStep(6)"
-                      :disable="!service.signed"
-                    />
-                  </div>
-                </div>
-              </q-step>
-
-              <q-step :name="6" title="Capture Scan Unit Data" icon="fas fa-database" :done="service.captureScanData">
-                <div class="section-container bg-white">
-                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                    <q-icon name="fas fa-database" class="q-mr-sm" /> Capture Scan Unit Data
-                  </div>
-                  <div class="row items-center justify-between">
-                    <q-checkbox
-                      v-model="service.captureScanData"
-                      label="Unit data captured"
-                      color="primary"
-                      size="lg"
-                    />
-                    <q-btn
-                      flat
-                      color="primary"
-                      label="Continue"
-                      @click="goToStep(7)"
-                      :disable="!service.captureScanData"
-                    />
-                  </div>
-                </div>
-              </q-step>
-
-              <q-step :name="7" title="Generate QR" icon="fas fa-qrcode" :done="service.qrGenerated">
-                <div class="section-container bg-white">
-                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                    <q-icon name="fas fa-qrcode" class="q-mr-sm" /> Generate QR
-                  </div>
-                  <div class="row items-center justify-between">
-                    <q-btn
-                      color="secondary"
-                      icon="fas fa-qrcode"
-                      label="Generate QR"
-                      @click="generateQr"
-                      :disable="service.qrGenerated"
-                    />
-                    <q-btn
                       type="submit"
                       color="secondary"
                       icon="fas fa-cloud-check"
@@ -636,8 +589,6 @@ export default defineComponent({
       signed: false,
       signedBy: 'client',
       unitJobCardDone: false,
-      captureScanData: false,
-      qrGenerated: false,
     })
 
     const frequencyOptions = ['Monthly', 'Quarterly', 'Semi-Annual', 'Annual', 'Every 3-5 Years']
@@ -975,15 +926,6 @@ export default defineComponent({
       { label: 'Technician', value: 'technician' },
     ]
 
-    const generateQr = () => {
-      service.qrGenerated = true
-      $q.notify({
-        color: 'positive',
-        message: 'QR generated successfully.',
-        icon: 'fas fa-qrcode',
-      })
-    }
-
     const progressKey = computed(() => {
       const id = serviceId || assetId || 'manual'
       return `service-progress:${id}`
@@ -1019,8 +961,6 @@ export default defineComponent({
           signed: service.signed,
           signedBy: service.signedBy,
           unitJobCardDone: service.unitJobCardDone,
-          captureScanData: service.captureScanData,
-          qrGenerated: service.qrGenerated,
         },
       }
       localStorage.setItem(progressKey.value, JSON.stringify(payload))
@@ -1032,6 +972,8 @@ export default defineComponent({
       try {
         const parsed = JSON.parse(raw)
         if (parsed?.service) {
+          delete parsed.service.captureScanData
+          delete parsed.service.qrGenerated
           Object.assign(service, parsed.service)
         }
         if (parsed?.currentStep) {
@@ -1062,9 +1004,7 @@ export default defineComponent({
         !!service.timeArrived &&
         !!service.unitJobCardDone &&
         !!service.timeEnded &&
-        !!service.signed &&
-        !!service.captureScanData &&
-        !!service.qrGenerated
+        !!service.signed
       )
     })
 
@@ -1092,7 +1032,6 @@ export default defineComponent({
       canSubmit,
       openScanner,
       goToStep,
-      generateQr,
       pauseProgress,
       goBackToSchedule,
       simulateScan,

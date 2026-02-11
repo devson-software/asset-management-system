@@ -5,13 +5,39 @@
         <div class="row items-center no-wrap">
           <q-btn flat round icon="fas fa-arrow-left" @click="$router.push('/field/customers')" />
           <div class="q-ml-sm">
-            <div class="text-h5 text-weight-bold text-primary">Select Project</div>
+            <div class="text-h5 text-weight-bold text-primary">Projects/Buildings</div>
             <div class="text-subtitle2 text-grey-7">Choose a site to view schedule</div>
           </div>
         </div>
+        
       </div>
 
       <div class="col-12">
+        <q-card flat bordered class="rounded-borders bg-white q-mb-md">
+          <q-card-section>
+            <q-select
+              v-model="selectedCustomerId"
+              :options="customerOptions"
+              label="Search Customers"
+              outlined
+              dense
+              emit-value
+              map-options
+              use-input
+              input-debounce="0"
+              @filter="filterCustomers"
+              option-label="label"
+              option-value="value"
+              clearable
+              bg-color="white"
+            >
+              <template v-slot:prepend>
+                <q-icon name="fas fa-users" size="xs" />
+              </template>
+            </q-select>
+          </q-card-section>
+        </q-card>
+
         <q-banner v-if="!customer" rounded class="bg-orange-1 text-orange-9 q-mb-md">
           <template v-slot:avatar><q-icon name="fas fa-circle-exclamation" /></template>
           Please select a customer first.
@@ -35,7 +61,7 @@
             :filter="filter"
             :pagination="{ rowsPerPage: 10 }"
             class="projects-table"
-            @row-click="goToSchedule"
+            @row-click="goToActions"
           >
             <template v-slot:header="props">
               <q-tr :props="props" class="cursor-pointer">
@@ -149,6 +175,23 @@
               </q-td>
             </template>
 
+            <template v-slot:body-cell-actions="props">
+              <q-td :props="props" class="text-right">
+                <q-btn flat round color="grey-7" icon="fas fa-ellipsis-vertical" size="sm">
+                  <q-menu auto-close class="rounded-borders shadow-2">
+                    <q-list style="min-width: 180px">
+                      <q-item clickable @click="goToActions(null, props.row)">
+                        <q-item-section avatar>
+                          <q-icon name="fas fa-list-check" color="primary" size="sm" />
+                        </q-item-section>
+                        <q-item-section>Project Actions</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
+              </q-td>
+            </template>
+
           </q-table>
         </q-card>
       </div>
@@ -157,7 +200,7 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref, reactive } from 'vue'
+import { defineComponent, computed, ref, reactive, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMainStore } from '../stores/main'
 
@@ -167,7 +210,8 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const store = useMainStore()
-    const customerId = computed(() => route.query.customerId || '')
+    const selectedCustomerId = ref(route.query.customerId || null)
+    const customerId = computed(() => selectedCustomerId.value || '')
     const filter = ref('')
     const columnFilters = reactive({
       name: '',
@@ -183,8 +227,42 @@ export default defineComponent({
       return customer.value?.projects || []
     })
 
+    const customerOptions = computed(() => {
+      return store.customers.map((c) => ({ label: c.name, value: c.id }))
+    })
+
+    const customerOptionsFiltered = ref(customerOptions.value || [])
+
+    const filterCustomers = (val, update) => {
+      update(() => {
+        if (!val) {
+          customerOptionsFiltered.value = customerOptions.value
+          return
+        }
+        const needle = val.toLowerCase()
+        customerOptionsFiltered.value = customerOptions.value.filter((c) =>
+          c.label.toLowerCase().includes(needle),
+        )
+      })
+    }
+
+    watch(
+      () => route.query.customerId,
+      (nextId) => {
+        selectedCustomerId.value = nextId || null
+      },
+    )
+
+    watch(selectedCustomerId, (nextId) => {
+      if (String(route.query.customerId || '') === String(nextId || '')) return
+      router.push({
+        path: '/field/projects',
+        query: nextId ? { customerId: nextId } : {},
+      })
+    })
+
     const columns = [
-      { name: 'name', label: 'Project', align: 'left', field: 'name', sortable: true },
+      { name: 'name', label: 'Project/Building', align: 'left', field: 'name', sortable: true },
       {
         name: 'siteAddress',
         label: 'Site Address',
@@ -199,6 +277,7 @@ export default defineComponent({
         field: 'assetsCount',
         sortable: true,
       },
+      { name: 'actions', label: '', align: 'right' },
     ]
 
     const rows = computed(() => {
@@ -221,10 +300,10 @@ export default defineComponent({
       })
     })
 
-    const goToSchedule = (evt, row) => {
+    const goToActions = (evt, row) => {
       if (!row?.id) return
       router.push({
-        path: '/field/service-schedule',
+        path: `/field/projects/${row.id}/actions`,
         query: { customerId: customerId.value, projectId: row.id },
       })
     }
@@ -235,7 +314,10 @@ export default defineComponent({
       columnFilters,
       columns,
       filteredRows,
-      goToSchedule,
+      goToActions,
+      selectedCustomerId,
+      customerOptions: customerOptionsFiltered,
+      filterCustomers,
     }
   },
 })
