@@ -5,9 +5,9 @@
         <q-btn
           v-if="showBack"
           flat
-          round
-          icon="fas fa-arrow-left"
-          aria-label="Back"
+          icon="fas fa-house"
+          label="Home"
+          aria-label="Home"
           @click="goToCustomers()"
         />
         <q-toolbar-title class="text-weight-bold cursor-pointer" @click="goToCustomers">
