@@ -1064,4 +1064,10 @@ export default defineComponent({
 .field-schedule-page .service-item-meta .column {
   align-items: flex-start;
 }
+
+.q-stepper--vertical .q-stepper__step-inner
+ {
+    /* padding: 0 24px 32px 60px; */
+    padding-left: 0 !important;
+}
 </style>

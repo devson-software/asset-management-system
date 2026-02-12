@@ -36,13 +36,16 @@
           </div>
         </q-card-section>
 
-        <q-card-section class="q-pa-lg">
+        <q-card-section :class="isFieldView ? 'q-pa-sm field-stepper-wrapper' : 'q-pa-lg'">
           <q-form @submit="onSubmit" class="q-gutter-y-lg">
             <q-stepper
               v-model="currentStep"
               vertical
               animated
               header-nav
+              :flat="isFieldView"
+              :contracted="isFieldView"
+              :class="isFieldView ? 'field-stepper' : ''"
               @update:model-value="onStepperChange"
             >
               <q-step :name="1" title="Start Scan" icon="fas fa-qrcode" :done="!!service.timeArrived">
@@ -508,7 +511,7 @@
               </q-card>
             </q-dialog>
 
-            <div class="row q-gutter-md justify-between q-mt-xl">
+            <div class="row  justify-between">
               <q-btn label="Pause & Continue Later" flat color="primary" @click="pauseProgress" />
               <q-btn label="Back to Schedule" flat color="grey-7" @click="goBackToSchedule" />
             </div>
@@ -1070,12 +1073,12 @@ export default defineComponent({
   max-width: 900px;
   margin: 0 auto;
 }
-.section-container {
+/* .section-container {
   border: 1px solid #e0e0e0;
   padding: 20px;
   border-radius: 12px;
   background: #fdfdfd;
-}
+} */
 .checklist-container {
   border: 1px solid #e0e0e0;
 }
@@ -1109,6 +1112,7 @@ export default defineComponent({
 .section-container {
   border: 1px solid #e0e0e0;
   padding: 16px;
+  margin-right: 0;
   border-radius: 8px;
 }
 .signature-pad {
@@ -1127,5 +1131,65 @@ export default defineComponent({
   max-width: 100%;
   margin: 0;
   border-radius: 0;
+}
+
+.q-stepper__step-inner {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.field-stepper-wrapper {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.field-stepper .q-stepper__content,
+.field-stepper .q-stepper__step-content,
+.field-stepper .q-stepper__step-content-inner {
+  padding: 0 !important;
+  margin-left: 0 !important;
+}
+
+.field-stepper :deep(.q-stepper__header) {
+  padding: 0 !important;
+  margin-left: 0 !important;
+}
+
+.field-stepper :deep(.q-stepper__tab) {
+  padding: 6px 0 !important;
+  min-height: 44px;
+  margin-left: 0 !important;
+}
+
+.field-stepper :deep(.q-stepper__title) {
+  font-size: 14px;
+}
+
+.field-stepper :deep(.q-stepper__caption) {
+  font-size: 12px;
+}
+
+.field-service-page .section-container {
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.field-service-page .checklist-container {
+  border: 0;
+}
+
+.field-service-page .q-item {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.field-service-page .q-item__section--side {
+  padding-right: 8px;
+}
+
+:deep(.q-stepper__step-inner) {
+  /* background: red; */
+  /* padding: 0 24px 2px 60px; */
+  padding: 0px 0px 0px 11px !important;
 }
 </style>
