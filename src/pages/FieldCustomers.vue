@@ -62,6 +62,7 @@
           <q-table
             :rows="filteredRows"
             :columns="columns"
+            :visible-columns="visibleColumns"
             row-key="id"
             flat
             :filter="filter"
@@ -186,12 +187,14 @@
 <script>
 import { defineComponent, computed, ref, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { useMainStore } from '../stores/main'
 
 export default defineComponent({
   name: 'FieldCustomers',
   setup() {
     const router = useRouter()
+    const $q = useQuasar()
     const store = useMainStore()
     const filter = ref('')
     const selectedCustomerId = ref(null)
@@ -230,6 +233,13 @@ export default defineComponent({
         invitationStatus: `${c.projects?.length || 0} Projects`,
         projects: c.projects || [],
       }))
+    })
+
+    const visibleColumns = computed(() => {
+      if ($q.screen.lt.md) {
+        return ['fullName', 'invitation']
+      }
+      return columns.map((col) => col.name)
     })
 
     const customerOptions = computed(() => {
@@ -313,6 +323,7 @@ export default defineComponent({
       filter,
       columnFilters,
       columns,
+      visibleColumns,
       filteredRows,
       goToProjects,
       selectedCustomerId,

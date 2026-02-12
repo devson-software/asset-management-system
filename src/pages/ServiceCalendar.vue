@@ -219,24 +219,24 @@
                       {{ service.unitRef }}
                     </q-item-label>
                     <q-item-label class="text-grey-9">{{ service.customer }}</q-item-label>
-                    <div class="row items-center q-gutter-x-md q-mt-xs">
-                      <div class="text-caption text-grey-7 row items-center">
-                        <q-icon name="fas fa-location-dot" size="10px" class="q-mr-xs" />
+                    <div class="column q-gutter-y-xs q-mt-xs service-detail-stack">
+                      <div class="text-body2 text-grey-8 row items-center">
+                        <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
                         {{ service.project }}
                       </div>
                       <div
-                        class="text-caption text-grey-7 row items-center"
+                        class="text-body2 text-grey-8 row items-center"
                         v-if="service.duration"
                       >
-                        <q-icon name="fas fa-hourglass-half" size="10px" class="q-mr-xs" />
+                        <q-icon name="fas fa-hourglass-half" size="12px" class="q-mr-xs" />
                         {{ service.duration }}
                       </div>
                       <div
                         v-if="service.teamId"
-                        class="text-caption row items-center"
+                        class="text-body2 row items-center"
                         :style="{ color: getTeamColor(service.teamId) }"
                       >
-                        <q-icon name="fas fa-people-group" size="10px" class="q-mr-xs" />
+                        <q-icon name="fas fa-people-group" size="12px" class="q-mr-xs" />
                         {{ getTeamName(service.teamId) }}
                         <q-tooltip>
                           Team: {{ getTeamName(service.teamId) }}<br />
@@ -1050,6 +1050,10 @@ export default defineComponent({
   align-items: flex-start;
   flex-direction: column;
   gap: 12px;
+}
+
+.service-detail-stack {
+  line-height: 1.2;
 }
 
 .field-schedule-page .service-item-main,

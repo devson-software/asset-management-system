@@ -52,6 +52,7 @@
           <q-table
             :rows="filteredRows"
             :columns="columns"
+            :visible-columns="visibleColumns"
             row-key="id"
             flat
             :filter="filter"
@@ -184,6 +185,7 @@
 <script>
 import { defineComponent, computed, ref, reactive, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { useMainStore } from '../stores/main'
 
 export default defineComponent({
@@ -191,6 +193,7 @@ export default defineComponent({
   setup() {
     const route = useRoute()
     const router = useRouter()
+    const $q = useQuasar()
     const store = useMainStore()
     const selectedCustomerId = ref(route.query.customerId || null)
     const customerId = computed(() => selectedCustomerId.value || '')
@@ -272,6 +275,13 @@ export default defineComponent({
       }))
     })
 
+    const visibleColumns = computed(() => {
+      if ($q.screen.lt.md) {
+        return ['name', 'siteAddress']
+      }
+      return columns.map((col) => col.name)
+    })
+
     const filteredRows = computed(() => {
       return rows.value.filter((row) => {
         return Object.keys(columnFilters).every((key) => {
@@ -295,6 +305,7 @@ export default defineComponent({
       filter,
       columnFilters,
       columns,
+      visibleColumns,
       filteredRows,
       goToActions,
       selectedCustomerId,
