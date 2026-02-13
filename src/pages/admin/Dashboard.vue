@@ -220,7 +220,7 @@
 <script>
 import { defineComponent } from 'vue'
 import { onMounted } from 'vue'
-import { useMainStore } from '../stores/main'
+import { useMainStore } from '../../stores/main'
 
 export default defineComponent({
   name: 'DashboardPage',

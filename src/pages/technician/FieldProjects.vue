@@ -2,9 +2,12 @@
   <q-page padding class="bg-grey-1">
     <div class="row q-col-gutter-lg">
       <div class="col-12 flex justify-between items-center">
-        <div>
-          <div class="text-h5 text-weight-bold text-primary">Customers</div>
-          <div class="text-subtitle2 text-grey-7">Choose a client to view projects</div>
+        <div class="row items-center no-wrap">
+          <q-btn flat round icon="fas fa-arrow-left" @click="$router.push('/field/customers')" />
+          <div class="q-ml-sm">
+            <div class="text-h5 text-weight-bold text-primary">Projects/Buildings</div>
+            <div class="text-subtitle2 text-grey-7">Choose a site to view schedule</div>
+          </div>
         </div>
         
       </div>
@@ -12,7 +15,7 @@
       <div class="col-12">
         <q-card flat bordered class="rounded-borders bg-white q-pa-md">
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-sm-6">
+            <div class="col-12">
               <q-select
                 v-model="selectedCustomerId"
                 :options="customerOptions"
@@ -29,32 +32,19 @@
                 clearable
                 bg-color="white"
               >
-                <template v-slot:prepend><q-icon name="fas fa-building" size="xs" /></template>
-              </q-select>
-            </div>
-            <div class="col-12 col-sm-6">
-              <q-select
-                v-model="selectedProjectId"
-                :options="projectOptions"
-                label="Search Projects/Buildings"
-                outlined
-                dense
-                emit-value
-                map-options
-                use-input
-                input-debounce="0"
-                @filter="filterProjects"
-                option-label="label"
-                option-value="value"
-                clearable
-                :disable="!selectedCustomerId"
-                bg-color="white"
-              >
-                <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" /></template>
+                <template v-slot:prepend>
+                  <q-icon name="fas fa-users" size="xs" />
+                </template>
               </q-select>
             </div>
           </div>
         </q-card>
+
+        <q-banner v-if="!customer" rounded class="bg-orange-1 text-orange-9 q-mb-md">
+          <template v-slot:avatar><q-icon name="fas fa-circle-exclamation" /></template>
+          Please select a customer first.
+        </q-banner>
+
       </div>
 
       <div class="col-12">
@@ -67,8 +57,8 @@
             flat
             :filter="filter"
             :pagination="{ rowsPerPage: 10 }"
-            class="customers-table"
-            @row-click="goToProjects"
+            class="projects-table"
+            @row-click="goToActions"
           >
             <template v-slot:header="props">
               <q-tr :props="props" class="cursor-pointer">
@@ -140,43 +130,51 @@
               </q-tr>
             </template>
 
-            <template v-slot:body-cell-fullName="props">
+            <template v-slot:body-cell-name="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">
                   <q-avatar size="32px" class="q-mr-md shadow-1">
-                    <q-icon name="fas fa-building" color="primary" />
+                    <q-icon name="fas fa-location-dot" color="primary" />
                   </q-avatar>
                   <div>
-                    <div class="text-weight-bold">{{ props.row.fullName }}</div>
-                    <div class="text-caption text-grey-7">
-                      {{ props.row.contactName || 'No contact' }}
-                    </div>
+                    <div class="text-weight-bold">{{ props.row.name }}</div>
+                    <div class="text-caption text-grey-7">{{ props.row.vendorLocation || 'N/A' }}</div>
                   </div>
                 </div>
               </q-td>
             </template>
 
-            <template v-slot:body-cell-invitation="props">
+            <template v-slot:body-cell-siteAddress="props">
+              <q-td :props="props">
+                <div class="text-caption text-grey-7">{{ props.value || 'No site address' }}</div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-assetsCount="props">
               <q-td :props="props" class="text-center">
-                <q-chip dense color="blue-1" text-color="blue-9" class="text-weight-bold">
-                  {{ props.row.invitationStatus }}
+                <q-chip dense color="blue-1" text-color="primary" class="text-weight-bold">
+                  {{ props.value }}
                 </q-chip>
               </q-td>
             </template>
 
-            <template v-slot:body-cell-mobile="props">
-              <q-td :props="props">
-                <q-chip outline color="grey-7" size="sm" icon="fas fa-phone" dense>
-                  {{ props.value || 'N/A' }}
-                </q-chip>
+            <template v-slot:body-cell-actions="props">
+              <q-td :props="props" class="text-right">
+                <q-btn flat round color="grey-7" icon="fas fa-ellipsis-vertical" size="sm">
+                  <q-menu auto-close class="rounded-borders shadow-2">
+                    <q-list style="min-width: 180px">
+                      <q-item clickable @click="goToActions(null, props.row)">
+                        <q-item-section avatar>
+                          <q-icon name="fas fa-list-check" color="primary" size="sm" />
+                        </q-item-section>
+                        <q-item-section>Project Actions</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
               </q-td>
             </template>
 
-            <template v-slot:body-cell-vatNumber="props">
-              <q-td :props="props">
-                <div class="text-caption text-grey-7">{{ props.value || 'N/A' }}</div>
-              </q-td>
-            </template>
           </q-table>
         </q-card>
       </div>
@@ -186,60 +184,32 @@
 
 <script>
 import { defineComponent, computed, ref, reactive, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { useMainStore } from '../stores/main'
+import { useMainStore } from '../../stores/main'
 
 export default defineComponent({
-  name: 'FieldCustomers',
+  name: 'FieldProjects',
   setup() {
+    const route = useRoute()
     const router = useRouter()
     const $q = useQuasar()
     const store = useMainStore()
+    const selectedCustomerId = ref(route.query.customerId || null)
+    const customerId = computed(() => selectedCustomerId.value || '')
     const filter = ref('')
-    const selectedCustomerId = ref(null)
-    const selectedProjectId = ref(null)
-
     const columnFilters = reactive({
-      fullName: '',
-      email: '',
-      mobile: '',
-      vatNumber: '',
-      invitation: '',
+      name: '',
+      siteAddress: '',
+      assetsCount: '',
     })
 
-    const columns = [
-      { name: 'fullName', label: 'Customer', align: 'left', field: 'fullName', sortable: true },
-      { name: 'email', label: 'Email Address', align: 'left', field: 'email', sortable: true },
-      { name: 'mobile', label: 'Mobile', align: 'left', field: 'mobile', sortable: true },
-      { name: 'vatNumber', label: 'VAT Number', align: 'left', field: 'vatNumber', sortable: true },
-      {
-        name: 'invitation',
-        label: 'Projects',
-        align: 'center',
-        field: 'invitationStatus',
-        sortable: true,
-      },
-    ]
-
-    const rows = computed(() => {
-      return store.customers.map((c) => ({
-        id: c.id,
-        fullName: c.name,
-        contactName: c.contactName,
-        email: c.email || 'N/A',
-        mobile: c.mobile || 'N/A',
-        vatNumber: c.vatNumber || 'N/A',
-        invitationStatus: `${c.projects?.length || 0} Projects`,
-        projects: c.projects || [],
-      }))
+    const customer = computed(() => {
+      return store.customers.find((c) => c.id === customerId.value) || null
     })
 
-    const visibleColumns = computed(() => {
-      if ($q.screen.lt.md) {
-        return ['fullName', 'invitation']
-      }
-      return columns.map((col) => col.name)
+    const projects = computed(() => {
+      return customer.value?.projects || []
     })
 
     const customerOptions = computed(() => {
@@ -261,51 +231,59 @@ export default defineComponent({
       })
     }
 
-    const projectOptions = computed(() => {
-      if (!selectedCustomerId.value) return []
-      const customer = store.customers.find((c) => c.id === selectedCustomerId.value)
-      return customer ? customer.projects.map((p) => ({ label: p.name, value: p.id })) : []
-    })
+    watch(
+      () => route.query.customerId,
+      (nextId) => {
+        selectedCustomerId.value = nextId || null
+      },
+    )
 
-    const projectOptionsFiltered = ref(projectOptions.value || [])
-
-    watch(projectOptions, (next) => {
-      projectOptionsFiltered.value = next || []
-    })
-
-    watch(selectedCustomerId, () => {
-      selectedProjectId.value = null
-      projectOptionsFiltered.value = projectOptions.value || []
-    })
-
-    watch(selectedProjectId, (nextProjectId) => {
-      if (!nextProjectId) return
+    watch(selectedCustomerId, (nextId) => {
+      if (String(route.query.customerId || '') === String(nextId || '')) return
       router.push({
-        path: `/field/projects/${nextProjectId}/actions`,
-        query: { customerId: selectedCustomerId.value, projectId: nextProjectId },
+        path: '/field/projects',
+        query: nextId ? { customerId: nextId } : {},
       })
     })
 
-    const filterProjects = (val, update) => {
-      update(() => {
-        if (!val) {
-          projectOptionsFiltered.value = projectOptions.value
-          return
-        }
-        const needle = val.toLowerCase()
-        projectOptionsFiltered.value = projectOptions.value.filter((p) =>
-          p.label.toLowerCase().includes(needle),
-        )
-      })
-    }
+    const columns = [
+      { name: 'name', label: 'Project/Building', align: 'left', field: 'name', sortable: true },
+      {
+        name: 'siteAddress',
+        label: 'Site Address',
+        align: 'left',
+        field: 'siteAddress',
+        sortable: true,
+      },
+      {
+        name: 'assetsCount',
+        label: 'Assets',
+        align: 'center',
+        field: 'assetsCount',
+        sortable: true,
+      },
+      { name: 'actions', label: '', align: 'right' },
+    ]
+
+    const rows = computed(() => {
+      return projects.value.map((p) => ({
+        id: p.id,
+        name: p.name,
+        siteAddress: p.siteAddress || '',
+        vendorLocation: p.vendorLocation || '',
+        assetsCount: p.assets?.length || 0,
+      }))
+    })
+
+    const visibleColumns = computed(() => {
+      if ($q.screen.lt.md) {
+        return ['name', 'siteAddress']
+      }
+      return columns.map((col) => col.name)
+    })
 
     const filteredRows = computed(() => {
       return rows.value.filter((row) => {
-        if (selectedCustomerId.value && row.id !== selectedCustomerId.value) return false
-        if (selectedProjectId.value) {
-          const matchProject = row.projects.some((p) => p.id === selectedProjectId.value)
-          if (!matchProject) return false
-        }
         return Object.keys(columnFilters).every((key) => {
           if (!columnFilters[key]) return true
           const val = row[key] || ''
@@ -314,24 +292,25 @@ export default defineComponent({
       })
     })
 
-    const goToProjects = (evt, row) => {
+    const goToActions = (evt, row) => {
       if (!row?.id) return
-      router.push({ path: '/field/projects', query: { customerId: row.id } })
+      router.push({
+        path: `/field/projects/${row.id}/actions`,
+        query: { customerId: customerId.value, projectId: row.id },
+      })
     }
 
     return {
+      customer,
       filter,
       columnFilters,
       columns,
       visibleColumns,
       filteredRows,
-      goToProjects,
+      goToActions,
       selectedCustomerId,
-      selectedProjectId,
       customerOptions: customerOptionsFiltered,
-      projectOptions: projectOptionsFiltered,
       filterCustomers,
-      filterProjects,
     }
   },
 })
@@ -341,7 +320,7 @@ export default defineComponent({
 .rounded-borders {
   border-radius: 12px;
 }
-.customers-table {
+.projects-table {
   background: transparent;
 }
 </style>

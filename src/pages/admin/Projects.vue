@@ -248,7 +248,7 @@
 
 <script>
 import { defineComponent, ref, computed, reactive } from 'vue'
-import { store } from '../store'
+import { store } from '../../store'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import * as XLSX from 'xlsx'

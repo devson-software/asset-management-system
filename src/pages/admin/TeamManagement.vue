@@ -254,7 +254,7 @@
 <script>
 import { defineComponent, reactive, ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
-import { store } from '../store'
+import { store } from '../../store'
 
 export default defineComponent({
   name: 'TeamManagement',

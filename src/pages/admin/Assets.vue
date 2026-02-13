@@ -323,7 +323,7 @@
 import { defineComponent, ref, computed, reactive } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
-import { store } from '../store'
+import { store } from '../../store'
 import * as XLSX from 'xlsx'
 
 export default defineComponent({

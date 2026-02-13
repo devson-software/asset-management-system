@@ -229,7 +229,7 @@
 
 <script>
 import { defineComponent, ref, reactive, computed } from 'vue'
-import { store } from '../store'
+import { store } from '../../store'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import * as XLSX from 'xlsx'

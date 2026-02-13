@@ -140,7 +140,7 @@
 <script>
 import { defineComponent, computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useMainStore } from '../stores/main'
+import { useMainStore } from '../../stores/main'
 
 export default defineComponent({
   name: 'FieldProjectActions',

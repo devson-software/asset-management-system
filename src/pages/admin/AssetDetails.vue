@@ -369,7 +369,7 @@
 <script>
 import { defineComponent, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { store } from '../store'
+import { store } from '../../store'
 import { useQuasar } from 'quasar'
 
 export default defineComponent({

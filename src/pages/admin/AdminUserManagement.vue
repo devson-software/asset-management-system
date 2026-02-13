@@ -189,7 +189,7 @@
 
 <script>
 import { defineComponent, ref, reactive, computed } from 'vue'
-import { store } from '../store'
+import { store } from '../../store'
 import { useQuasar } from 'quasar'
 
 export default defineComponent({

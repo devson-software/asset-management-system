@@ -348,7 +348,7 @@
 <script>
 import { defineComponent, reactive, computed, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { store } from '../store'
+import { store } from '../../store'
 import { useQuasar } from 'quasar'
 
 export default defineComponent({

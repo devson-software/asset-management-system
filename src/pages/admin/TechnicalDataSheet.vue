@@ -437,7 +437,7 @@
 import { defineComponent, reactive, ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { store } from '../store'
+import { store } from '../../store'
 
 export default defineComponent({
   name: 'TechnicalDataSheet',
