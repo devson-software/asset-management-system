@@ -67,8 +67,7 @@
             <q-card
               flat
               bordered
-              class="rounded-borders action-card full-height"
-              @click="goToCommissioning"
+              class="rounded-borders action-card full-height disabled-card"
             >
               <q-card-section class="row items-center">
                 <q-avatar
@@ -79,7 +78,7 @@
                 />
                 <div class="q-ml-md">
                   <div class="text-subtitle1 text-weight-bold">Commissioning</div>
-                  <div class="text-caption text-grey-7">Capture commissioning data</div>
+                  <div class="text-caption text-grey-7">Disabled</div>
                 </div>
                 <q-space />
                 <q-icon name="fas fa-chevron-right" color="grey-5" />
@@ -91,8 +90,7 @@
             <q-card
               flat
               bordered
-              class="rounded-borders action-card full-height"
-              @click="goToAssets"
+              class="rounded-borders action-card full-height disabled-card"
             >
               <q-card-section class="row items-center">
                 <q-avatar
@@ -103,7 +101,7 @@
                 />
                 <div class="q-ml-md">
                   <div class="text-subtitle1 text-weight-bold">Assets</div>
-                  <div class="text-caption text-grey-7">View assets for this project</div>
+                  <div class="text-caption text-grey-7">Disabled</div>
                 </div>
                 <q-space />
                 <q-icon name="fas fa-chevron-right" color="grey-5" />
@@ -115,8 +113,7 @@
             <q-card
               flat
               bordered
-              class="rounded-borders action-card full-height"
-              @click="goToJobCards"
+              class="rounded-borders action-card full-height disabled-card"
             >
               <q-card-section class="row items-center">
                 <q-avatar
@@ -127,7 +124,7 @@
                 />
                 <div class="q-ml-md">
                   <div class="text-subtitle1 text-weight-bold">Job Card</div>
-                  <div class="text-caption text-grey-7">Create or review job cards</div>
+                  <div class="text-caption text-grey-7">Disabled</div>
                 </div>
                 <q-space />
                 <q-icon name="fas fa-chevron-right" color="grey-5" />
@@ -245,5 +242,10 @@ export default defineComponent({
 }
 .action-card {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.disabled-card {
+  opacity: 0.55;
+  pointer-events: none;
 }
 </style>
