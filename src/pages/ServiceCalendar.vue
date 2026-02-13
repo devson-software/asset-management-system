@@ -269,45 +269,6 @@
                       @click="startService(service)"
                     />
 
-                    <!-- Tasks Preview in List -->
-                    <div
-                      v-if="store.serviceDefinitions && store.serviceDefinitions[service.type]"
-                      class="q-mt-sm"
-                    >
-                      <div class="column q-gutter-y-xs">
-                        <q-chip
-                          v-for="(task, idx) in store.serviceDefinitions[service.type].tasks.slice(
-                            0,
-                            2,
-                          )"
-                          :key="idx"
-                          outline
-                          dense
-                          size="9px"
-                          color="blue-grey-3"
-                          text-color="blue-grey-7"
-                          icon="fas fa-check"
-                        >
-                          {{ task }}
-                        </q-chip>
-                        <div
-                          v-if="store.serviceDefinitions[service.type].tasks.length > 2"
-                          class="text-caption text-grey-5"
-                          style="font-size: 10px; align-self: center"
-                        >
-                          +{{ store.serviceDefinitions[service.type].tasks.length - 2 }} more
-                          <q-tooltip>
-                            <div
-                              v-for="(task, idx) in store.serviceDefinitions[service.type].tasks"
-                              :key="idx"
-                              class="q-mb-xs"
-                            >
-                              • {{ task }}
-                            </div>
-                          </q-tooltip>
-                        </div>
-                      </div>
-                    </div>
                   </q-item-section>
 
                   <q-item-section side class="service-item-meta">

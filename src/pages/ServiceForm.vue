@@ -70,13 +70,6 @@
                         Time Recorded: {{ service.timeArrived }}
                       </div>
                     </div>
-                    <q-btn
-                      flat
-                      color="primary"
-                      label="Continue"
-                      @click="goToStep(2)"
-                      :disable="!service.timeArrived"
-                    />
                   </div>
                   <div class="row q-mt-md">
                     <q-btn
@@ -96,7 +89,7 @@
                   <div class="text-subtitle1 text-primary q-mb-md row items-center">
                     <q-icon name="fas fa-file-invoice" class="q-mr-sm" /> Unit Job Card
                   </div>
-                  <div class="row items-center justify-between">
+                  <div class="column">
                     <q-toggle
                       v-model="service.unitJobCardDone"
                       label="Unit job card checked"
@@ -104,8 +97,9 @@
                       class="text-weight-bold"
                     />
                     <q-btn
-                      flat
+                      class="full-width q-mt-md"
                       color="primary"
+                      unelevated
                       label="Continue"
                       @click="goToStep(3)"
                       :disable="!service.unitJobCardDone"
@@ -397,8 +391,14 @@
                   </transition>
                 </div>
 
-                <div class="row justify-end">
-                  <q-btn flat color="primary" label="Continue" @click="goToStep(4)" />
+                <div class="row">
+                  <q-btn
+                    class="full-width"
+                    color="primary"
+                    unelevated
+                    label="Continue"
+                    @click="goToStep(4)"
+                  />
                 </div>
               </q-step>
 
@@ -424,13 +424,6 @@
                         Time Recorded: {{ service.timeEnded }}
                       </div>
                     </div>
-                    <q-btn
-                      flat
-                      color="primary"
-                      label="Continue"
-                      @click="goToStep(5)"
-                      :disable="!service.timeEnded"
-                    />
                   </div>
                   <div class="row q-mt-md">
                     <q-btn
@@ -450,7 +443,7 @@
                   <div class="text-subtitle1 text-primary q-mb-md row items-center">
                     <q-icon name="fas fa-pen-fancy" class="q-mr-sm" /> Signature (Client / Tech)
                   </div>
-                  <div class="row items-center justify-between">
+                  <div class="column">
                     <q-btn-toggle
                       v-model="service.signedBy"
                       :options="signatureOptions"
@@ -467,6 +460,7 @@
                     />
                     <q-btn
                       type="submit"
+                      class="full-width q-mt-md"
                       color="secondary"
                       icon="fas fa-cloud-check"
                       label="Complete & Save"
@@ -887,6 +881,7 @@ export default defineComponent({
           message: 'Start scan simulated.',
           icon: 'fas fa-check-circle',
         })
+        goToStep(2)
       } else {
         service.timeEnded = new Date().toLocaleTimeString()
         $q.notify({
@@ -894,6 +889,7 @@ export default defineComponent({
           message: 'Closing scan simulated.',
           icon: 'fas fa-check-circle',
         })
+        goToStep(5)
       }
     }
 
@@ -936,10 +932,11 @@ export default defineComponent({
     }
 
     const onStepperChange = (nextStep) => {
-      if (nextStep <= maxStepReached.value) {
+      const unlockedStep = Math.max(maxStepReached.value, currentStep.value)
+      if (nextStep <= unlockedStep) {
         currentStep.value = nextStep
       } else {
-        currentStep.value = maxStepReached.value
+        currentStep.value = unlockedStep
       }
     }
 
@@ -1039,6 +1036,34 @@ export default defineComponent({
       () => ({ ...service, currentStep: currentStep.value }),
       () => saveProgress(),
       { deep: true },
+    )
+
+    watch(
+      () => service.timeArrived,
+      (val) => {
+        if (val) maxStepReached.value = Math.max(maxStepReached.value, 2)
+      },
+    )
+
+    watch(
+      () => service.unitJobCardDone,
+      (val) => {
+        if (val) maxStepReached.value = Math.max(maxStepReached.value, 3)
+      },
+    )
+
+    watch(
+      () => service.timeEnded,
+      (val) => {
+        if (val) maxStepReached.value = Math.max(maxStepReached.value, 5)
+      },
+    )
+
+    watch(
+      () => service.signed,
+      (val) => {
+        if (val) maxStepReached.value = Math.max(maxStepReached.value, 5)
+      },
     )
 
     return {
