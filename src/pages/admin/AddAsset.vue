@@ -209,7 +209,10 @@
             <q-separator />
 
             <div class="row q-col-gutter-md">
-              <div class="col-12 col-md-6">
+              <div
+                v-if="showIndoorUnit"
+                :class="showOutdoorUnit ? 'col-12 col-md-6' : 'col-12'"
+              >
                 <q-card flat bordered class="bg-grey-1">
                   <q-card-section class="q-pa-sm text-overline">Indoor Unit</q-card-section>
                   <q-card-section class="q-pt-none q-gutter-y-sm">
@@ -218,7 +221,10 @@
                   </q-card-section>
                 </q-card>
               </div>
-              <div class="col-12 col-md-6">
+              <div
+                v-if="showOutdoorUnit"
+                :class="showIndoorUnit ? 'col-12 col-md-6' : 'col-12'"
+              >
                 <q-card flat bordered class="bg-grey-1">
                   <q-card-section class="q-pa-sm text-overline">Outdoor Unit</q-card-section>
                   <q-card-section class="q-pt-none q-gutter-y-sm">
@@ -229,7 +235,7 @@
               </div>
             </div>
 
-            <div class="row q-col-gutter-md q-mt-sm">
+            <div v-if="showRefrigerant" class="row q-col-gutter-md q-mt-sm">
               <div class="col-12 col-md-6">
                 <q-select 
                   v-model="asset.refrigerantType" 
@@ -408,11 +414,42 @@ export default defineComponent({
       return store.plantHierachy[asset.plantCategory] || []
     })
 
+    const showIndoorUnit = computed(() => {
+      return [
+        'Direct expansion split units',
+        'VRF Indoor units',
+        'Fan coil units',
+        'Air handling units',
+      ].includes(asset.plantCategory)
+    })
+
+    const showOutdoorUnit = computed(() => {
+      return ['VRF condensing units', 'Package plant', 'Chiller'].includes(asset.plantCategory)
+    })
+
+    const showRefrigerant = computed(() => {
+      return [
+        'Direct expansion split units',
+        'VRF condensing units',
+        'Package plant',
+        'Chiller',
+      ].includes(asset.plantCategory)
+    })
+
     watch(() => manualSelection.customerId, () => {
       if (!isEdit) {
         manualSelection.projectId = null
       }
     })
+
+    watch(
+      () => asset.plantCategory,
+      (next, prev) => {
+        if (next !== prev) {
+          asset.unitType = ''
+        }
+      },
+    )
 
     const filterLibrary = (val, update) => {
       // Library searching logic if needed
@@ -517,6 +554,9 @@ export default defineComponent({
       entryTab, 
       selectedLibraryItem, 
       unitTypeOptions,
+      showIndoorUnit,
+      showOutdoorUnit,
+      showRefrigerant,
       manualSelection,
       customerOptions,
       projectOptions,

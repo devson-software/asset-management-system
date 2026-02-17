@@ -319,32 +319,72 @@ export const store = reactive({
     }
   },
   plantHierachy: {
-    'DX Split': [
+    'Direct expansion split units': [
       'Cassette',
-      '1 way blow cassette',
-      'Midwall',
-      'Underceiling',
-      'Console',
-      'Hide-away'
+      'Hide-away units',
+      'Midwall units',
+      'Ceiling suspended units',
+      'Floor standing',
+      'Console split units'
     ],
-    'VRF / VRV System': [
-      'Outdoor Unit',
-      'Indoor Cassette',
-      'Indoor Midwall',
-      'Indoor Concealed'
+    'VRF Indoor units': [
+      'Cassette units VRF',
+      'Mid wall unit VRF',
+      'Under ceiling units VRF',
+      'Hide-away units VRF',
+      'Floor standing VRF',
+      'Heat recovery box',
+      'Hydronic control unit'
     ],
-    'Chiller Plant': [
-      'Air Cooled Chiller',
-      'Water Cooled Chiller',
-      'Cooling Tower',
-      'Primary Pump',
-      'Secondary Pump'
+    'VRF condensing units': [
+      'Air cooled condenser VRF/VRV',
+      'Water cooled condenser VRF/VRV'
     ],
-    'AHU / Ventilation': [
-      'Air Handling Unit',
-      'Fan Coil Unit',
-      'Extraction Fan',
-      'Fresh Air Fan'
+    'Package plant': [
+      'Air cooled package plant',
+      'Water cooled package plant'
+    ],
+    Pumps: [
+      'In line vertical pumps',
+      'Centrifugal pumps',
+      'Split case pumps',
+      'Vertical turbine pumps',
+      'Booster pump sets',
+      'Circulator pumps',
+      'Condensate pumps',
+      'Variable speed pumps (VFD/ECM)'
+    ],
+    'Cooling towers': [
+      'Closed circuit cooling towers',
+      'Open circuit cooling towers'
+    ],
+    'Fan coil units': [
+      'Cassette',
+      'Hide-away units',
+      'Midwall units',
+      'Ceiling suspended units',
+      'Floor standing',
+      'console split units'
+    ],
+    'Air handling units': [
+      'AHU 2 pipe with electric heat',
+      'AHU 4 pipe with heating coil'
+    ],
+    Chiller: [
+      'Air cooled chiller',
+      'Water cooled chiller'
+    ],
+    Fans: [
+      'Axial flow fans',
+      'Tube axial flow fans',
+      'Vane axial fans',
+      'Mixed flow fans',
+      'Cross flow (tangential) fans',
+      'In line tube fans',
+      'Centrifugal fan',
+      'EC plug fan',
+      'Radial (straight blade) fans',
+      'Backward-inclined/aerofoil centrifugal fans'
     ]
   },
   unitLibrary: [
