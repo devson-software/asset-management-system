@@ -452,11 +452,15 @@
                       unelevated
                       size="sm"
                     />
+                    <div class="signature-pad q-mt-md flex flex-center text-grey-6">
+                      Sign here
+                    </div>
                     <q-checkbox
                       v-model="service.signed"
                       label="Signature Captured"
                       color="positive"
-                      size="lg"
+                      size="xl"
+                      class="full-width signature-checkbox"
                     />
                     <q-btn
                       type="submit"
@@ -1145,6 +1149,13 @@ export default defineComponent({
   border-radius: 8px;
   background: #fafafa;
   min-height: 120px;
+}
+.signature-checkbox {
+  padding: 10px 14px;
+  min-height: 56px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .field-service-page {

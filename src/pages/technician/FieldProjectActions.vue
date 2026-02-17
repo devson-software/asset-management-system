@@ -67,7 +67,8 @@
             <q-card
               flat
               bordered
-              class="rounded-borders action-card full-height disabled-card"
+              class="rounded-borders action-card full-height"
+              @click="goToCommissioning"
             >
               <q-card-section class="row items-center">
                 <q-avatar
@@ -78,7 +79,7 @@
                 />
                 <div class="q-ml-md">
                   <div class="text-subtitle1 text-weight-bold">Commissioning</div>
-                  <div class="text-caption text-grey-7">Disabled</div>
+                  <div class="text-caption text-grey-7">Create or review commissioning</div>
                 </div>
                 <q-space />
                 <q-icon name="fas fa-chevron-right" color="grey-5" />
@@ -90,7 +91,8 @@
             <q-card
               flat
               bordered
-              class="rounded-borders action-card full-height disabled-card"
+              class="rounded-borders action-card full-height"
+              @click="goToAssets"
             >
               <q-card-section class="row items-center">
                 <q-avatar
@@ -101,7 +103,7 @@
                 />
                 <div class="q-ml-md">
                   <div class="text-subtitle1 text-weight-bold">Assets</div>
-                  <div class="text-caption text-grey-7">Disabled</div>
+                  <div class="text-caption text-grey-7">View assets for this project</div>
                 </div>
                 <q-space />
                 <q-icon name="fas fa-chevron-right" color="grey-5" />
@@ -113,7 +115,8 @@
             <q-card
               flat
               bordered
-              class="rounded-borders action-card full-height disabled-card"
+              class="rounded-borders action-card full-height"
+              @click="goToJobCards"
             >
               <q-card-section class="row items-center">
                 <q-avatar
@@ -124,7 +127,7 @@
                 />
                 <div class="q-ml-md">
                   <div class="text-subtitle1 text-weight-bold">Job Card</div>
-                  <div class="text-caption text-grey-7">Disabled</div>
+                  <div class="text-caption text-grey-7">Create or review job cards</div>
                 </div>
                 <q-space />
                 <q-icon name="fas fa-chevron-right" color="grey-5" />
@@ -208,17 +211,24 @@ export default defineComponent({
       })
     }
 
-    const goToCommissioning = () => {
-      router.push('/field/commissioning')
-    }
-
     const goToAssets = () => {
       const targetProjectId = selectedProjectId.value || projectId.value
-      router.push({ path: '/assets', query: { projectId: targetProjectId } })
+      router.push({
+        path: '/field/assets',
+        query: { customerId: customerId.value, projectId: targetProjectId },
+      })
+    }
+
+    const goToCommissioning = () => {
+      const targetProjectId = selectedProjectId.value || projectId.value
+      router.push({
+        path: '/field/commissioning-master',
+        query: { customerId: customerId.value, projectId: targetProjectId },
+      })
     }
 
     const goToJobCards = () => {
-      router.push('/field/job-cards/add')
+      router.push('/field/job-cards')
     }
 
     return {
