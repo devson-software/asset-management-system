@@ -11,7 +11,9 @@
           @click="goToCustomers()"
         />
         <q-toolbar-title class="text-weight-bold cursor-pointer" @click="goToCustomers">
-         <!-- Customers -->
+          <span v-if="projectName" class="field-project-chip">
+            {{ projectName }}
+          </span>
         </q-toolbar-title>
         <q-btn flat round class="q-ml-xs" aria-label="Profile menu">
           <q-avatar size="34px" class="shadow-1">
@@ -42,6 +44,7 @@
 <script>
 import { defineComponent, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { store } from '../store'
 
 export default defineComponent({
   name: 'FieldLayout',
@@ -51,7 +54,22 @@ export default defineComponent({
     const goToCustomers = () => router.push('/field/customers')
     const logout = () => router.push('/login')
     const showBack = computed(() => route.path !== '/field/customers')
-    return { goToCustomers, logout, showBack }
+    const projectName = computed(() => {
+      const projectId = route.query.projectId ? String(route.query.projectId) : ''
+      const customerId = route.query.customerId ? String(route.query.customerId) : ''
+      if (!projectId) return ''
+      if (customerId) {
+        const customer = store.customers.find((c) => c.id === customerId)
+        const project = customer?.projects.find((p) => p.id === projectId)
+        return project?.name || ''
+      }
+      for (const customer of store.customers) {
+        const project = customer.projects.find((p) => p.id === projectId)
+        if (project) return project.name
+      }
+      return ''
+    })
+    return { goToCustomers, logout, showBack, projectName }
   },
 })
 </script>
@@ -68,6 +86,15 @@ export default defineComponent({
 .field-toolbar {
   min-height: 56px;
   padding: 6px 12px;
+}
+
+.field-project-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .field-page-container {

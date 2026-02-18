@@ -19,6 +19,10 @@
             <div class="text-subtitle2 text-grey-7">
               Plan and manage maintenance visits across all sites
             </div>
+            <q-chip v-if="isFieldView && projectName" dense color="primary" text-color="white" class="q-mt-xs">
+              <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
+              {{ projectName }}
+            </q-chip>
           </div>
         </div>
         <div class="q-gutter-sm">
@@ -549,6 +553,14 @@ export default defineComponent({
     const projectFilter = ref(null)
     const teamFilter = ref(null)
     const isFieldView = computed(() => route.path.startsWith('/field'))
+    const projectName = computed(() => {
+      const projectId = route.query.projectId ? String(route.query.projectId) : ''
+      const customerId = route.query.customerId ? String(route.query.customerId) : ''
+      if (!projectId) return ''
+      const customer = store.customers.find((c) => c.id === customerId)
+      const project = customer?.projects.find((p) => p.id === projectId)
+      return project?.name || ''
+    })
 
     const form = reactive({
       customerId: null,
@@ -941,6 +953,7 @@ export default defineComponent({
       teamFilter,
       teams,
       isFieldView,
+      projectName,
       getUserName,
       getTeamName,
       getTeamColor,

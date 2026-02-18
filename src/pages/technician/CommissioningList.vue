@@ -7,6 +7,10 @@
           <div>
             <div class="text-h5 text-weight-bold text-primary">Commissioning</div>
             <div class="text-subtitle2 text-grey-7">Scan or manually create commissioning reports</div>
+            <q-chip v-if="projectName" dense color="primary" text-color="white" class="q-mt-xs">
+              <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
+              {{ projectName }}
+            </q-chip>
           </div>
           <q-space />
           <q-btn-dropdown
@@ -79,6 +83,12 @@ export default defineComponent({
     const router = useRouter()
     const customerId = computed(() => route.query.customerId || '')
     const projectId = computed(() => route.query.projectId || '')
+    const projectName = computed(() => {
+      if (!projectId.value) return ''
+      const customer = store.customers.find((c) => c.id === customerId.value)
+      const project = customer?.projects.find((p) => p.id === projectId.value)
+      return project?.name || ''
+    })
 
     const goToProjectActions = () => {
       if (projectId.value) {
@@ -130,7 +140,7 @@ export default defineComponent({
       })
     }
 
-    return { recordRows, columns, goToAdd, goToProjectActions }
+    return { recordRows, columns, projectName, goToAdd, goToProjectActions }
   },
 })
 </script>

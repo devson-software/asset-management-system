@@ -7,6 +7,10 @@
           <div>
             <div class="text-h5 text-weight-bold text-primary">Job Cards</div>
             <div class="text-subtitle2 text-grey-7">View job history and add new cards</div>
+            <q-chip v-if="projectName" dense color="primary" text-color="white" class="q-mt-xs">
+              <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
+              {{ projectName }}
+            </q-chip>
           </div>
         </div>
         <q-btn-dropdown color="primary" icon="fas fa-plus" label="Add Job Card" class="shadow-1">
@@ -117,6 +121,14 @@ export default defineComponent({
     const buildingFilter = ref(null)
     const areaFilter = ref(null)
     const locationFilter = ref(null)
+    const projectName = computed(() => {
+      const projectId = route.query.projectId || ''
+      const customerId = route.query.customerId || ''
+      if (!projectId) return ''
+      const customer = store.customers.find((c) => c.id === customerId)
+      const project = customer?.projects.find((p) => p.id === projectId)
+      return project?.name || ''
+    })
 
     const assetIndex = computed(() => {
       const map = new Map()
@@ -197,6 +209,7 @@ export default defineComponent({
     }
 
     return {
+      projectName,
       buildingFilter,
       areaFilter,
       locationFilter,
