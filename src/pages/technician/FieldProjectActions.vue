@@ -223,7 +223,7 @@ export default defineComponent({
     const goToCommissioning = () => {
       const targetProjectId = selectedProjectId.value || projectId.value
       router.push({
-        path: '/field/commissioning-master',
+        path: '/field/commissioning',
         query: { customerId: customerId.value, projectId: targetProjectId },
       })
     }

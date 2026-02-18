@@ -116,7 +116,7 @@ export default defineComponent({
 
     const goToAdd = (mode) => {
       router.push({
-        path: '/field/commissioning/add',
+        path: '/field/commissioning-master',
         query: {
           customerId: customerId.value,
           projectId: projectId.value,
