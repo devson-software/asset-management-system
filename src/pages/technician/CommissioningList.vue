@@ -9,63 +9,58 @@
             <div class="text-subtitle2 text-grey-7">Scan or manually create commissioning reports</div>
           </div>
           <q-space />
-          <q-btn
+          <q-btn-dropdown
             color="primary"
-            icon="fas fa-pen-to-square"
-            label="Manual Add"
+            icon="fas fa-plus"
+            label="Add Commissioning"
             class="shadow-1"
-            @click="goToAdd('manual')"
-          />
-          <q-btn
-            color="secondary"
-            icon="fas fa-qrcode"
-            label="QR Scan Add"
-            class="shadow-1"
-            @click="goToAdd('qr')"
-          />
+          >
+            <q-list style="min-width: 200px">
+              <q-item clickable v-close-popup @click="goToAdd('manual')">
+                <q-item-section avatar>
+                  <q-icon name="fas fa-pen-to-square" color="primary" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold">Manual Add</q-item-label>
+                  <q-item-label caption>Enter details manually</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="goToAdd('qr')">
+                <q-item-section avatar>
+                  <q-icon name="fas fa-qrcode" color="secondary" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold">QR Scan Add</q-item-label>
+                  <q-item-label caption>Scan asset QR code</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
       </div>
 
       <div class="col-12">
-        <div v-if="recordRows.length" class="column q-gutter-md">
-          <q-card
-            v-for="record in recordRows"
-            :key="record.id"
+        <q-card flat bordered class="rounded-borders q-pa-md">
+          <q-table
+            :rows="recordRows"
+            :columns="columns"
+            row-key="id"
             flat
-            bordered
-            class="rounded-borders record-card"
+            class="master-table"
           >
-            <q-card-section>
-              <div class="row items-center justify-between">
-                <div class="text-subtitle1 text-weight-bold">{{ record.unitRef }}</div>
+            <template v-slot:body-cell-status="props">
+              <q-td :props="props">
                 <q-chip
                   dense
-                  :color="record.status === 'Completed' ? 'green-1' : 'orange-1'"
-                  :text-color="record.status === 'Completed' ? 'green-9' : 'orange-9'"
+                  :color="props.row.status === 'Completed' ? 'green-1' : 'orange-1'"
+                  :text-color="props.row.status === 'Completed' ? 'green-9' : 'orange-9'"
                   size="sm"
                 >
-                  {{ record.status }}
+                  {{ props.row.status }}
                 </q-chip>
-              </div>
-              <div class="text-caption text-grey-7">{{ record.customer }} · {{ record.project }}</div>
-              <div class="row q-gutter-x-md q-mt-sm">
-                <div class="text-caption text-grey-7 row items-center">
-                  <q-icon name="fas fa-calendar" size="12px" class="q-mr-xs" />
-                  {{ record.date }}
-                </div>
-                <div class="text-caption text-grey-7 row items-center">
-                  <q-icon name="fas fa-clipboard-check" size="12px" class="q-mr-xs" />
-                  {{ record.type }}
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-
-        <q-card v-else flat bordered class="rounded-borders">
-          <q-card-section class="text-center text-grey-7">
-            No commissioning records found for this project yet.
-          </q-card-section>
+              </q-td>
+            </template>
+          </q-table>
         </q-card>
       </div>
     </div>
@@ -114,6 +109,16 @@ export default defineComponent({
       })
     })
 
+    const columns = [
+      { name: 'id', label: 'ID', align: 'left', field: 'id' },
+      { name: 'date', label: 'Date', align: 'left', field: 'date' },
+      { name: 'unitRef', label: 'Unit Ref', align: 'left', field: 'unitRef' },
+      { name: 'customer', label: 'Customer', align: 'left', field: 'customer' },
+      { name: 'project', label: 'Project', align: 'left', field: 'project' },
+      { name: 'type', label: 'Type', align: 'left', field: 'type' },
+      { name: 'status', label: 'Status', align: 'left' },
+    ]
+
     const goToAdd = (mode) => {
       router.push({
         path: '/field/commissioning-master',
@@ -125,7 +130,7 @@ export default defineComponent({
       })
     }
 
-    return { recordRows, goToAdd, goToProjectActions }
+    return { recordRows, columns, goToAdd, goToProjectActions }
   },
 })
 </script>

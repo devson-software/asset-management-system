@@ -259,7 +259,7 @@
 
 <script>
 import { defineComponent, reactive, computed, ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { store } from '../../store'
 
@@ -268,7 +268,6 @@ export default defineComponent({
   setup() {
     const $q = useQuasar()
     const router = useRouter()
-    const route = useRoute()
     const entryMode = ref('qr')
     const currentStep = ref(1)
     const scanTimes = reactive({ start: '', end: '' })
@@ -378,13 +377,7 @@ export default defineComponent({
     }
 
     const goToProjectActions = () => {
-      const projectId = route.query.projectId || ''
-      const customerId = route.query.customerId || ''
-      if (projectId) {
-        router.push({ path: `/field/projects/${projectId}/actions`, query: { customerId, projectId } })
-        return
-      }
-      router.push('/field/projects')
+      router.push('/field/job-cards')
     }
 
     const goToStep = (step) => {

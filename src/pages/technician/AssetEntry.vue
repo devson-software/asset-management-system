@@ -269,14 +269,7 @@ export default defineComponent({
     }
 
     const goToProjectActions = () => {
-      if (selection.projectId) {
-        router.push({
-          path: `/field/projects/${selection.projectId}/actions`,
-          query: { customerId: selection.customerId, projectId: selection.projectId },
-        })
-        return
-      }
-      router.push('/field/projects')
+      router.push('/field/assets')
     }
 
     return {

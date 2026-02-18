@@ -12,20 +12,28 @@
             </div>
           </div>
           <q-space />
-          <q-btn
-            color="primary"
-            icon="fas fa-pen-to-square"
-            label="Manual Add"
-            class="shadow-1"
-            @click="goToAdd('manual')"
-          />
-          <q-btn
-            color="secondary"
-            icon="fas fa-qrcode"
-            label="QR Scan Add"
-            class="shadow-1"
-            @click="goToAdd('qr')"
-          />
+          <q-btn-dropdown color="primary" icon="fas fa-plus" label="Add Asset" class="shadow-1">
+            <q-list style="min-width: 200px">
+              <q-item clickable v-close-popup @click="goToAdd('manual')">
+                <q-item-section avatar>
+                  <q-icon name="fas fa-pen-to-square" color="primary" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold">Manual Add</q-item-label>
+                  <q-item-label caption>Enter details manually</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="goToAdd('qr')">
+                <q-item-section avatar>
+                  <q-icon name="fas fa-qrcode" color="secondary" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold">QR Scan Add</q-item-label>
+                  <q-item-label caption>Scan asset QR code</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
       </div>
 
@@ -191,9 +199,5 @@ export default defineComponent({
 <style scoped>
 .rounded-borders {
   border-radius: 12px;
-}
-
-.asset-card {
-  background: #fff;
 }
 </style>

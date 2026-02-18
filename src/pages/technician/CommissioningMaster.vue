@@ -622,13 +622,7 @@ export default defineComponent({
     }
 
     const goToProjectActions = () => {
-      const projectId = route.query.projectId || ''
-      const customerId = route.query.customerId || ''
-      if (projectId) {
-        router.push({ path: `/field/projects/${projectId}/actions`, query: { customerId, projectId } })
-        return
-      }
-      router.push('/field/projects')
+      router.push('/field/commissioning')
     }
 
     const goToAddAsset = (mode) => {
