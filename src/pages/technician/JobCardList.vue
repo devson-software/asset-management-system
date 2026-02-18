@@ -1,10 +1,10 @@
 <template>
   <q-page padding class="bg-grey-1">
     <div class="row q-col-gutter-lg">
-      <div class="col-12 flex justify-between items-center">
-        <div class="row items-center no-wrap">
+      <div class="col-12">
+        <div class="row items-center q-col-gutter-sm">
           <q-btn flat round icon="fas fa-arrow-left" class="q-mr-sm" @click="goToProjectActions" />
-          <div>
+          <div class="col">
             <div class="text-h5 text-weight-bold text-primary">Job Cards</div>
             <div class="text-subtitle2 text-grey-7">View job history and add new cards</div>
             <q-chip v-if="projectName" dense color="primary" text-color="white" class="q-mt-xs">
@@ -12,8 +12,8 @@
               {{ projectName }}
             </q-chip>
           </div>
-        </div>
-        <q-btn-dropdown color="primary" icon="fas fa-plus" label="Add Job Card" class="shadow-1">
+          <div class="col-12 col-sm-auto">
+            <q-btn-dropdown color="primary" icon="fas fa-plus" label="Add Job Card" class="shadow-1 full-width">
           <q-list style="min-width: 200px">
             <q-item clickable v-close-popup @click="goToAdd('manual')">
               <q-item-section avatar>
@@ -34,7 +34,9 @@
               </q-item-section>
             </q-item>
           </q-list>
-        </q-btn-dropdown>
+            </q-btn-dropdown>
+          </div>
+        </div>
       </div>
 
       <div class="col-12">
@@ -84,6 +86,7 @@
           <q-table
             :rows="filteredRows"
             :columns="columns"
+            :visible-columns="visibleColumns"
             row-key="id"
             flat
             class="master-table"
@@ -111,6 +114,7 @@
 <script>
 import { defineComponent, computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { store } from '../../store'
 
 export default defineComponent({
@@ -118,6 +122,7 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const route = useRoute()
+    const $q = useQuasar()
     const buildingFilter = ref(null)
     const areaFilter = ref(null)
     const locationFilter = ref(null)
@@ -194,6 +199,13 @@ export default defineComponent({
       { name: 'status', label: 'Status', align: 'left' },
     ]
 
+    const visibleColumns = computed(() => {
+      if ($q.screen.lt.sm) {
+        return ['customer', 'area', 'location', 'date', 'status']
+      }
+      return columns.map((c) => c.name)
+    })
+
     const goToProjectActions = () => {
       const projectId = route.query.projectId || ''
       const customerId = route.query.customerId || ''
@@ -217,6 +229,7 @@ export default defineComponent({
       areaOptions,
       locationOptions,
       filteredRows,
+      visibleColumns,
       columns,
       goToAdd,
       goToProjectActions,

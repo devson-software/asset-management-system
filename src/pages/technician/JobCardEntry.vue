@@ -1,4 +1,4 @@
-<template>
+gi<template>
   <q-page padding class="bg-grey-1">
     <div class="row q-col-gutter-lg justify-center">
       <div class="col-12 col-md-8">

@@ -2,9 +2,9 @@
   <q-page padding class="bg-grey-1">
     <div class="row q-col-gutter-lg">
       <div class="col-12">
-        <div class="row items-center q-gutter-sm">
+        <div class="row items-center q-col-gutter-sm">
           <q-btn flat round icon="fas fa-arrow-left" class="q-mr-sm" @click="goToProjectActions" />
-          <div>
+          <div class="col">
             <div class="text-h5 text-weight-bold text-primary">Commissioning</div>
             <div class="text-subtitle2 text-grey-7">Scan or manually create commissioning reports</div>
             <q-chip v-if="projectName" dense color="primary" text-color="white" class="q-mt-xs">
@@ -12,13 +12,13 @@
               {{ projectName }}
             </q-chip>
           </div>
-          <q-space />
-          <q-btn-dropdown
-            color="primary"
-            icon="fas fa-plus"
-            label="Add Commissioning"
-            class="shadow-1"
-          >
+          <div class="col-12 col-sm-auto">
+            <q-btn-dropdown
+              color="primary"
+              icon="fas fa-plus"
+              label="Add Commissioning"
+              class="shadow-1 full-width commissioning-add-btn"
+            >
             <q-list style="min-width: 200px">
               <q-item clickable v-close-popup @click="goToAdd('manual')">
                 <q-item-section avatar>
@@ -39,7 +39,8 @@
                 </q-item-section>
               </q-item>
             </q-list>
-          </q-btn-dropdown>
+            </q-btn-dropdown>
+          </div>
         </div>
       </div>
 
@@ -152,5 +153,9 @@ export default defineComponent({
 
 .record-card {
   background: #fff;
+}
+
+.commissioning-add-btn {
+  width: 100%;
 }
 </style>

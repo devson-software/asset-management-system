@@ -12,6 +12,7 @@
                   {{
                     isEdit
                       ? 'Refining job details and technician notes'
+                      
                       : 'Capture a manual service or repair event for the history'
                   }}
                 </div>

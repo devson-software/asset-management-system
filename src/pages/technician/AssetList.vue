@@ -2,17 +2,22 @@
   <q-page padding class="bg-grey-1">
     <div class="row q-col-gutter-lg">
       <div class="col-12">
-        <div class="row items-center q-gutter-sm">
+        <div class="row items-center q-col-gutter-sm">
           <q-btn flat round icon="fas fa-arrow-left" class="q-mr-sm" @click="goToProjectActions" />
-          <div>
+          <div class="col">
             <div class="text-h5 text-weight-bold text-primary">Assets</div>
             <div class="text-subtitle2 text-grey-7">Register assets by manual entry or QR scan</div>
             <div v-if="projectName" class="text-subtitle2 text-primary text-weight-medium">
               {{ projectName }}
             </div>
           </div>
-          <q-space />
-          <q-btn-dropdown color="primary" icon="fas fa-plus" label="Add Asset" class="shadow-1">
+          <div class="col-12 col-sm-auto">
+            <q-btn-dropdown
+              color="primary"
+              icon="fas fa-plus"
+              label="Add Asset"
+              class="shadow-1 full-width"
+            >
             <q-list style="min-width: 200px">
               <q-item clickable v-close-popup @click="goToAdd('manual')">
                 <q-item-section avatar>
@@ -33,7 +38,8 @@
                 </q-item-section>
               </q-item>
             </q-list>
-          </q-btn-dropdown>
+            </q-btn-dropdown>
+          </div>
         </div>
       </div>
 
