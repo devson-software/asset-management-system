@@ -770,4 +770,7 @@ export default defineComponent({
 .field-stepper :deep(.q-stepper__caption) {
   font-size: 12px;
 }
+:deep(.q-stepper__step-inner) {
+  padding: 0px 0px 0px 11px !important;
+}
 </style>

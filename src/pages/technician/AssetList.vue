@@ -60,48 +60,21 @@
             </div>
           </div>
 
-          <div v-if="filteredAssets.length" class="column q-gutter-md">
-            <q-card
-              v-for="asset in filteredAssets"
-              :key="asset.id"
-              flat
-              bordered
-              class="rounded-borders asset-card"
-            >
-              <q-card-section>
-                <div class="row items-center justify-between">
-                  <div class="text-subtitle1 text-weight-bold">{{ asset.unitRef || 'Unit' }}</div>
-                  <q-chip dense color="blue-1" text-color="primary" size="sm">
-                    {{ asset.status || 'Registered' }}
-                  </q-chip>
-                </div>
-                <div class="row q-gutter-x-md q-mt-sm">
-                  <div class="text-caption text-grey-7 row items-center">
-                    <q-icon name="fas fa-layer-group" size="12px" class="q-mr-xs" />
-                    {{ asset.unitType || 'Type not set' }}
-                  </div>
-                  <div class="text-caption text-grey-7 row items-center">
-                    <q-icon name="fas fa-building" size="12px" class="q-mr-xs" />
-                    {{ asset.manufacturer || 'Manufacturer' }}
-                  </div>
-                </div>
-                <div class="text-caption text-grey-7 q-mt-xs">
-                  <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
-                  {{ asset.vendorLocation || asset.siteAddress || 'Location not set' }}
-                </div>
-                <div v-if="asset.vendorArea" class="text-caption text-grey-7 q-mt-xs">
-                  <q-icon name="fas fa-map" size="12px" class="q-mr-xs" />
-                  {{ asset.vendorArea }}
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-
-          <q-card v-else flat bordered class="rounded-borders">
-            <q-card-section class="text-center text-grey-7">
-              No assets found for this project yet.
-            </q-card-section>
-          </q-card>
+          <q-table
+            :rows="filteredAssets"
+            :columns="columns"
+            row-key="id"
+            flat
+            class="master-table"
+          >
+            <template v-slot:body-cell-status="props">
+              <q-td :props="props">
+                <q-chip dense color="blue-1" text-color="primary" size="sm">
+                  {{ props.row.status || 'Registered' }}
+                </q-chip>
+              </q-td>
+            </template>
+          </q-table>
         </q-card>
       </div>
     </div>
@@ -180,6 +153,15 @@ export default defineComponent({
       })
     })
 
+    const columns = [
+      { name: 'unitRef', label: 'Unit Ref', align: 'left', field: 'unitRef' },
+      { name: 'unitType', label: 'Type', align: 'left', field: 'unitType' },
+      { name: 'manufacturer', label: 'Manufacturer', align: 'left', field: 'manufacturer' },
+      { name: 'vendorArea', label: 'Area', align: 'left', field: 'vendorArea' },
+      { name: 'vendorLocation', label: 'Location', align: 'left', field: 'vendorLocation' },
+      { name: 'status', label: 'Status', align: 'left' },
+    ]
+
     const goToAdd = (mode) => {
       router.push({
         path: '/field/assets/add',
@@ -198,6 +180,7 @@ export default defineComponent({
       areaOptions,
       locationOptions,
       filteredAssets,
+      columns,
       goToAdd,
       goToProjectActions,
     }
