@@ -84,31 +84,7 @@
                 </div>
               </q-step>
 
-              <q-step :name="2" title="Unit J/C" icon="fas fa-file-invoice" :done="service.unitJobCardDone">
-                <div class="section-container bg-white">
-                  <div class="text-subtitle1 text-primary q-mb-md row items-center">
-                    <q-icon name="fas fa-file-invoice" class="q-mr-sm" /> Unit Job Card
-                  </div>
-                  <div class="column">
-                    <q-toggle
-                      v-model="service.unitJobCardDone"
-                      label="Unit job card checked"
-                      color="primary"
-                      class="text-weight-bold"
-                    />
-                    <q-btn
-                      class="full-width q-mt-md"
-                      color="primary"
-                      unelevated
-                      label="Continue"
-                      @click="goToStep(3)"
-                      :disable="!service.unitJobCardDone"
-                    />
-                  </div>
-                </div>
-              </q-step>
-
-              <q-step :name="3" title="Input Info" icon="fas fa-pen-to-square">
+              <q-step :name="2" title="Input Info" icon="fas fa-pen-to-square">
                 <div class="section-container bg-white">
                   <div class="text-subtitle1 text-primary q-mb-md row items-center">
                     <q-icon name="fas fa-info-circle" class="q-mr-sm" /> Schedule Information
@@ -367,26 +343,51 @@
                       v-if="service.faultFound"
                       class="q-mt-md q-gutter-y-sm bg-red-1 q-pa-md rounded-borders"
                     >
-                      <q-input
-                        v-model="service.faultDetails"
-                        label="Specify the fault details"
-                        type="textarea"
-                        outlined
-                        dense
-                        bg-color="white"
-                      />
-                      <q-file
-                        v-model="service.faultPictures"
-                        label="Capture / Upload Evidence"
-                        outlined
-                        dense
-                        multiple
-                        accept="image/*"
-                        use-chips
-                        bg-color="white"
+                      <div
+                        v-for="(fault, index) in service.faults"
+                        :key="`fault-${index}`"
+                        class="bg-white q-pa-sm rounded-borders"
                       >
-                        <template v-slot:prepend><q-icon name="fas fa-camera" /></template>
-                      </q-file>
+                        <div class="row items-center justify-between">
+                          <div class="text-caption text-grey-7">Fault {{ index + 1 }}</div>
+                          <q-btn
+                            v-if="service.faults.length > 1"
+                            flat
+                            dense
+                            icon="fas fa-trash-can"
+                            color="negative"
+                            @click="removeFault(index)"
+                          />
+                        </div>
+                        <q-input
+                          v-model="fault.details"
+                          label="Specify the fault details"
+                          type="textarea"
+                          outlined
+                          dense
+                          bg-color="white"
+                        />
+                        <q-file
+                          v-model="fault.pictures"
+                          label="Capture / Upload Evidence"
+                          outlined
+                          dense
+                          multiple
+                          accept="image/*"
+                          use-chips
+                          bg-color="white"
+                        >
+                          <template v-slot:prepend><q-icon name="fas fa-camera" /></template>
+                        </q-file>
+                      </div>
+                      <q-btn
+                        class="full-width q-mt-sm"
+                        color="negative"
+                        unelevated
+                        icon="fas fa-plus"
+                        label="Add Another Fault"
+                        @click="addFault"
+                      />
                     </div>
                   </transition>
                 </div>
@@ -397,12 +398,12 @@
                     color="primary"
                     unelevated
                     label="Continue"
-                    @click="goToStep(4)"
+                    @click="goToStep(3)"
                   />
                 </div>
               </q-step>
 
-              <q-step :name="4" title="Closing Scan" icon="fas fa-qrcode" :done="!!service.timeEnded">
+              <q-step :name="3" title="Closing Scan" icon="fas fa-qrcode" :done="!!service.timeEnded">
                 <div class="section-container bg-blue-1">
                   <div class="text-subtitle1 text-blue-9 q-mb-md row items-center">
                     <q-icon name="fas fa-qrcode" class="q-mr-sm" /> Closing Scan
@@ -438,20 +439,36 @@
                 </div>
               </q-step>
 
-              <q-step :name="5" title="Signature" icon="fas fa-pen-fancy" :done="service.signed">
+              <q-step :name="4" title="Signature" icon="fas fa-pen-fancy" :done="service.signed">
                 <div class="section-container bg-white">
                   <div class="text-subtitle1 text-primary q-mb-md row items-center">
                     <q-icon name="fas fa-pen-fancy" class="q-mr-sm" /> Signature (Client / Tech)
                   </div>
                   <div class="column">
-                    <q-btn-toggle
-                      v-model="service.signedBy"
-                      :options="signatureOptions"
-                      color="primary"
-                      toggle-color="primary"
-                      unelevated
-                      size="sm"
-                    />
+                    <div class="row q-col-gutter-sm">
+                      <div class="col-6">
+                        <q-btn
+                          class="full-width"
+                          label="Technician"
+                          color="primary"
+                          :outline="service.signedBy !== 'technician'"
+                          :text-color="service.signedBy === 'technician' ? 'white' : 'primary'"
+                          unelevated
+                          @click="service.signedBy = 'technician'"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <q-btn
+                          class="full-width"
+                          label="Client"
+                          color="secondary"
+                          :outline="service.signedBy !== 'client'"
+                          :text-color="service.signedBy === 'client' ? 'white' : 'secondary'"
+                          unelevated
+                          @click="service.signedBy = 'client'"
+                        />
+                      </div>
+                    </div>
                     <div class="signature-pad q-mt-md flex flex-center text-grey-6">
                       Sign here
                     </div>
@@ -592,12 +609,10 @@ export default defineComponent({
       compCurrent: '',
       approachTemp: '',
       faultFound: false,
-      faultDetails: '',
-      faultPictures: null,
+      faults: [],
       generalComments: '',
       signed: false,
       signedBy: 'client',
-      unitJobCardDone: false,
     })
 
     const frequencyOptions = ['Monthly', 'Quarterly', 'Semi-Annual', 'Annual', 'Every 3-5 Years']
@@ -893,7 +908,7 @@ export default defineComponent({
           message: 'Closing scan simulated.',
           icon: 'fas fa-check-circle',
         })
-        goToStep(5)
+        goToStep(4)
       }
     }
 
@@ -909,7 +924,8 @@ export default defineComponent({
         unitRef: targetAsset.value ? targetAsset.value.unitRef : 'Unknown',
         customer: targetAsset.value ? targetAsset.value.customerName : 'Unknown',
         tech: 'Jeram HVAC',
-        faultFound: service.faultFound,
+        faultFound: service.faultFound && service.faults.length > 0,
+        faults: service.faults,
       }
       store.jobCards.unshift(newJobCard)
 
@@ -921,6 +937,14 @@ export default defineComponent({
       })
       clearProgress()
       goBackToSchedule()
+    }
+
+    const addFault = () => {
+      service.faults.push({ details: '', pictures: [] })
+    }
+
+    const removeFault = (index) => {
+      service.faults.splice(index, 1)
     }
 
     const openScanner = (mode) => {
@@ -944,10 +968,6 @@ export default defineComponent({
       }
     }
 
-    const signatureOptions = [
-      { label: 'Client', value: 'client' },
-      { label: 'Technician', value: 'technician' },
-    ]
 
     const progressKey = computed(() => {
       const id = serviceId || assetId || 'manual'
@@ -979,11 +999,10 @@ export default defineComponent({
           compCurrent: service.compCurrent,
           approachTemp: service.approachTemp,
           faultFound: service.faultFound,
-          faultDetails: service.faultDetails,
+          faults: service.faults,
           generalComments: service.generalComments,
           signed: service.signed,
           signedBy: service.signedBy,
-          unitJobCardDone: service.unitJobCardDone,
         },
       }
       localStorage.setItem(progressKey.value, JSON.stringify(payload))
@@ -997,6 +1016,21 @@ export default defineComponent({
         if (parsed?.service) {
           delete parsed.service.captureScanData
           delete parsed.service.qrGenerated
+          delete parsed.service.unitJobCardDone
+          const legacyFaultDetails = parsed.service.faultDetails
+          const legacyFaultPictures = parsed.service.faultPictures
+          delete parsed.service.faultDetails
+          delete parsed.service.faultPictures
+          if (!parsed.service.faults || !parsed.service.faults.length) {
+            if (legacyFaultDetails || (legacyFaultPictures && legacyFaultPictures.length)) {
+              parsed.service.faults = [
+                {
+                  details: legacyFaultDetails || '',
+                  pictures: legacyFaultPictures || [],
+                },
+              ]
+            }
+          }
           Object.assign(service, parsed.service)
         }
         if (parsed?.currentStep) {
@@ -1024,12 +1058,7 @@ export default defineComponent({
     }
 
     const canSubmit = computed(() => {
-      return (
-        !!service.timeArrived &&
-        !!service.unitJobCardDone &&
-        !!service.timeEnded &&
-        !!service.signed
-      )
+      return !!service.timeArrived && !!service.timeEnded && !!service.signed
     })
 
     onMounted(() => {
@@ -1050,23 +1079,24 @@ export default defineComponent({
     )
 
     watch(
-      () => service.unitJobCardDone,
+      () => service.faultFound,
       (val) => {
-        if (val) maxStepReached.value = Math.max(maxStepReached.value, 3)
+        if (val && service.faults.length === 0) addFault()
+        if (!val) service.faults = []
       },
     )
 
     watch(
       () => service.timeEnded,
       (val) => {
-        if (val) maxStepReached.value = Math.max(maxStepReached.value, 5)
+        if (val) maxStepReached.value = Math.max(maxStepReached.value, 4)
       },
     )
 
     watch(
       () => service.signed,
       (val) => {
-        if (val) maxStepReached.value = Math.max(maxStepReached.value, 5)
+        if (val) maxStepReached.value = Math.max(maxStepReached.value, 4)
       },
     )
 
@@ -1081,11 +1111,12 @@ export default defineComponent({
       scannerMode,
       currentStep,
       maxStepReached,
-      signatureOptions,
       canSubmit,
       openScanner,
       goToStep,
       onStepperChange,
+      addFault,
+      removeFault,
       pauseProgress,
       goBackToSchedule,
       simulateScan,

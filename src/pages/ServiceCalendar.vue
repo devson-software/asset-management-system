@@ -49,7 +49,7 @@
           :class="isFieldView ? 'field-schedule-filters' : ''"
         >
           <div class="row q-col-gutter-md items-center">
-            <div v-if="!isFieldView" class="col-12 col-sm-3">
+            <div :class="isFieldView ? 'col-12' : 'col-12 col-sm-3'">
               <q-select
                 v-model="customerFilter"
                 :options="customerOptions"
@@ -66,7 +66,7 @@
                 /></template>
               </q-select>
             </div>
-            <div v-if="!isFieldView" class="col-12 col-sm-3">
+            <div :class="isFieldView ? 'col-12' : 'col-12 col-sm-3'">
               <q-select
                 v-model="projectFilter"
                 :options="filterProjectOptions"
@@ -131,7 +131,7 @@
                 icon="fas fa-filter-circle-xmark"
                 label="Reset"
                 @click="clearFilters"
-                v-if="(isFieldView && teamFilter) || (!isFieldView && (customerFilter || projectFilter || teamFilter))"
+                v-if="customerFilter || projectFilter || teamFilter"
               />
             </div>
           </div>
@@ -719,6 +719,9 @@ export default defineComponent({
       customerFilter.value = null
       projectFilter.value = null
       teamFilter.value = null
+      if (isFieldView.value) {
+        applyRouteFilters()
+      }
     }
 
     const openAddDialog = () => {

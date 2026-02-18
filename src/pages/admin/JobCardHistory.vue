@@ -311,6 +311,7 @@ export default defineComponent({
       unitRef: '',
       customer: '',
       tech: '',
+      workType: '',
       status: '',
     })
 
@@ -319,12 +320,19 @@ export default defineComponent({
       { name: 'date', label: 'Service Date', align: 'left', field: 'date', sortable: true },
       { name: 'unitRef', label: 'Unit Ref', align: 'left', field: 'unitRef', sortable: true },
       { name: 'customer', label: 'Customer', align: 'left', field: 'customer', sortable: true },
+      { name: 'workType', label: 'Job Type', align: 'left', field: 'workType', sortable: true },
       { name: 'tech', label: 'Technician', align: 'left', field: 'tech', sortable: true },
       { name: 'status', label: 'Status', align: 'center', field: 'status', sortable: true },
       { name: 'actions', label: '', align: 'right' },
     ]
 
-    const rows = computed(() => store.jobCards)
+    const rows = computed(() =>
+      store.jobCards.map((job) => ({
+        ...job,
+        workType: job.workType || job.jobType || job.type || '',
+        status: job.faultFound ? 'Fault Found' : 'No Fault',
+      })),
+    )
 
     const filteredRows = computed(() => {
       return rows.value.filter((row) => {
@@ -361,8 +369,9 @@ export default defineComponent({
         'Service Date': r.date,
         'Unit Ref': r.unitRef,
         Customer: r.customer,
+        'Job Type': r.workType || '',
         Technician: r.tech,
-        Status: r.faultFound ? 'Fault Reported' : 'System Clear',
+        Status: r.status || '',
         Comments: r.comments || '',
       }))
 

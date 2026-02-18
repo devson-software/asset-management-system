@@ -55,11 +55,7 @@ const routes = [
       { path: 'admin/users/edit/:userId', component: () => import('pages/admin/AddUser.vue') },
       { path: 'admin/teams', component: () => import('pages/admin/TeamManagement.vue') },
 
-      { path: 'commissioning', component: () => import('pages/technician/CommissioningList.vue') },
-      {
-        path: 'commissioning/add',
-        component: () => import('pages/technician/CommissioningEntry.vue'),
-      },
+      { path: 'commissioning', component: () => import('pages/CommissioningList.vue') },
       {
         path: 'commissioning/new/:type/:assetId?',
         component: () => import('pages/admin/CommissioningForm.vue'),

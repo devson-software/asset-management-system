@@ -401,14 +401,30 @@
                       <q-icon name="fas fa-pen-fancy" class="q-mr-sm" /> Signature
                     </div>
                     <div class="column">
-                      <q-btn-toggle
-                        v-model="form.signedBy"
-                        :options="signatureOptions"
-                        color="primary"
-                        toggle-color="primary"
-                        unelevated
-                        spread
-                      />
+                      <div class="row q-col-gutter-sm">
+                        <div class="col-6">
+                          <q-btn
+                            class="full-width"
+                            label="Technician"
+                            color="primary"
+                            :outline="form.signedBy !== 'technician'"
+                            :text-color="form.signedBy === 'technician' ? 'white' : 'primary'"
+                            unelevated
+                            @click="form.signedBy = 'technician'"
+                          />
+                        </div>
+                        <div class="col-6">
+                          <q-btn
+                            class="full-width"
+                            label="Customer"
+                            color="secondary"
+                            :outline="form.signedBy !== 'customer'"
+                            :text-color="form.signedBy === 'customer' ? 'white' : 'secondary'"
+                            unelevated
+                            @click="form.signedBy = 'customer'"
+                          />
+                        </div>
+                      </div>
                       <div class="signature-pad q-mt-md flex flex-center text-grey-6">
                         Sign here
                       </div>
@@ -487,10 +503,6 @@ export default defineComponent({
     })
 
     const workTypeOptions = ['Maintenance', 'Repair', 'Installation', 'Emergency Callout', 'Warranty']
-    const signatureOptions = [
-      { label: 'Client', value: 'client' },
-      { label: 'Technician', value: 'technician' },
-    ]
     const newPart = reactive({ description: '', quantity: 1 })
 
     const addPart = () => {
@@ -675,7 +687,6 @@ export default defineComponent({
       entryModeOptions,
       currentStep,
       scanTimes,
-      signatureOptions,
       goToStep,
       simulateScan,
       newPart,

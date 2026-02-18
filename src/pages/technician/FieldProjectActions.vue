@@ -6,8 +6,9 @@
           <q-btn flat round icon="fas fa-arrow-left" @click="$router.push('/field/projects')" />
           <div class="q-ml-sm">
             <div class="text-h5 text-weight-bold text-primary">Project Actions</div>
-            <div class="text-subtitle2 text-grey-7">
-              {{  'Select an action below' }}
+            <div class="text-subtitle2 text-grey-7">Select an action below</div>
+            <div v-if="projectName" class="text-subtitle2 text-primary text-weight-medium">
+              {{ projectName }}
             </div>
           </div>
         </div>
@@ -45,6 +46,30 @@
       <div class="col-12">
         <div class="row q-col-gutter-md">
           <div class="col-12 col-sm-6">
+            <q-card
+              flat
+              bordered
+              class="rounded-borders action-card full-height"
+              @click="goToAssets"
+            >
+              <q-card-section class="row items-center">
+                <q-avatar
+                  color="orange-1"
+                  text-color="orange-9"
+                  icon="fas fa-boxes-stacked"
+                  size="48px"
+                />
+                <div class="q-ml-md">
+                  <div class="text-subtitle1 text-weight-bold">Assets</div>
+                  <div class="text-caption text-grey-7">View assets for this project</div>
+                </div>
+                <q-space />
+                <q-icon name="fas fa-chevron-right" color="grey-5" />
+              </q-card-section>
+            </q-card>
+          </div>
+
+          <div class="col-12 col-sm-6">
             <q-card flat bordered class="rounded-borders action-card full-height" @click="goToSchedule">
               <q-card-section class="row items-center">
                 <q-avatar
@@ -80,30 +105,6 @@
                 <div class="q-ml-md">
                   <div class="text-subtitle1 text-weight-bold">Commissioning</div>
                   <div class="text-caption text-grey-7">Create or review commissioning</div>
-                </div>
-                <q-space />
-                <q-icon name="fas fa-chevron-right" color="grey-5" />
-              </q-card-section>
-            </q-card>
-          </div>
-
-          <div class="col-12 col-sm-6">
-            <q-card
-              flat
-              bordered
-              class="rounded-borders action-card full-height"
-              @click="goToAssets"
-            >
-              <q-card-section class="row items-center">
-                <q-avatar
-                  color="orange-1"
-                  text-color="orange-9"
-                  icon="fas fa-boxes-stacked"
-                  size="48px"
-                />
-                <div class="q-ml-md">
-                  <div class="text-subtitle1 text-weight-bold">Assets</div>
-                  <div class="text-caption text-grey-7">View assets for this project</div>
                 </div>
                 <q-space />
                 <q-icon name="fas fa-chevron-right" color="grey-5" />

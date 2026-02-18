@@ -177,14 +177,30 @@
                       <q-icon name="fas fa-pen-fancy" class="q-mr-sm" /> Signature
                     </div>
                     <div class="column">
-                      <q-btn-toggle
-                        v-model="signature.signedBy"
-                        :options="signatureOptions"
-                        color="primary"
-                        toggle-color="primary"
-                        unelevated
-                        spread
-                      />
+                      <div class="row q-col-gutter-sm">
+                        <div class="col-6">
+                          <q-btn
+                            class="full-width"
+                            label="Technician"
+                            color="primary"
+                            :outline="signature.signedBy !== 'technician'"
+                            :text-color="signature.signedBy === 'technician' ? 'white' : 'primary'"
+                            unelevated
+                            @click="signature.signedBy = 'technician'"
+                          />
+                        </div>
+                        <div class="col-6">
+                          <q-btn
+                            class="full-width"
+                            label="Customer"
+                            color="secondary"
+                            :outline="signature.signedBy !== 'customer'"
+                            :text-color="signature.signedBy === 'customer' ? 'white' : 'secondary'"
+                            unelevated
+                            @click="signature.signedBy = 'customer'"
+                          />
+                        </div>
+                      </div>
                       <div class="signature-pad q-mt-md flex flex-center text-grey-6">
                         Sign here
                       </div>
@@ -249,10 +265,6 @@ export default defineComponent({
       signed: false,
     })
 
-    const signatureOptions = [
-      { label: 'Technician', value: 'technician' },
-      { label: 'Customer', value: 'customer' },
-    ]
 
     const typeOptions = ['Pump', 'Fan', 'DX Split']
     const statusOptions = ['In Progress', 'Completed']
@@ -365,7 +377,6 @@ export default defineComponent({
       scanTimes,
       form,
       signature,
-      signatureOptions,
       typeOptions,
       statusOptions,
       canContinueForm,
