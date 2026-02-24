@@ -201,7 +201,7 @@ export default defineComponent({
 
     const visibleColumns = computed(() => {
       if ($q.screen.lt.sm) {
-        return ['customer', 'area', 'location', 'date', 'status']
+        return ['customer', 'date', 'status']
       }
       return columns.map((c) => c.name)
     })

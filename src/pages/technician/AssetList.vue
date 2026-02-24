@@ -7,9 +7,9 @@
           <div class="col">
             <div class="text-h5 text-weight-bold text-primary">Assets</div>
             <div class="text-subtitle2 text-grey-7">Register assets by manual entry or QR scan</div>
-            <div v-if="projectName" class="text-subtitle2 text-primary text-weight-medium">
+            <!-- <div v-if="projectName" class="text-subtitle2 text-primary text-weight-medium">
               {{ projectName }}
-            </div>
+            </div> -->
           </div>
           <div class="col-12 col-sm-auto">
             <q-btn-dropdown
@@ -77,6 +77,7 @@
           <q-table
             :rows="filteredAssets"
             :columns="columns"
+            :visible-columns="visibleColumns"
             row-key="id"
             flat
             class="master-table"
@@ -98,6 +99,7 @@
 <script>
 import { defineComponent, computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { store } from '../../store'
 
 export default defineComponent({
@@ -109,6 +111,14 @@ export default defineComponent({
     const projectId = computed(() => route.query.projectId || '')
     const areaFilter = ref(null)
     const locationFilter = ref(null)
+    const $q = useQuasar()
+
+    const visibleColumns = computed(() => {
+      if ($q.screen.lt.md) {
+        return ['unitType', 'manufacturer',  'status']
+      }
+      return columns.map((col) => col.name)
+    })
 
     const projectName = computed(() => {
       if (!projectId.value) return ''
@@ -197,6 +207,7 @@ export default defineComponent({
       columns,
       goToAdd,
       goToProjectActions,
+      visibleColumns,
     }
   },
 })

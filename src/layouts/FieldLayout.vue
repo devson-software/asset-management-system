@@ -10,8 +10,9 @@
           aria-label="Home"
           @click="goToCustomers()"
         />
-        <q-toolbar-title class="text-weight-bold cursor-pointer" @click="goToCustomers">
-          <span v-if="projectName" class="field-project-chip">
+        <q-toolbar-title style="text-align: center;" class="text-weight-bold cursor-pointer" @click="goToCustomers">
+          <span  v-if="projectName" class="field-project-chip">
+            <q-icon name="fas fa-location-dot" size="20px" class="q-mr-xs" />
             {{ projectName }}
           </span>
         </q-toolbar-title>

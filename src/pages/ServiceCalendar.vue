@@ -19,10 +19,10 @@
             <div class="text-subtitle2 text-grey-7">
               Plan and manage maintenance visits across all sites
             </div>
-            <q-chip v-if="isFieldView && projectName" dense color="primary" text-color="white" class="q-mt-xs">
+            <!-- <q-chip v-if="isFieldView && projectName" dense color="primary" text-color="white" class="q-mt-xs">
               <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
               {{ projectName }}
-            </q-chip>
+            </q-chip> -->
           </div>
         </div>
         <div class="q-gutter-sm">

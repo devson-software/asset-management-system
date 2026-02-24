@@ -7,10 +7,10 @@
           <div class="col">
             <div class="text-h5 text-weight-bold text-primary">Commissioning</div>
             <div class="text-subtitle2 text-grey-7">Scan or manually create commissioning reports</div>
-            <q-chip v-if="projectName" dense color="primary" text-color="white" class="q-mt-xs">
+            <!-- <q-chip v-if="projectName" dense color="primary" text-color="white" class="q-mt-xs">
               <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
               {{ projectName }}
-            </q-chip>
+            </q-chip> -->
           </div>
           <div class="col-12 col-sm-auto">
             <q-btn-dropdown
@@ -49,6 +49,7 @@
           <q-table
             :rows="recordRows"
             :columns="columns"
+            :visible-columns="visibleColumns"
             row-key="id"
             flat
             class="master-table"
@@ -76,11 +77,13 @@
 import { defineComponent, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { store } from '../../store'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'TechnicianCommissioningList',
   setup() {
     const route = useRoute()
+    const $q = useQuasar()
     const router = useRouter()
     const customerId = computed(() => route.query.customerId || '')
     const projectId = computed(() => route.query.projectId || '')
@@ -102,6 +105,17 @@ export default defineComponent({
       router.push('/field/projects')
     }
 
+
+    // { name: 'customer', label: 'Customer', align: 'left', field: 'customer' },
+    //   { name: 'project', label: 'Project', align: 'left', field: 'project' },
+    //   { name: 'type', label: 'Type', align: 'left', field: 'type' },
+    const visibleColumns = computed(() => {
+      if ($q.screen.lt.md) {
+        return ['date', 'project', 'status']
+      }
+      return columns.map((col) => col.name)
+    })
+
     const recordRows = computed(() => {
       return store.commissioningRecords.filter((record) => {
         if (customerId.value && record.customerId && record.customerId !== customerId.value) return false
@@ -119,6 +133,14 @@ export default defineComponent({
         return true
       })
     })
+
+    
+    // const visibleColumns = computed(() => {
+    //   if ($q.screen.lt.md) {
+    //     return ['name', 'siteAddress']
+    //   }
+    //   return columns.map((col) => col.name)
+    // })
 
     const columns = [
       { name: 'id', label: 'ID', align: 'left', field: 'id' },
@@ -141,7 +163,7 @@ export default defineComponent({
       })
     }
 
-    return { recordRows, columns, projectName, goToAdd, goToProjectActions }
+    return { recordRows, columns, projectName, goToAdd, goToProjectActions, visibleColumns }
   },
 })
 </script>

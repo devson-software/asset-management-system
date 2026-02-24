@@ -7,9 +7,9 @@
           <div class="q-ml-sm">
             <div class="text-h5 text-weight-bold text-primary">Project Actions</div>
             <div class="text-subtitle2 text-grey-7">Select an action below</div>
-            <div v-if="projectName" class="text-subtitle2 text-primary text-weight-medium">
+            <!-- <div v-if="projectName" class="text-subtitle2 text-primary text-weight-medium">
               {{ projectName }}
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
