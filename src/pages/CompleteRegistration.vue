@@ -82,7 +82,7 @@
           </q-card>
           
           <div class="text-center q-mt-md text-grey-6">
-            © 2026 HVAC Management Tool - QR Service
+            © 2026 AssetProQR
           </div>
         </div>
       </q-page>

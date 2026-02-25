@@ -6,13 +6,14 @@
         <q-avatar
           size="100px"
           font-size="52px"
+
           color="primary"
           text-color="white"
           icon="fas fa-screwdriver-wrench"
           class="q-mb-md shadow-5 login-avatar"
         />
-        <div class="text-h4 text-weight-bolder text-primary q-mb-xs">QR service</div>
-        <div class="text-subtitle2 text-grey-7">HVAC Management Tool</div>
+        <div class="text-h4 text-weight-bolder text-primary q-mb-xs">AssetProQR</div>
+        <!-- <div class="text-subtitle2 text-grey-7">HVAC Management Tool</div> -->
       </q-card-section>
 
       <q-card-section class="q-px-xl q-pb-xl login-card-section-body">
