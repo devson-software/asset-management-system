@@ -2,7 +2,7 @@
   "name": "hvac-asset-pro",
   "version": "0.0.1",
   "description": "Professional HVAC management tool for Air Conditioning Business",
-  "productName": "HVAC Asset Pro",
+  "productName": "AssetProQR",
   "author": "DevsonWD <warrick@devson.co.za>",
   "type": "module",
   "private": true,

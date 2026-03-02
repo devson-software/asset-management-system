@@ -91,11 +91,11 @@ export default defineComponent({
 
 .field-project-chip {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 6px 14px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .field-page-container {
