@@ -186,6 +186,56 @@ WHERE a.TenantId = @TenantId AND a.IsDeleted = 0;
 SELECT Id, Name FROM Assets;
 ```
 
+## Denormalization Strategy
+
+### Intentional Denormalization
+
+We intentionally denormalize certain data for performance and query simplicity:
+
+#### 1. **Display Names in Queries**
+```sql
+-- Good: Denormalized for performance
+SELECT a.Id, a.UnitRef, ph_cat.Name AS PlantCategoryName, ph_type.Name AS UnitTypeName
+FROM app.Assets a
+LEFT JOIN ref.PlantHierarchy ph_cat ON ph_cat.Id = a.PlantCategoryId
+LEFT JOIN ref.PlantHierarchy ph_type ON ph_type.Id = a.UnitTypeId
+```
+
+**Why this is intentional:**
+- Avoids N+1 queries when loading asset lists
+- Provides readable display names without additional API calls
+- Performance-critical for asset dashboards and reports
+- Data integrity maintained via FK constraints to `ref.PlantHierarchy`
+
+#### 2. **Lookup Codes vs Display Names**
+- Store **lookup codes** (e.g., `'r410a'`) in domain models for data integrity
+- Resolve to **display names** (e.g., `'R410A'`) in queries for UI
+- System defaults use `TenantId = NULL` for consistency
+
+#### 3. **When to Denormalize**
+- **Read-heavy operations** (asset lists, dashboards, reports)
+- **Display purposes** (dropdowns, UI labels)
+- **Performance-critical paths** (avoiding JOINs in hot paths)
+
+#### 4. **When NOT to Denormalize**
+- **Write operations** (always use normalized FKs)
+- **Business logic** (use codes, not display names)
+- **Data integrity** (FK constraints enforce relationships)
+
+### Trade-offs
+
+**Benefits:**
+- Faster queries (fewer JOINs in common operations)
+- Simpler API responses (display names included)
+- Better user experience (no separate lookup calls)
+
+**Costs:**
+- Slightly more complex queries
+- Need to maintain JOIN logic consistency
+- Display name changes require query updates (rare)
+
+This is a deliberate performance optimization, not accidental denormalization.
+
 ## Documentation Maintenance
 
 - This document lives in `/docs/database-architecture.md`
