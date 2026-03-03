@@ -107,6 +107,7 @@ DeletedBy    UNIQUEIDENTIFIER NULL
 ### Numbered Scripts
 Migrations are numbered sequentially in `Infrastructure/Database/Migrations/`:
 ```
+000_CreateSchemas.sql
 001_CreateTenants.sql
 002_CreateCustomers.sql
 003_CreateProjects.sql
@@ -122,7 +123,8 @@ Migrations are numbered sequentially in `Infrastructure/Database/Migrations/`:
 ```
 
 ### Schema Creation
-Each migration creates tables in their target schema:
+1. **000_CreateSchemas.sql** - Creates all schemas (dbo, app, ops, ref)
+2. **Subsequent migrations** - Create tables in their target schemas:
 ```sql
 CREATE TABLE app.Assets (...);
 CREATE TABLE ref.Lookups (...);
