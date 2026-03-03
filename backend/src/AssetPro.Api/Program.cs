@@ -37,8 +37,8 @@ builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection(Se
 // ---------------------------------------------------------------------------
 // Database
 // ---------------------------------------------------------------------------
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not configured.");
+var connectionString = builder.Configuration.GetConnectionString("AssetProDb")
+    ?? throw new InvalidOperationException("Connection string 'AssetProDb' not configured.");
 
 builder.Services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
 
