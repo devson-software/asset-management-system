@@ -151,13 +151,17 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // ---------------------------------------------------------------------------
-// Run DbUp migrations
+// Run DbUp migrations (Development only)
 // ---------------------------------------------------------------------------
-var migrationResult = DatabaseMigrator.Migrate(connectionString);
-if (!migrationResult.Successful)
+if (app.Environment.IsDevelopment())
 {
-    app.Logger.LogError(migrationResult.Error, "Database migration failed.");
-    throw migrationResult.Error;
+    var migrationResult = DatabaseMigrator.Migrate(connectionString);
+    if (!migrationResult.Successful)
+    {
+        app.Logger.LogError(migrationResult.Error, "Database migration failed.");
+        throw migrationResult.Error;
+    }
+    app.Logger.LogInformation("Database migrations completed successfully.");
 }
 
 // ---------------------------------------------------------------------------
@@ -186,6 +190,32 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/health", () => Results.Ok(new { status = "ok", time = DateTimeOffset.UtcNow }))
     .WithTags("System")
     .AllowAnonymous();
+
+// ---------------------------------------------------------------------------
+// Manual migration trigger (Admin only)
+// ---------------------------------------------------------------------------
+app.MapPost("/admin/migrate", async (IDbConnectionFactory db, ILogger<Program> logger) =>
+{
+    try
+    {
+        var result = DatabaseMigrator.Migrate(connectionString);
+        if (!result.Successful)
+        {
+            logger.LogError(result.Error, "Manual database migration failed");
+            return Results.Problem($"Migration failed: {result.Error.Message}", statusCode: 500);
+        }
+        
+        logger.LogInformation("Manual database migration completed successfully");
+        return Results.Ok(new { message = "Migration completed successfully", scripts = result.Scripts.Count() });
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Unexpected error during manual migration");
+        return Results.Problem($"Unexpected error: {ex.Message}", statusCode: 500);
+    }
+})
+.RequireAuthorization("Admin") // Only admins can trigger migrations
+.WithTags("System");
 
 // ---------------------------------------------------------------------------
 // Map all feature endpoints (auto-discovery)
