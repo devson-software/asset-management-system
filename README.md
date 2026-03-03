@@ -1,6 +1,14 @@
 # HVAC Asset Pro
 
-A professional HVAC management tool built with Quasar.js for tracking HVAC units, service schedules, and maintenance records.
+A professional multi-tenant HVAC management SaaS for tracking HVAC units, service schedules, and maintenance records.
+
+## Repository Structure
+
+```
+├── frontend/    # Vue 3 / Quasar SPA
+├── backend/     # .NET 9 Web API (Vertical Slice Architecture)
+└── README.md
+```
 
 ## Features
 
@@ -14,25 +22,22 @@ A professional HVAC management tool built with Quasar.js for tracking HVAC units
 - **Cloud Storage**: Secure job card history and reporting.
 - **Asset Register**: Full inventory overview with Excel export and QR label printing.
 
-## Setup
+## Frontend Setup
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Run in development mode:
-   ```bash
-   quasar dev
-   ```
-3. Build for production:
-   ```bash
-   quasar build
-   ```
+```bash
+cd frontend
+npm install
+npx quasar dev
+```
 
-## Workflow
+## Backend Setup
 
-1. **Login**: Access the technician portal.
-2. **Register**: Add a customer and their specific project/site.
-3. **Capture**: Fill in the technical data sheet for the equipment.
-4. **Service**: Use the calendar to perform scheduled maintenance via QR code.
-5. **Report**: Generate job cards and export the register for accounting.
+```bash
+cd backend/src/AssetPro.Api
+dotnet run
+```
+
+## Branches
+
+- **main** — Wireframe / client demo (frontend only)
+- **develop** — Active development (monorepo with backend)
