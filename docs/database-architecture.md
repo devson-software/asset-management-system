@@ -192,20 +192,25 @@ SELECT Id, Name FROM Assets;
 
 We intentionally denormalize certain data for performance and query simplicity:
 
-#### 1. **Display Names in Queries**
+#### 1. **TenantId in Reference Tables**
 ```sql
--- Good: Denormalized for performance
-SELECT a.Id, a.UnitRef, ph_cat.Name AS PlantCategoryName, ph_type.Name AS UnitTypeName
-FROM app.Assets a
-LEFT JOIN ref.PlantHierarchy ph_cat ON ph_cat.Id = a.PlantCategoryId
-LEFT JOIN ref.PlantHierarchy ph_type ON ph_type.Id = a.UnitTypeId
+-- Good: Reference tables include TenantId for tenant-specific lookups
+SELECT l.Code, l.DisplayName 
+FROM ref.Lookups l
+WHERE l.Category = 'RefrigerantType' 
+  AND (l.TenantId = @TenantId OR l.TenantId IS NULL)
+  AND l.IsDeleted = 0;
+
+-- System defaults (TenantId = NULL) available to all tenants
+-- Tenant overrides (TenantId = @TenantId) only visible to that tenant
 ```
 
 **Why this is intentional:**
-- Avoids N+1 queries when loading asset lists
-- Provides readable display names without additional API calls
-- Performance-critical for asset dashboards and reports
-- Data integrity maintained via FK constraints to `ref.PlantHierarchy`
+- Allows system-wide defaults with `TenantId = NULL`
+- Enables tenant-specific customizations with their own `TenantId`
+- Single query gets both defaults + tenant overrides
+- Performance: No separate calls for system vs tenant data
+- Data isolation: Each tenant only sees their customizations
 
 #### 2. **Lookup Codes vs Display Names**
 - Store **lookup codes** (e.g., `'r410a'`) in domain models for data integrity
