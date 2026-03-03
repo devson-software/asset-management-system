@@ -24,7 +24,7 @@ public static class GetLookupCategories
 
             return await conn.QueryAsync<string>("""
                 SELECT DISTINCT Category
-                FROM Lookups
+                FROM ref.Lookups
                 WHERE (TenantId IS NULL OR TenantId = @TenantId)
                   AND IsDeleted = 0
                 ORDER BY Category

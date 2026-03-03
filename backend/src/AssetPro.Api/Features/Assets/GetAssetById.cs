@@ -60,11 +60,11 @@ public static class GetAssetById
                        a.RefrigerantType, a.RefrigerantKg, a.ServiceSchedule, a.ServiceDuration,
                        a.VendorArea, a.VendorLocation, a.VendorAddress, a.Status,
                        a.NameplatePhotoUrl, a.QrCodeUrl, a.CreatedAt
-                FROM Assets a
-                INNER JOIN Projects p ON p.Id = a.ProjectId AND p.IsDeleted = 0
-                INNER JOIN Customers c ON c.Id = p.CustomerId AND c.IsDeleted = 0
-                LEFT JOIN PlantHierarchy ph_cat ON ph_cat.Id = a.PlantCategoryId
-                LEFT JOIN PlantHierarchy ph_type ON ph_type.Id = a.UnitTypeId
+                FROM app.Assets a
+                INNER JOIN app.Projects p ON p.Id = a.ProjectId AND p.IsDeleted = 0
+                INNER JOIN app.Customers c ON c.Id = p.CustomerId AND c.IsDeleted = 0
+                LEFT JOIN ref.PlantHierarchy ph_cat ON ph_cat.Id = a.PlantCategoryId
+                LEFT JOIN ref.PlantHierarchy ph_type ON ph_type.Id = a.UnitTypeId
                 WHERE a.Id = @Id AND a.TenantId = @TenantId AND a.IsDeleted = 0
                 """, new { request.Id, request.TenantId });
 

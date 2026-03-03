@@ -1,7 +1,7 @@
-CREATE TABLE CommissioningRecords (
+CREATE TABLE ops.CommissioningRecords (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
-    AssetId             UNIQUEIDENTIFIER NULL REFERENCES Assets(Id),
+    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Tenants(Id),
+    AssetId             UNIQUEIDENTIFIER NULL REFERENCES app.Assets(Id),
     UnitRef             NVARCHAR(50)     NOT NULL,
     CommissioningType   NVARCHAR(50)     NOT NULL,
     Status              NVARCHAR(50)     NOT NULL DEFAULT 'in_progress',
@@ -16,4 +16,4 @@ CREATE TABLE CommissioningRecords (
 );
 
 CREATE NONCLUSTERED INDEX IX_CommissioningRecords_TenantAsset
-    ON CommissioningRecords(TenantId, AssetId) WHERE IsDeleted = 0;
+    ON ops.CommissioningRecords(TenantId, AssetId) WHERE IsDeleted = 0;

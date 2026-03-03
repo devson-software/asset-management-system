@@ -1,6 +1,6 @@
-CREATE TABLE Lookups (
+CREATE TABLE ref.Lookups (
     Id              UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId        UNIQUEIDENTIFIER NULL REFERENCES Tenants(Id),
+    TenantId        UNIQUEIDENTIFIER NULL REFERENCES dbo.Tenants(Id),
     Category        NVARCHAR(50)     NOT NULL,
     Code            NVARCHAR(50)     NOT NULL,
     DisplayName     NVARCHAR(200)    NOT NULL,

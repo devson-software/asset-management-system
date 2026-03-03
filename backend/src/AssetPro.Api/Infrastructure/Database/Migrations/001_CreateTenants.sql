@@ -1,4 +1,4 @@
-CREATE TABLE Tenants (
+CREATE TABLE dbo.Tenants (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
     CompanyName         NVARCHAR(300)    NOT NULL,
     Subdomain           NVARCHAR(100)    NOT NULL,
@@ -18,4 +18,4 @@ CREATE TABLE Tenants (
 );
 
 CREATE UNIQUE NONCLUSTERED INDEX UX_Tenants_Subdomain
-    ON Tenants(Subdomain) WHERE IsDeleted = 0;
+    ON dbo.Tenants(Subdomain) WHERE IsDeleted = 0;

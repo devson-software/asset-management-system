@@ -43,7 +43,7 @@ public static class CreateProject
             var id = Guid.NewGuid();
 
             await conn.ExecuteAsync("""
-                INSERT INTO Projects (Id, TenantId, CustomerId, Name, SiteAddress,
+                INSERT INTO app.Projects (Id, TenantId, CustomerId, Name, SiteAddress,
                     VendorLocation, TimeAllocation, PictureUrl, CreatedAt, CreatedBy)
                 VALUES (@Id, @TenantId, @CustomerId, @Name, @SiteAddress,
                     @VendorLocation, @TimeAllocation, @PictureUrl, SYSUTCDATETIME(), @CreatedBy)

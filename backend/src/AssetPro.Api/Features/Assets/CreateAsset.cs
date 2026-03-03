@@ -60,7 +60,7 @@ public static class CreateAsset
             var id = Guid.NewGuid();
 
             await conn.ExecuteAsync("""
-                INSERT INTO Assets (Id, TenantId, ProjectId, UnitRef, PlantCategoryId, UnitTypeId,
+                INSERT INTO app.Assets (Id, TenantId, ProjectId, UnitRef, PlantCategoryId, UnitTypeId,
                     Manufacturer, IndoorModel, SerialNumber, OutdoorModel, OutdoorSerial,
                     InstallationDate, RefrigerantType, RefrigerantKg, ServiceSchedule, ServiceDuration,
                     VendorArea, VendorLocation, VendorAddress, NameplatePhotoUrl, Status,

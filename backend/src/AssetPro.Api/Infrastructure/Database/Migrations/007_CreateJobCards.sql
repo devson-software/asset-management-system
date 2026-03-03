@@ -1,9 +1,9 @@
-CREATE TABLE JobCards (
+CREATE TABLE ops.JobCards (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
+    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Tenants(Id),
     JobNumber           NVARCHAR(30)     NOT NULL,
-    AssetId             UNIQUEIDENTIFIER NOT NULL REFERENCES Assets(Id),
-    ServiceEventId      UNIQUEIDENTIFIER NULL REFERENCES ServiceEvents(Id),
+    AssetId             UNIQUEIDENTIFIER NOT NULL REFERENCES app.Assets(Id),
+    ServiceEventId      UNIQUEIDENTIFIER NULL REFERENCES ops.ServiceEvents(Id),
     TechnicianId        UNIQUEIDENTIFIER NOT NULL,
     Date                DATE             NOT NULL,
     WorkType            NVARCHAR(50)     NOT NULL DEFAULT 'maintenance',
@@ -28,7 +28,7 @@ CREATE TABLE JobCards (
 );
 
 CREATE UNIQUE NONCLUSTERED INDEX UX_JobCards_TenantJobNumber
-    ON JobCards(TenantId, JobNumber) WHERE IsDeleted = 0;
+    ON ops.JobCards(TenantId, JobNumber) WHERE IsDeleted = 0;
 
 CREATE NONCLUSTERED INDEX IX_JobCards_TenantAsset
-    ON JobCards(TenantId, AssetId) WHERE IsDeleted = 0;
+    ON ops.JobCards(TenantId, AssetId) WHERE IsDeleted = 0;

@@ -51,7 +51,7 @@ public static class UpdateCustomer
             using var conn = await _db.CreateConnectionAsync(cancellationToken);
 
             var rows = await conn.ExecuteAsync("""
-                UPDATE Customers SET
+                UPDATE app.Customers SET
                     Name = @Name, ContactName = @ContactName, Email = @Email,
                     Mobile = @Mobile, Telephone = @Telephone, Address = @Address,
                     BillingAddress = @BillingAddress, VatNumber = @VatNumber,

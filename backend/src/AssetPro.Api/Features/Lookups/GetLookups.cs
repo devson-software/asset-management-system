@@ -27,7 +27,7 @@ public static class GetLookups
             return await conn.QueryAsync<Response>("""
                 SELECT Id, Code, DisplayName, SortOrder,
                        CASE WHEN TenantId IS NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsSystem
-                FROM Lookups
+                FROM ref.Lookups
                 WHERE Category = @Category
                   AND (TenantId IS NULL OR TenantId = @TenantId)
                   AND IsDeleted = 0 AND IsActive = 1

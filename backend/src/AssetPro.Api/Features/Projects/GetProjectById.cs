@@ -37,8 +37,8 @@ public static class GetProjectById
             var project = await conn.QuerySingleOrDefaultAsync<Response>("""
                 SELECT p.Id, p.CustomerId, c.Name AS CustomerName, p.Name, p.SiteAddress,
                        p.VendorLocation, p.TimeAllocation, p.PictureUrl, p.CreatedAt
-                FROM Projects p
-                INNER JOIN Customers c ON c.Id = p.CustomerId AND c.IsDeleted = 0
+                FROM app.Projects p
+                INNER JOIN app.Customers c ON c.Id = p.CustomerId AND c.IsDeleted = 0
                 WHERE p.Id = @Id AND p.TenantId = @TenantId AND p.IsDeleted = 0
                 """, new { request.Id, request.TenantId });
 

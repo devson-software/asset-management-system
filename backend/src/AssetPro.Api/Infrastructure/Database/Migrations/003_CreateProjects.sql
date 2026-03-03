@@ -1,7 +1,7 @@
-CREATE TABLE Projects (
+CREATE TABLE app.Projects (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
-    CustomerId          UNIQUEIDENTIFIER NOT NULL REFERENCES Customers(Id),
+    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Tenants(Id),
+    CustomerId          UNIQUEIDENTIFIER NOT NULL REFERENCES app.Customers(Id),
     Name                NVARCHAR(300)    NOT NULL,
     SiteAddress         NVARCHAR(500)    NULL,
     VendorLocation      NVARCHAR(200)    NULL,
@@ -17,4 +17,4 @@ CREATE TABLE Projects (
 );
 
 CREATE NONCLUSTERED INDEX IX_Projects_TenantCustomer
-    ON Projects(TenantId, CustomerId) WHERE IsDeleted = 0;
+    ON app.Projects(TenantId, CustomerId) WHERE IsDeleted = 0;

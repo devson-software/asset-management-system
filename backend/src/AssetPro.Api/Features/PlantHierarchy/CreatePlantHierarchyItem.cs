@@ -41,7 +41,7 @@ public static class CreatePlantHierarchyItem
             var id = Guid.NewGuid();
 
             await conn.ExecuteAsync("""
-                INSERT INTO PlantHierarchy (Id, TenantId, ParentId, Name, Level, SortOrder, CreatedAt, CreatedBy)
+                INSERT INTO ref.PlantHierarchy (Id, TenantId, ParentId, Name, Level, SortOrder, CreatedAt, CreatedBy)
                 VALUES (@Id, @TenantId, @ParentId, @Name, @Level, @SortOrder, SYSUTCDATETIME(), @CreatedBy)
                 """, new
             {

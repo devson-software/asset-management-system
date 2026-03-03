@@ -1,7 +1,7 @@
-CREATE TABLE Assets (
+CREATE TABLE app.Assets (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
-    ProjectId           UNIQUEIDENTIFIER NOT NULL REFERENCES Projects(Id),
+    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Tenants(Id),
+    ProjectId           UNIQUEIDENTIFIER NOT NULL REFERENCES app.Projects(Id),
     UnitRef             NVARCHAR(50)     NOT NULL,
     PlantCategoryId     UNIQUEIDENTIFIER NULL,
     UnitTypeId          UNIQUEIDENTIFIER NULL,
@@ -31,7 +31,7 @@ CREATE TABLE Assets (
 );
 
 CREATE NONCLUSTERED INDEX IX_Assets_TenantProject
-    ON Assets(TenantId, ProjectId) WHERE IsDeleted = 0;
+    ON app.Assets(TenantId, ProjectId) WHERE IsDeleted = 0;
 
 CREATE UNIQUE NONCLUSTERED INDEX UX_Assets_TenantUnitRef
-    ON Assets(TenantId, UnitRef) WHERE IsDeleted = 0;
+    ON app.Assets(TenantId, UnitRef) WHERE IsDeleted = 0;

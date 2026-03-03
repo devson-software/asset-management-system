@@ -49,7 +49,7 @@ public static class CreateCustomer
             var id = Guid.NewGuid();
 
             await conn.ExecuteAsync("""
-                INSERT INTO Customers (Id, TenantId, Name, ContactName, Email, Mobile,
+                INSERT INTO app.Customers (Id, TenantId, Name, ContactName, Email, Mobile,
                     Telephone, Address, BillingAddress, VatNumber, PictureUrl, CreatedAt, CreatedBy)
                 VALUES (@Id, @TenantId, @Name, @ContactName, @Email, @Mobile,
                     @Telephone, @Address, @BillingAddress, @VatNumber, @PictureUrl, SYSUTCDATETIME(), @CreatedBy)

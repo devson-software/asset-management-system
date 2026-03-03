@@ -36,9 +36,9 @@ public static class GetProjects
             var sql = """
                 SELECT p.Id, p.CustomerId, c.Name AS CustomerName, p.Name, p.SiteAddress,
                        p.VendorLocation, p.TimeAllocation, p.PictureUrl,
-                       (SELECT COUNT(1) FROM Assets a WHERE a.ProjectId = p.Id AND a.IsDeleted = 0) AS AssetCount
-                FROM Projects p
-                INNER JOIN Customers c ON c.Id = p.CustomerId AND c.IsDeleted = 0
+                       (SELECT COUNT(1) FROM app.Assets a WHERE a.ProjectId = p.Id AND a.IsDeleted = 0) AS AssetCount
+                FROM app.Projects p
+                INNER JOIN app.Customers c ON c.Id = p.CustomerId AND c.IsDeleted = 0
                 WHERE p.TenantId = @TenantId AND p.IsDeleted = 0
                 """;
 

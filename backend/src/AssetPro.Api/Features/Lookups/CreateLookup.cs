@@ -43,7 +43,7 @@ public static class CreateLookup
             var id = Guid.NewGuid();
 
             await conn.ExecuteAsync("""
-                INSERT INTO Lookups (Id, TenantId, Category, Code, DisplayName, SortOrder, CreatedAt, CreatedBy)
+                INSERT INTO ref.Lookups (Id, TenantId, Category, Code, DisplayName, SortOrder, CreatedAt, CreatedBy)
                 VALUES (@Id, @TenantId, @Category, @Code, @DisplayName, @SortOrder, SYSUTCDATETIME(), @CreatedBy)
                 """, new
             {

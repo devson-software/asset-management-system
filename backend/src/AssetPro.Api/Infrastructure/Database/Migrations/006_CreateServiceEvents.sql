@@ -1,8 +1,8 @@
-CREATE TABLE ServiceEvents (
+CREATE TABLE ops.ServiceEvents (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
-    AssetId             UNIQUEIDENTIFIER NOT NULL REFERENCES Assets(Id),
-    TeamId              UNIQUEIDENTIFIER NULL REFERENCES Teams(Id),
+    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Tenants(Id),
+    AssetId             UNIQUEIDENTIFIER NOT NULL REFERENCES app.Assets(Id),
+    TeamId              UNIQUEIDENTIFIER NULL REFERENCES app.Teams(Id),
     ServiceType         NVARCHAR(100)    NOT NULL,
     StartDate           DATE             NOT NULL,
     EndDate             DATE             NOT NULL,
@@ -19,4 +19,4 @@ CREATE TABLE ServiceEvents (
 );
 
 CREATE NONCLUSTERED INDEX IX_ServiceEvents_TenantDate
-    ON ServiceEvents(TenantId, StartDate) WHERE IsDeleted = 0;
+    ON ops.ServiceEvents(TenantId, StartDate) WHERE IsDeleted = 0;

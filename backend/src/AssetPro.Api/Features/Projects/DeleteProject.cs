@@ -25,7 +25,7 @@ public static class DeleteProject
             using var conn = await _db.CreateConnectionAsync(cancellationToken);
 
             var rows = await conn.ExecuteAsync("""
-                UPDATE Projects SET
+                UPDATE app.Projects SET
                     IsDeleted = 1, DeletedAt = SYSUTCDATETIME(), DeletedBy = @DeletedBy
                 WHERE Id = @Id AND TenantId = @TenantId AND IsDeleted = 0
                 """, new

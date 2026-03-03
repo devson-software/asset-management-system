@@ -42,7 +42,7 @@ public static class UpdateLookup
 
             // Only allow editing tenant-owned lookups (not system defaults)
             var rows = await conn.ExecuteAsync("""
-                UPDATE Lookups SET
+                UPDATE ref.Lookups SET
                     DisplayName = @DisplayName, SortOrder = @SortOrder, IsActive = @IsActive,
                     UpdatedAt = SYSUTCDATETIME(), UpdatedBy = @UpdatedBy
                 WHERE Id = @Id AND TenantId = @TenantId AND IsDeleted = 0

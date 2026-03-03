@@ -34,7 +34,7 @@ public static class GetCustomers
 
             return await conn.QueryAsync<Response>("""
                 SELECT Id, Name, ContactName, Email, Mobile, Telephone, Address, PictureUrl
-                FROM Customers
+                FROM app.Customers
                 WHERE TenantId = @TenantId AND IsDeleted = 0
                 ORDER BY Name
                 """, new { request.TenantId });

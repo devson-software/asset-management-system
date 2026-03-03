@@ -1,6 +1,6 @@
-CREATE TABLE Customers (
+CREATE TABLE app.Customers (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
+    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Tenants(Id),
     Name                NVARCHAR(300)    NOT NULL,
     ContactName         NVARCHAR(200)    NOT NULL,
     Email               NVARCHAR(256)    NOT NULL,
@@ -20,4 +20,4 @@ CREATE TABLE Customers (
 );
 
 CREATE NONCLUSTERED INDEX IX_Customers_TenantId
-    ON Customers(TenantId) WHERE IsDeleted = 0;
+    ON app.Customers(TenantId) WHERE IsDeleted = 0;

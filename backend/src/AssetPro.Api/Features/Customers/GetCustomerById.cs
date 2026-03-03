@@ -39,7 +39,7 @@ public static class GetCustomerById
             var customer = await conn.QuerySingleOrDefaultAsync<Response>("""
                 SELECT Id, Name, ContactName, Email, Mobile, Telephone,
                        Address, BillingAddress, VatNumber, PictureUrl, CreatedAt
-                FROM Customers
+                FROM app.Customers
                 WHERE Id = @Id AND TenantId = @TenantId AND IsDeleted = 0
                 """, new { request.Id, request.TenantId });
 

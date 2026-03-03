@@ -1,6 +1,6 @@
-CREATE TABLE Teams (
+CREATE TABLE app.Teams (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
+    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Tenants(Id),
     Name                NVARCHAR(100)    NOT NULL,
     Color               NVARCHAR(10)     NULL,
     CreatedAt           DATETIME2(7)     NOT NULL DEFAULT SYSUTCDATETIME(),
@@ -13,12 +13,12 @@ CREATE TABLE Teams (
 );
 
 CREATE NONCLUSTERED INDEX IX_Teams_TenantId
-    ON Teams(TenantId) WHERE IsDeleted = 0;
+    ON app.Teams(TenantId) WHERE IsDeleted = 0;
 
-CREATE TABLE TeamMembers (
+CREATE TABLE app.TeamMembers (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
-    TeamId              UNIQUEIDENTIFIER NOT NULL REFERENCES Teams(Id),
+    TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES dbo.Tenants(Id),
+    TeamId              UNIQUEIDENTIFIER NOT NULL REFERENCES app.Teams(Id),
     UserId              UNIQUEIDENTIFIER NOT NULL,
     Role                NVARCHAR(50)     NOT NULL DEFAULT 'assistant',
     CreatedAt           DATETIME2(7)     NOT NULL DEFAULT SYSUTCDATETIME(),
@@ -31,4 +31,4 @@ CREATE TABLE TeamMembers (
 );
 
 CREATE NONCLUSTERED INDEX IX_TeamMembers_TenantTeam
-    ON TeamMembers(TenantId, TeamId) WHERE IsDeleted = 0;
+    ON app.TeamMembers(TenantId, TeamId) WHERE IsDeleted = 0;

@@ -1,6 +1,6 @@
-CREATE TABLE UnitLibrary (
+CREATE TABLE ref.UnitLibrary (
     Id                  UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId            UNIQUEIDENTIFIER NULL REFERENCES Tenants(Id),
+    TenantId            UNIQUEIDENTIFIER NULL REFERENCES dbo.Tenants(Id),
     Manufacturer        NVARCHAR(200)    NOT NULL,
     UnitTypeId          UNIQUEIDENTIFIER NULL,
     IndoorModel         NVARCHAR(200)    NOT NULL,
@@ -18,4 +18,4 @@ CREATE TABLE UnitLibrary (
 );
 
 CREATE NONCLUSTERED INDEX IX_UnitLibrary_TenantId
-    ON UnitLibrary(TenantId) WHERE IsDeleted = 0;
+    ON ref.UnitLibrary(TenantId) WHERE IsDeleted = 0;

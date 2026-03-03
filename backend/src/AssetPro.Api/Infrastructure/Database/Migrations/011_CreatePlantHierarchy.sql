@@ -2,10 +2,10 @@
 IF OBJECT_ID('dbo.PlantHierarchy', 'U') IS NOT NULL
     DROP TABLE dbo.PlantHierarchy;
 
-CREATE TABLE PlantHierarchy (
+CREATE TABLE ref.PlantHierarchy (
     Id              UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
-    TenantId        UNIQUEIDENTIFIER NULL REFERENCES Tenants(Id),
-    ParentId        UNIQUEIDENTIFIER NULL REFERENCES PlantHierarchy(Id),
+    TenantId        UNIQUEIDENTIFIER NULL REFERENCES dbo.Tenants(Id),
+    ParentId        UNIQUEIDENTIFIER NULL REFERENCES ref.PlantHierarchy(Id),
     Name            NVARCHAR(200)    NOT NULL,
     Level           INT              NOT NULL DEFAULT 0,
     SortOrder       INT              NOT NULL DEFAULT 0,
@@ -20,7 +20,7 @@ CREATE TABLE PlantHierarchy (
 );
 
 CREATE NONCLUSTERED INDEX IX_PlantHierarchy_TenantParent
-    ON PlantHierarchy(TenantId, ParentId) WHERE IsDeleted = 0 AND IsActive = 1;
+    ON ref.PlantHierarchy(TenantId, ParentId) WHERE IsDeleted = 0 AND IsActive = 1;
 
 CREATE NONCLUSTERED INDEX IX_PlantHierarchy_TenantLevel
-    ON PlantHierarchy(TenantId, Level) WHERE IsDeleted = 0 AND IsActive = 1;
+    ON ref.PlantHierarchy(TenantId, Level) WHERE IsDeleted = 0 AND IsActive = 1;

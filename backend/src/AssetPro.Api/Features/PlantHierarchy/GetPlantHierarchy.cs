@@ -33,7 +33,7 @@ public static class GetPlantHierarchy
             return await conn.QueryAsync<Response>("""
                 SELECT Id, ParentId, Name, Level, SortOrder,
                        CASE WHEN TenantId IS NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsSystem
-                FROM PlantHierarchy
+                FROM ref.PlantHierarchy
                 WHERE (TenantId IS NULL OR TenantId = @TenantId)
                   AND IsDeleted = 0 AND IsActive = 1
                 ORDER BY Level, SortOrder, Name

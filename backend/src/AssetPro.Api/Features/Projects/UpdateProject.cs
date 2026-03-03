@@ -45,7 +45,7 @@ public static class UpdateProject
             using var conn = await _db.CreateConnectionAsync(cancellationToken);
 
             var rows = await conn.ExecuteAsync("""
-                UPDATE Projects SET
+                UPDATE app.Projects SET
                     CustomerId = @CustomerId, Name = @Name, SiteAddress = @SiteAddress,
                     VendorLocation = @VendorLocation, TimeAllocation = @TimeAllocation,
                     PictureUrl = @PictureUrl,
