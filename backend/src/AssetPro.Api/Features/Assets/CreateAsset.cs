@@ -11,8 +11,8 @@ public static class CreateAsset
     public record Request(
         Guid ProjectId,
         string UnitRef,
-        string? PlantCategory,
-        string UnitType,
+        Guid? PlantCategoryId,
+        Guid? UnitTypeId,
         string Manufacturer,
         string IndoorModel,
         string SerialNumber,
@@ -40,11 +40,10 @@ public static class CreateAsset
         {
             RuleFor(x => x.ProjectId).NotEmpty();
             RuleFor(x => x.UnitRef).NotEmpty().MaximumLength(50);
-            RuleFor(x => x.UnitType).NotEmpty().MaximumLength(200);
             RuleFor(x => x.Manufacturer).NotEmpty().MaximumLength(200);
             RuleFor(x => x.IndoorModel).NotEmpty().MaximumLength(200);
             RuleFor(x => x.SerialNumber).NotEmpty().MaximumLength(100);
-            RuleFor(x => x.RefrigerantType).NotEmpty().MaximumLength(20);
+            RuleFor(x => x.RefrigerantType).NotEmpty().MaximumLength(50);
             RuleFor(x => x.ServiceSchedule).NotEmpty().MaximumLength(50);
         }
     }
@@ -61,15 +60,15 @@ public static class CreateAsset
             var id = Guid.NewGuid();
 
             await conn.ExecuteAsync("""
-                INSERT INTO Assets (Id, TenantId, ProjectId, UnitRef, PlantCategory, UnitType,
+                INSERT INTO Assets (Id, TenantId, ProjectId, UnitRef, PlantCategoryId, UnitTypeId,
                     Manufacturer, IndoorModel, SerialNumber, OutdoorModel, OutdoorSerial,
                     InstallationDate, RefrigerantType, RefrigerantKg, ServiceSchedule, ServiceDuration,
                     VendorArea, VendorLocation, VendorAddress, NameplatePhotoUrl, Status,
                     CreatedAt, CreatedBy)
-                VALUES (@Id, @TenantId, @ProjectId, @UnitRef, @PlantCategory, @UnitType,
+                VALUES (@Id, @TenantId, @ProjectId, @UnitRef, @PlantCategoryId, @UnitTypeId,
                     @Manufacturer, @IndoorModel, @SerialNumber, @OutdoorModel, @OutdoorSerial,
                     @InstallationDate, @RefrigerantType, @RefrigerantKg, @ServiceSchedule, @ServiceDuration,
-                    @VendorArea, @VendorLocation, @VendorAddress, @NameplatePhotoUrl, 'Registered',
+                    @VendorArea, @VendorLocation, @VendorAddress, @NameplatePhotoUrl, 'registered',
                     SYSUTCDATETIME(), @CreatedBy)
                 """, new
             {
@@ -77,8 +76,8 @@ public static class CreateAsset
                 request.TenantId,
                 request.ProjectId,
                 request.UnitRef,
-                request.PlantCategory,
-                request.UnitType,
+                request.PlantCategoryId,
+                request.UnitTypeId,
                 request.Manufacturer,
                 request.IndoorModel,
                 request.SerialNumber,

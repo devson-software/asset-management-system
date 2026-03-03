@@ -8,7 +8,7 @@ CREATE TABLE ServiceEvents (
     EndDate             DATE             NOT NULL,
     StartTime           NVARCHAR(10)     NULL,
     Duration            NVARCHAR(50)     NULL,
-    Status              NVARCHAR(30)     NOT NULL DEFAULT 'Scheduled',
+    Status              NVARCHAR(50)     NOT NULL DEFAULT 'scheduled',
     CreatedAt           DATETIME2(7)     NOT NULL DEFAULT SYSUTCDATETIME(),
     CreatedBy           UNIQUEIDENTIFIER NOT NULL,
     UpdatedAt           DATETIME2(7)     NULL,

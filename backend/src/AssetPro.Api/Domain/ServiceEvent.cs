@@ -11,7 +11,7 @@ public class ServiceEvent : IAuditableEntity, ITenantScoped
     public DateTime EndDate { get; set; }
     public string? StartTime { get; set; }
     public string? Duration { get; set; }
-    public string Status { get; set; } = "Scheduled";
+    public string Status { get; set; } = "scheduled";
 
     public DateTime CreatedAt { get; set; }
     public Guid CreatedBy { get; set; }

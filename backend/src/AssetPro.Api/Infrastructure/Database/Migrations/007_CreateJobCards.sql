@@ -6,7 +6,7 @@ CREATE TABLE JobCards (
     ServiceEventId      UNIQUEIDENTIFIER NULL REFERENCES ServiceEvents(Id),
     TechnicianId        UNIQUEIDENTIFIER NOT NULL,
     Date                DATE             NOT NULL,
-    WorkType            NVARCHAR(50)     NOT NULL DEFAULT 'Maintenance',
+    WorkType            NVARCHAR(50)     NOT NULL DEFAULT 'maintenance',
     CheckInTime         NVARCHAR(20)     NULL,
     CheckOutTime        NVARCHAR(20)     NULL,
     FaultFound          BIT              NOT NULL DEFAULT 0,

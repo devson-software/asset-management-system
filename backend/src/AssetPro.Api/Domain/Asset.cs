@@ -6,22 +6,22 @@ public class Asset : IAuditableEntity, ITenantScoped
     public Guid TenantId { get; set; }
     public Guid ProjectId { get; set; }
     public string UnitRef { get; set; } = default!;
-    public string? PlantCategory { get; set; }
-    public string UnitType { get; set; } = default!;
+    public Guid? PlantCategoryId { get; set; }
+    public Guid? UnitTypeId { get; set; }
     public string Manufacturer { get; set; } = default!;
     public string IndoorModel { get; set; } = default!;
     public string SerialNumber { get; set; } = default!;
     public string? OutdoorModel { get; set; }
     public string? OutdoorSerial { get; set; }
     public DateTime? InstallationDate { get; set; }
-    public string RefrigerantType { get; set; } = "R410A";
+    public string RefrigerantType { get; set; } = "r410a";
     public decimal? RefrigerantKg { get; set; }
-    public string ServiceSchedule { get; set; } = "Monthly";
+    public string ServiceSchedule { get; set; } = "monthly";
     public string? ServiceDuration { get; set; }
     public string? VendorArea { get; set; }
     public string? VendorLocation { get; set; }
     public string? VendorAddress { get; set; }
-    public string Status { get; set; } = "Registered";
+    public string Status { get; set; } = "registered";
     public string? NameplatePhotoUrl { get; set; }
     public string? QrCodeUrl { get; set; }
 

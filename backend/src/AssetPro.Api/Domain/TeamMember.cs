@@ -6,7 +6,7 @@ public class TeamMember : IAuditableEntity, ITenantScoped
     public Guid TenantId { get; set; }
     public Guid TeamId { get; set; }
     public Guid UserId { get; set; }
-    public string Role { get; set; } = "Assistant";
+    public string Role { get; set; } = "assistant";
 
     public DateTime CreatedAt { get; set; }
     public Guid CreatedBy { get; set; }

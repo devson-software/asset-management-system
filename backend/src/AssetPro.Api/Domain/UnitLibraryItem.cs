@@ -5,7 +5,7 @@ public class UnitLibraryItem : IAuditableEntity
     public Guid Id { get; set; }
     public Guid? TenantId { get; set; }
     public string Manufacturer { get; set; } = default!;
-    public string UnitType { get; set; } = default!;
+    public Guid? UnitTypeId { get; set; }
     public string IndoorModel { get; set; } = default!;
     public string? OutdoorModel { get; set; }
     public string RefrigerantType { get; set; } = default!;

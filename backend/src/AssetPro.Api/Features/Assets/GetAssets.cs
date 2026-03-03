@@ -18,7 +18,8 @@ public static class GetAssets
         string ProjectName,
         string CustomerName,
         string UnitRef,
-        string UnitType,
+        string? PlantCategoryName,
+        string? UnitTypeName,
         string Manufacturer,
         string IndoorModel,
         string SerialNumber,
@@ -37,11 +38,14 @@ public static class GetAssets
 
             var sql = """
                 SELECT a.Id, a.ProjectId, p.Name AS ProjectName, c.Name AS CustomerName,
-                       a.UnitRef, a.UnitType, a.Manufacturer, a.IndoorModel,
+                       a.UnitRef, ph_cat.Name AS PlantCategoryName, ph_type.Name AS UnitTypeName,
+                       a.Manufacturer, a.IndoorModel,
                        a.SerialNumber, a.ServiceSchedule, a.Status
                 FROM Assets a
                 INNER JOIN Projects p ON p.Id = a.ProjectId AND p.IsDeleted = 0
                 INNER JOIN Customers c ON c.Id = p.CustomerId AND c.IsDeleted = 0
+                LEFT JOIN PlantHierarchy ph_cat ON ph_cat.Id = a.PlantCategoryId
+                LEFT JOIN PlantHierarchy ph_type ON ph_type.Id = a.UnitTypeId
                 WHERE a.TenantId = @TenantId AND a.IsDeleted = 0
                 """;
 

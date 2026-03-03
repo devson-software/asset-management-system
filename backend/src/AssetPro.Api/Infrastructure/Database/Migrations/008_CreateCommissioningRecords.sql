@@ -4,7 +4,7 @@ CREATE TABLE CommissioningRecords (
     AssetId             UNIQUEIDENTIFIER NULL REFERENCES Assets(Id),
     UnitRef             NVARCHAR(50)     NOT NULL,
     CommissioningType   NVARCHAR(50)     NOT NULL,
-    Status              NVARCHAR(30)     NOT NULL DEFAULT 'In Progress',
+    Status              NVARCHAR(50)     NOT NULL DEFAULT 'in_progress',
     FormDataJson        NVARCHAR(MAX)    NULL,
     CreatedAt           DATETIME2(7)     NOT NULL DEFAULT SYSUTCDATETIME(),
     CreatedBy           UNIQUEIDENTIFIER NOT NULL,

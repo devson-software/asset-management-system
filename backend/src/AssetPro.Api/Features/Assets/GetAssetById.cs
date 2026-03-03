@@ -19,8 +19,10 @@ public static class GetAssetById
         string ProjectName,
         string CustomerName,
         string UnitRef,
-        string? PlantCategory,
-        string UnitType,
+        Guid? PlantCategoryId,
+        string? PlantCategoryName,
+        Guid? UnitTypeId,
+        string? UnitTypeName,
         string Manufacturer,
         string IndoorModel,
         string SerialNumber,
@@ -51,7 +53,9 @@ public static class GetAssetById
 
             var asset = await conn.QuerySingleOrDefaultAsync<Response>("""
                 SELECT a.Id, a.ProjectId, p.Name AS ProjectName, c.Name AS CustomerName,
-                       a.UnitRef, a.PlantCategory, a.UnitType, a.Manufacturer, a.IndoorModel,
+                       a.UnitRef, a.PlantCategoryId, ph_cat.Name AS PlantCategoryName,
+                       a.UnitTypeId, ph_type.Name AS UnitTypeName,
+                       a.Manufacturer, a.IndoorModel,
                        a.SerialNumber, a.OutdoorModel, a.OutdoorSerial, a.InstallationDate,
                        a.RefrigerantType, a.RefrigerantKg, a.ServiceSchedule, a.ServiceDuration,
                        a.VendorArea, a.VendorLocation, a.VendorAddress, a.Status,
@@ -59,6 +63,8 @@ public static class GetAssetById
                 FROM Assets a
                 INNER JOIN Projects p ON p.Id = a.ProjectId AND p.IsDeleted = 0
                 INNER JOIN Customers c ON c.Id = p.CustomerId AND c.IsDeleted = 0
+                LEFT JOIN PlantHierarchy ph_cat ON ph_cat.Id = a.PlantCategoryId
+                LEFT JOIN PlantHierarchy ph_type ON ph_type.Id = a.UnitTypeId
                 WHERE a.Id = @Id AND a.TenantId = @TenantId AND a.IsDeleted = 0
                 """, new { request.Id, request.TenantId });
 

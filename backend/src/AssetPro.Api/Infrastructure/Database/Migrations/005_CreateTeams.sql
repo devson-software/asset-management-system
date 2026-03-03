@@ -20,7 +20,7 @@ CREATE TABLE TeamMembers (
     TenantId            UNIQUEIDENTIFIER NOT NULL REFERENCES Tenants(Id),
     TeamId              UNIQUEIDENTIFIER NOT NULL REFERENCES Teams(Id),
     UserId              UNIQUEIDENTIFIER NOT NULL,
-    Role                NVARCHAR(20)     NOT NULL DEFAULT 'Assistant',
+    Role                NVARCHAR(50)     NOT NULL DEFAULT 'assistant',
     CreatedAt           DATETIME2(7)     NOT NULL DEFAULT SYSUTCDATETIME(),
     CreatedBy           UNIQUEIDENTIFIER NOT NULL,
     UpdatedAt           DATETIME2(7)     NULL,

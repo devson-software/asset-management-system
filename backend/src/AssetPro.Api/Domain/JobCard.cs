@@ -9,7 +9,7 @@ public class JobCard : IAuditableEntity, ITenantScoped
     public Guid? ServiceEventId { get; set; }
     public Guid TechnicianId { get; set; }
     public DateTime Date { get; set; }
-    public string WorkType { get; set; } = "Maintenance";
+    public string WorkType { get; set; } = "maintenance";
     public string? CheckInTime { get; set; }
     public string? CheckOutTime { get; set; }
     public bool FaultFound { get; set; }
