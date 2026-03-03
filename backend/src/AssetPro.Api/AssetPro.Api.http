@@ -1,0 +1,6 @@
+@AssetPro.Api_HostAddress = http://localhost:5223
+
+GET {{AssetPro.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
