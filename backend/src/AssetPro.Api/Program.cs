@@ -161,7 +161,7 @@ if (app.Environment.IsDevelopment())
         app.Logger.LogError(migrationResult.Error, "Database migration failed.");
         throw migrationResult.Error;
     }
-    app.Logger.LogInformation("Database migrations completed successfully.");
+    app.Logger.LogInformation("Database migrations completed successfully. Scripts executed: {Count}", migrationResult.Scripts.Count());
 }
 
 // ---------------------------------------------------------------------------

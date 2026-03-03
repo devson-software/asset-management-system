@@ -16,7 +16,7 @@ CREATE TABLE ref.Lookups (
 );
 
 CREATE UNIQUE NONCLUSTERED INDEX UX_Lookups_TenantCategoryCode
-    ON Lookups(TenantId, Category, Code) WHERE IsDeleted = 0;
+    ON ref.Lookups(TenantId, Category, Code) WHERE IsDeleted = 0;
 
 CREATE NONCLUSTERED INDEX IX_Lookups_TenantCategory
-    ON Lookups(TenantId, Category) WHERE IsDeleted = 0 AND IsActive = 1;
+    ON ref.Lookups(TenantId, Category) WHERE IsDeleted = 0 AND IsActive = 1;
