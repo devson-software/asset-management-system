@@ -9,43 +9,129 @@
               <q-icon name="fas fa-boxes-stacked" size="md" class="q-mr-md" />
               <div>
                 <div class="text-h5">Register Asset</div>
-                <div class="text-subtitle2">
-                  {{ isQrMode ? 'QR scan guided entry with signature' : 'Manual entry with signature' }}
-                </div>
+                <div class="text-subtitle2">Adding a new unit to the site register</div>
               </div>
             </div>
           </q-card-section>
 
+          <q-card-section class="q-pa-none">
+            <q-tabs
+              v-model="entryTab"
+              dense
+              class="text-grey"
+              active-color="primary"
+              indicator-color="primary"
+              align="justify"
+              narrow-indicator
+            >
+              <q-tab name="manual" label="Manual Entry" icon="fas fa-keyboard" />
+              <q-tab name="library" label="Import from Library" icon="fas fa-book" />
+            </q-tabs>
+            <q-separator />
+          </q-card-section>
+
           <q-card-section class="q-pa-lg">
+            <q-tab-panels v-model="entryTab" animated>
+              <q-tab-panel name="library" class="q-pa-none">
+                <div class="q-mb-md">
+                  <div class="text-subtitle2 text-grey-7 q-mb-sm">Select equipment template from global library:</div>
+                  <q-select
+                    v-model="selectedLibraryItem"
+                    :options="store.unitLibrary"
+                    label="Search Library (e.g. Samsung AM036...)"
+                    outlined
+                    dense
+                    use-input
+                    @filter="filterLibrary"
+                    bg-color="blue-0"
+                  >
+                    <template v-slot:option="scope">
+                      <q-item v-bind="scope.itemProps" @click="importFromLibrary(scope.opt)">
+                        <q-item-section avatar>
+                          <q-icon name="fas fa-snowflake" color="primary" />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>{{ scope.opt.manufacturer }} - {{ scope.opt.unitType }}</q-item-label>
+                          <q-item-label caption>{{ scope.opt.indoorModel }} / {{ scope.opt.outdoorModel }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+                <q-banner rounded class="bg-blue-1 text-primary q-mb-lg">
+                  <template v-slot:avatar><q-icon name="fas fa-info-circle" /></template>
+                  Importing from library pre-fills manufacturer, models, refrigerant, and service times.
+                </q-banner>
+              </q-tab-panel>
+            </q-tab-panels>
+
             <q-form @submit="onSubmit" class="q-gutter-y-lg">
-              <div v-if="isQrMode" class="bg-blue-1 text-primary q-pa-md rounded-borders">
-                <div class="row items-center justify-between">
-                  <div class="text-subtitle2 text-weight-medium">Scan the asset QR to auto-fill details.</div>
+
+              <!-- Unit Identification -->
+              <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center">
+                <q-icon name="fas fa-list-check" size="xs" class="q-mr-sm" />
+                Unit Identification
+              </div>
+
+              <div class="row q-col-gutter-md q-mt-xs">
+                <div class="col-12 col-md-6">
                   <q-btn
                     color="primary"
                     icon="fas fa-qrcode"
-                    label="Simulate QR Scan"
-                    unelevated
-                    @click="simulateScan"
+                    label="Scan & Auto-fill"
+                    class="full-width"
+                    @click="startAutoFillScan"
+                  />
+                </div>
+                <div class="col-12 col-md-6">
+                  <q-file
+                    v-model="asset.nameplatePhoto"
+                    label="Nameplate Photo"
+                    outlined
+                    dense
+                    accept="image/*"
+                    capture="environment"
+                    bg-color="white"
+                    @update:model-value="onNameplateSelected"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-camera" size="xs" /></template>
+                  </q-file>
+                  <q-img
+                    v-if="nameplatePreview"
+                    :src="nameplatePreview"
+                    class="q-mt-sm rounded-borders"
+                    ratio="16/9"
                   />
                 </div>
               </div>
 
-              <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center">
-                <q-icon name="fas fa-list-check" size="xs" class="q-mr-sm" />
-                Asset Details
-              </div>
-
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
-                  <q-input
-                    v-model="asset.unitRef"
-                    label="Unit Reference"
+                  <q-select
+                    v-model="asset.plantCategory"
+                    :options="Object.keys(store.plantHierachy)"
+                    label="Plant Category"
                     outlined
                     dense
                     required
                     bg-color="white"
-                  />
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-industry" size="xs" /></template>
+                  </q-select>
+                </div>
+                <div class="col-12 col-md-6">
+                  <q-select
+                    v-model="asset.unitType"
+                    :options="unitTypeOptions"
+                    label="Type of Unit"
+                    outlined
+                    dense
+                    required
+                    :disable="!asset.plantCategory"
+                    bg-color="white"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-layer-group" size="xs" /></template>
+                  </q-select>
                 </div>
                 <div class="col-12 col-md-6">
                   <q-input
@@ -54,111 +140,188 @@
                     outlined
                     dense
                     required
+                    placeholder="e.g. Samsung, Daikin, LG"
                     bg-color="white"
-                  />
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-building" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
                   <q-input
-                    v-model="asset.unitType"
-                    label="Unit Type"
+                    v-model="asset.unitRef"
+                    label="Unit Reference #"
                     outlined
                     dense
                     required
+                    hint="e.g. Ac1.01"
                     bg-color="white"
-                  />
-                </div>
-                <div class="col-12 col-md-6">
-                  <q-input
-                    v-model="asset.indoorModel"
-                    label="Indoor Model"
-                    outlined
-                    dense
-                    bg-color="white"
-                  />
-                </div>
-                <div class="col-12 col-md-6">
-                  <q-input
-                    v-model="asset.serialNumber"
-                    label="Serial Number"
-                    outlined
-                    dense
-                    bg-color="white"
-                  />
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-tag" size="xs" /></template>
+                  </q-input>
                 </div>
                 <div class="col-12 col-md-6">
                   <q-input
                     v-model="asset.installationDate"
-                    type="date"
                     label="Installation Date"
+                    type="date"
+                    stack-label
                     outlined
                     dense
-                    stack-label
                     bg-color="white"
-                  />
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-calendar-day" size="xs" /></template>
+                  </q-input>
                 </div>
-                <div class="col-12">
+              </div>
+
+              <q-separator />
+
+              <!-- Indoor / Outdoor Unit Cards -->
+              <div class="row q-col-gutter-md">
+                <div
+                  v-if="showIndoorUnit"
+                  :class="showOutdoorUnit ? 'col-12 col-md-6' : 'col-12'"
+                >
+                  <q-card flat bordered class="bg-grey-1">
+                    <q-card-section class="q-pa-sm text-overline">Indoor Unit</q-card-section>
+                    <q-card-section class="q-pt-none q-gutter-y-sm">
+                      <q-input v-model="asset.indoorModel" label="Model Number" outlined dense required bg-color="white" />
+                      <q-input v-model="asset.serialNumber" label="Serial Number" outlined dense required bg-color="white" />
+                    </q-card-section>
+                  </q-card>
+                </div>
+                <div
+                  v-if="showOutdoorUnit"
+                  :class="showIndoorUnit ? 'col-12 col-md-6' : 'col-12'"
+                >
+                  <q-card flat bordered class="bg-grey-1">
+                    <q-card-section class="q-pa-sm text-overline">Outdoor Unit</q-card-section>
+                    <q-card-section class="q-pt-none q-gutter-y-sm">
+                      <q-input v-model="asset.outdoorModel" label="Model Number" outlined dense bg-color="white" />
+                      <q-input v-model="asset.outdoorSerial" label="Serial Number" outlined dense bg-color="white" />
+                    </q-card-section>
+                  </q-card>
+                </div>
+              </div>
+
+              <!-- Refrigerant -->
+              <div v-if="showRefrigerant" class="row q-col-gutter-md">
+                <div class="col-12 col-md-6">
+                  <q-select
+                    v-model="asset.refrigerantType"
+                    :options="['R410A', 'R32', 'R22', 'R404A', 'R134a', 'R407C']"
+                    label="Refrigerant Type"
+                    outlined
+                    dense
+                    use-input
+                    hide-selected
+                    fill-input
+                    input-debounce="0"
+                    @new-value="createValue"
+                    bg-color="white"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-gas-pump" size="xs" /></template>
+                  </q-select>
+                </div>
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="asset.refrigerantKg"
+                    label="Refrigerant QTY (kg)"
+                    type="number"
+                    step="0.01"
+                    outlined
+                    dense
+                    bg-color="white"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-weight-hanging" size="xs" /></template>
+                  </q-input>
+                </div>
+              </div>
+
+              <!-- Service & Maintenance Plan -->
+              <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-mt-md">
+                <q-icon name="fas fa-calendar-check" size="xs" class="q-mr-sm" />
+                Service &amp; Maintenance Plan
+                <q-space />
+                <span class="text-caption text-primary bg-blue-1 q-px-sm q-py-xs rounded-borders">
+                  <q-icon name="fas fa-robot" size="10px" class="q-mr-xs" />
+                  Auto-create schedule?
+                  <q-toggle v-model="asset.autoSchedule" size="sm" dense class="q-ml-sm" />
+                </span>
+              </div>
+
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-md-6">
+                  <q-select
+                    v-model="asset.serviceSchedule"
+                    :options="['Monthly', 'Quarterly', 'Bi-annual', 'Annual']"
+                    label="Service Schedule"
+                    outlined
+                    dense
+                    required
+                    bg-color="white"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-repeat" size="xs" /></template>
+                  </q-select>
+                </div>
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="asset.serviceTime"
+                    label="Service Duration"
+                    outlined
+                    dense
+                    bg-color="white"
+                    placeholder="e.g. 2 hours"
+                    hint="Specify time or use default from library"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-clock" size="xs" /></template>
+                  </q-input>
+                </div>
+              </div>
+
+              <!-- Specific Location -->
+              <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-mt-md">
+                <q-icon name="fas fa-location-crosshairs" size="xs" class="q-mr-sm" />
+                Specific Location
+              </div>
+
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="asset.vendorArea"
+                    label="Area"
+                    outlined
+                    dense
+                    bg-color="white"
+                    placeholder="e.g. North Wing, Ground Floor"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-map" size="xs" /></template>
+                  </q-input>
+                </div>
+                <div class="col-12 col-md-6">
                   <q-input
                     v-model="asset.vendorLocation"
-                    label="Location / Plant Room"
+                    label="Specific Location"
                     outlined
                     dense
                     bg-color="white"
-                  />
+                    placeholder="e.g. Office 12, Server Room A"
+                  >
+                    <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" /></template>
+                  </q-input>
                 </div>
               </div>
 
-              <!-- <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center">
-                <q-icon name="fas fa-pen-fancy" size="xs" class="q-mr-sm" />
-                Signature
+              <div class="row q-gutter-sm justify-between q-mt-lg">
+                <q-btn label="Cancel" flat color="grey-7" @click="goToProjectActions" />
+                <q-btn
+                  label="Complete Registration"
+                  color="secondary"
+                  type="submit"
+                  icon="fas fa-cloud-arrow-up"
+                  class="q-px-md"
+                />
               </div>
-              <div class="row q-col-gutter-md">
-                <div class="col-12">
-                  <div class="row q-col-gutter-sm">
-                    <div class="col-6">
-                      <q-btn
-                        class="full-width"
-                        label="Technician"
-                        color="primary"
-                        :outline="signature.signedBy !== 'technician'"
-                        :text-color="signature.signedBy === 'technician' ? 'white' : 'primary'"
-                        unelevated
-                        @click="signature.signedBy = 'technician'"
-                      />
-                    </div>
-                    <div class="col-6">
-                      <q-btn
-                        class="full-width"
-                        label="Customer"
-                        color="secondary"
-                        :outline="signature.signedBy !== 'customer'"
-                        :text-color="signature.signedBy === 'customer' ? 'white' : 'secondary'"
-                        unelevated
-                        @click="signature.signedBy = 'customer'"
-                      />
-                    </div>
-                  </div>
-                  <div class="signature-pad q-mt-md flex flex-center text-grey-6">
-                    Sign here
-                  </div>
-                  <q-checkbox
-                    v-model="signature.signed"
-                    label="Signature Captured"
-                    color="positive"
-                    size="xl"
-                    class="full-width signature-checkbox q-mt-md"
-                  />
-                </div>
-              </div> -->
-
-              <q-btn
-                class="full-width"
-                color="secondary"
-                unelevated
-                icon="fas fa-cloud-arrow-up"
-                label="Save Asset"
-                type="submit"
-                :disable="!signature.signed"
-              />
             </q-form>
           </q-card-section>
         </q-card>
@@ -168,8 +331,9 @@
 </template>
 
 <script>
-import { defineComponent, reactive, computed } from 'vue'
+import { defineComponent, reactive, computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { store } from '../../store'
 
 export default defineComponent({
@@ -177,53 +341,128 @@ export default defineComponent({
   setup() {
     const route = useRoute()
     const router = useRouter()
-    const isQrMode = computed(() => route.query.mode === 'qr')
+    const $q = useQuasar()
 
     const selection = reactive({
       customerId: route.query.customerId || '',
       projectId: route.query.projectId || '',
     })
 
+    const entryTab = ref('manual')
+    const selectedLibraryItem = ref(null)
+    const nameplatePreview = ref('')
+
     const asset = reactive({
       unitRef: '',
-      manufacturer: '',
+      plantCategory: '',
       unitType: '',
+      manufacturer: '',
       indoorModel: '',
       serialNumber: '',
+      outdoorModel: '',
+      outdoorSerial: '',
       installationDate: '',
+      refrigerantType: 'R410A',
+      refrigerantKg: '',
+      serviceSchedule: 'Monthly',
+      serviceTime: '',
+      autoSchedule: true,
+      vendorArea: '',
       vendorLocation: '',
+      nameplatePhoto: null,
     })
 
-    const signature = reactive({
-      signedBy: 'technician',
-      signed: false,
+    const unitTypeOptions = computed(() => {
+      if (!asset.plantCategory) return []
+      return store.plantHierachy[asset.plantCategory] || []
     })
 
-    const customerOptions = computed(() =>
-      store.customers.map((c) => ({ label: c.fullName || c.name, value: c.id })),
+    const showIndoorUnit = computed(() =>
+      ['Direct expansion split units', 'VRF Indoor units', 'Fan coil units', 'Air handling units'].includes(
+        asset.plantCategory,
+      ),
     )
 
-    const projectOptions = computed(() => {
-      const customer = store.customers.find((c) => c.id === selection.customerId)
-      return customer ? customer.projects.map((p) => ({ label: p.name, value: p.id })) : []
-    })
+    const showOutdoorUnit = computed(() =>
+      ['VRF condensing units', 'Package plant', 'Chiller'].includes(asset.plantCategory),
+    )
 
-    const simulateScan = () => {
-      const sample = store.unitLibrary[0]
-      if (!sample) return
-      asset.manufacturer = sample.manufacturer || ''
-      asset.unitType = sample.unitType || ''
-      asset.indoorModel = sample.indoorModel || ''
-      asset.serialNumber = sample.serialNumber || ''
+    const showRefrigerant = computed(() =>
+      ['Direct expansion split units', 'VRF condensing units', 'Package plant', 'Chiller'].includes(
+        asset.plantCategory,
+      ),
+    )
+
+    watch(
+      () => asset.plantCategory,
+      (next, prev) => {
+        if (next !== prev) asset.unitType = ''
+      },
+    )
+
+    const filterLibrary = (val, update) => update()
+
+    const importFromLibrary = (item) => {
+      asset.manufacturer = item.manufacturer
+      asset.unitType = item.unitType
+      asset.indoorModel = item.indoorModel
+      asset.outdoorModel = item.outdoorModel
+      asset.refrigerantType = item.refrigerantType
+      asset.refrigerantKg = item.refrigerantCharge
+      asset.serviceTime = item.serviceDuration
+
+      for (const [cat, types] of Object.entries(store.plantHierachy)) {
+        if (types.includes(item.unitType)) {
+          asset.plantCategory = cat
+          break
+        }
+      }
+
+      entryTab.value = 'manual'
+      $q.notify({
+        color: 'info',
+        message: `Template for ${item.manufacturer} ${item.unitType} imported!`,
+        icon: 'fas fa-file-import',
+      })
+    }
+
+    const createValue = (val, done) => {
+      if (val.length > 0) done(val, 'add-unique')
+    }
+
+    const onNameplateSelected = (file) => {
+      if (!file) {
+        nameplatePreview.value = ''
+        return
+      }
+      nameplatePreview.value = URL.createObjectURL(file)
+    }
+
+    const startAutoFillScan = () => {
+      if (store.unitLibrary?.length) {
+        importFromLibrary(store.unitLibrary[0])
+        $q.notify({
+          color: 'positive',
+          message: 'Scan captured. Unit data auto-filled from template.',
+          icon: 'fas fa-qrcode',
+        })
+      } else {
+        $q.notify({
+          color: 'warning',
+          message: 'No templates available for auto-fill.',
+          icon: 'fas fa-triangle-exclamation',
+        })
+      }
     }
 
     const onSubmit = () => {
-      if (!selection.customerId || !selection.projectId || !signature.signed) return
-      store.addAsset(selection.customerId, selection.projectId, {
-        ...asset,
-        signedBy: signature.signedBy,
-        signed: signature.signed,
-      })
+      if (!selection.customerId || !selection.projectId) {
+        $q.notify({ color: 'negative', message: 'Customer and project context is missing.' })
+        return
+      }
+      store.addAsset(selection.customerId, selection.projectId, { ...asset })
+      $q.notify({ color: 'positive', message: 'Asset registered successfully' })
+
       const returnTo = route.query.returnTo
       if (returnTo) {
         router.push({
@@ -243,13 +482,21 @@ export default defineComponent({
     }
 
     return {
-      isQrMode,
       selection,
       asset,
-      signature,
-      customerOptions,
-      projectOptions,
-      simulateScan,
+      entryTab,
+      selectedLibraryItem,
+      nameplatePreview,
+      unitTypeOptions,
+      showIndoorUnit,
+      showOutdoorUnit,
+      showRefrigerant,
+      store,
+      filterLibrary,
+      importFromLibrary,
+      createValue,
+      onNameplateSelected,
+      startAutoFillScan,
       onSubmit,
       goToProjectActions,
     }
@@ -260,18 +507,5 @@ export default defineComponent({
 <style scoped>
 .rounded-borders {
   border-radius: 12px;
-}
-.signature-pad {
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  background: #fafafa;
-  min-height: 120px;
-}
-.signature-checkbox {
-  padding: 10px 14px;
-  min-height: 56px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #fff;
 }
 </style>
