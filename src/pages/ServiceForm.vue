@@ -1054,6 +1054,18 @@ export default defineComponent({
 
     const goBackToSchedule = () => {
       const basePath = route.path.startsWith('/field') ? '/field/service-schedule' : '/service-calendar'
+      if (route.path.startsWith('/field')) {
+        const customerId = route.query.customerId ? String(route.query.customerId) : null
+        const projectId = route.query.projectId ? String(route.query.projectId) : null
+        router.push({
+          path: basePath,
+          query: {
+            ...(customerId ? { customerId } : {}),
+            ...(projectId ? { projectId } : {}),
+          },
+        })
+        return
+      }
       router.push(basePath)
     }
 
