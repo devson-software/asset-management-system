@@ -1057,10 +1057,17 @@ export default defineComponent({
     const startService = (service) => {
       const assetId = getAssetIdByUnitRef(service.unitRef)
       const basePath = route.path.startsWith('/field') ? '/field/service-entry' : '/service-entry'
+      const customerId = route.query.customerId ? String(route.query.customerId) : null
+      const projectId = route.query.projectId ? String(route.query.projectId) : null
+      const query = {
+        serviceId: service.id,
+        ...(customerId ? { customerId } : {}),
+        ...(projectId ? { projectId } : {}),
+      }
       if (assetId) {
-        router.push({ path: `${basePath}/${assetId}`, query: { serviceId: service.id } })
+        router.push({ path: `${basePath}/${assetId}`, query })
       } else {
-        router.push({ path: basePath, query: { serviceId: service.id } })
+        router.push({ path: basePath, query })
       }
     }
 

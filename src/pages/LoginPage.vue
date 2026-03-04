@@ -129,20 +129,7 @@ export default defineComponent({
           message: `Login successful (${foundUser.role})`,
           icon: foundUser.role === 'administrator' ? 'fas fa-user-shield' : 'fas fa-screwdriver-wrench'
         })
-        if (foundUser.role === 'technician') {
-          const defaultCustomerId = mainStore.customers?.[0]?.id || ''
-          const defaultProjectId = mainStore.customers?.[0]?.projects?.[0]?.id || ''
-
-          router.push({
-            path: '/field/service-schedule',
-            query: {
-              ...(defaultCustomerId ? { customerId: defaultCustomerId } : {}),
-              ...(defaultProjectId ? { projectId: defaultProjectId } : {}),
-            },
-          })
-        } else {
-          router.push('/dashboard')
-        }
+        router.push(foundUser.role === 'technician' ? '/field/customers' : '/dashboard')
       } else {
         $q.notify({
           color: 'negative',

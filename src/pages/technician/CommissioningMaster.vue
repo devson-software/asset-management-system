@@ -76,7 +76,7 @@
                   </div>
                 </q-step>
 
-                <q-step :name="2" title="Open Scan" icon="fas fa-qrcode" :done="!!scanTimes.start">
+                <q-step v-if="entryMode === 'qr'" :name="2" title="Open Scan" icon="fas fa-qrcode" :done="!!scanTimes.start">
                   <div class="section-container bg-white">
                     <div class="text-subtitle1 text-primary q-mb-md row items-center">
                       <q-icon name="fas fa-qrcode" class="q-mr-sm" /> Open Scan
@@ -92,7 +92,7 @@
                   </div>
                 </q-step>
 
-                <q-step :name="3" title="Commissioning Input" icon="fas fa-pen-to-square">
+                <q-step :name="entryMode === 'qr' ? 3 : 2" title="Commissioning Input" icon="fas fa-pen-to-square">
                   <div class="q-gutter-y-lg">
                     <div class="section-container bg-white">
                       <div class="text-subtitle1 text-weight-bold text-primary q-mb-md row items-center">
@@ -353,12 +353,12 @@
                       unelevated
                       label="Continue"
                       :disable="!canContinueForm"
-                      @click="goToStep(4)"
+                      @click="goToStep(entryMode === 'qr' ? 4 : 3)"
                     />
                   </div>
                 </q-step>
 
-                <q-step :name="4" title="Closing Scan" icon="fas fa-qrcode" :done="!!scanTimes.end">
+                <q-step v-if="entryMode === 'qr'" :name="4" title="Closing Scan" icon="fas fa-qrcode" :done="!!scanTimes.end">
                   <div class="section-container bg-white">
                     <div class="text-subtitle1 text-primary q-mb-md row items-center">
                       <q-icon name="fas fa-qrcode" class="q-mr-sm" /> Closing Scan
@@ -374,7 +374,7 @@
                   </div>
                 </q-step>
 
-                <q-step :name="5" title="Signature" icon="fas fa-pen-fancy" :done="signature.confirmed">
+                <q-step :name="entryMode === 'qr' ? 5 : 3" title="Signature" icon="fas fa-pen-fancy" :done="signature.confirmed">
                   <div class="section-container bg-white">
                     <div class="text-subtitle1 text-primary q-mb-md row items-center">
                       <q-icon name="fas fa-pen-fancy" class="q-mr-sm" /> Signature
@@ -446,6 +446,8 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const currentStep = ref(1)
+    const forcedMode = route.query.mode ? String(route.query.mode) : ''
+    const entryMode = ref(forcedMode === 'manual' ? 'manual' : 'qr')
     const selectedAssetId = ref('')
     const scanTimes = reactive({ start: '', end: '' })
 
@@ -567,9 +569,13 @@ export default defineComponent({
     const goToStep = (step) => {
       if (step > currentStep.value) {
         if (!selectedAssetId.value) return
-        if (currentStep.value === 2 && !scanTimes.start) return
-        if (step === 5 && !scanTimes.end) return
-        if (step >= 4 && !canContinueForm.value) return
+        if (entryMode.value === 'qr') {
+          if (currentStep.value === 2 && !scanTimes.start) return
+          if (step === 5 && !scanTimes.end) return
+          if (step >= 4 && !canContinueForm.value) return
+        } else {
+          if (step >= 3 && !canContinueForm.value) return
+        }
       }
       currentStep.value = step
     }
@@ -704,6 +710,7 @@ export default defineComponent({
 
     return {
       currentStep,
+      entryMode,
       selectedAssetId,
       assetOptionsFiltered,
       filterAssets,

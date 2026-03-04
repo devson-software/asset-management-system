@@ -16,7 +16,7 @@ gi<template>
 
           <q-card-section class="q-pa-sm field-stepper-wrapper">
             <q-form @submit="onSubmit" class="q-gutter-y-lg">
-              <div class="q-mb-md">
+              <div v-if="showEntryModeToggle" class="q-mb-md">
                 <q-btn-toggle
                   v-model="entryMode"
                   :options="entryModeOptions"
@@ -271,7 +271,8 @@ export default defineComponent({
     const router = useRouter()
     const customerId = route.query.customerId || ''
     const projectId = route.query.projectId || ''
-    const entryMode = ref('qr')
+    const forcedMode = route.query.mode ? String(route.query.mode) : ''
+    const entryMode = ref(forcedMode === 'manual' ? 'manual' : 'qr')
     const currentStep = ref(1)
     const scanTimes = reactive({ start: '', end: '' })
 
@@ -400,6 +401,7 @@ export default defineComponent({
     return {
       entryMode,
       entryModeOptions,
+      showEntryModeToggle: !forcedMode,
       currentStep,
       scanTimes,
       form,

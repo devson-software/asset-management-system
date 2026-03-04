@@ -7,10 +7,10 @@
           <div class="col">
             <div class="text-h5 text-weight-bold text-primary">Job Cards</div>
             <div class="text-subtitle2 text-grey-7">View job history and add new cards</div>
-            <q-chip v-if="projectName" dense color="primary" text-color="white" class="q-mt-xs">
+            <!-- <q-chip v-if="projectName" dense color="primary" text-color="white" class="q-mt-xs">
               <q-icon name="fas fa-location-dot" size="12px" class="q-mr-xs" />
               {{ projectName }}
-            </q-chip>
+            </q-chip> -->
           </div>
           <div class="col-12 col-sm-auto">
             <q-btn-dropdown color="primary" icon="fas fa-plus" label="Add Job Card" class="shadow-1 full-width">
