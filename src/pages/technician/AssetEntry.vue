@@ -478,7 +478,10 @@ export default defineComponent({
     }
 
     const goToProjectActions = () => {
-      router.push('/field/assets')
+      router.push({
+        path: '/field/assets',
+        query: { customerId: selection.customerId, projectId: selection.projectId },
+      })
     }
 
     return {

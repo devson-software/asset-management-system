@@ -259,7 +259,7 @@ gi<template>
 
 <script>
 import { defineComponent, reactive, computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { store } from '../../store'
 
@@ -267,7 +267,10 @@ export default defineComponent({
   name: 'TechnicianJobCardEntry',
   setup() {
     const $q = useQuasar()
+    const route = useRoute()
     const router = useRouter()
+    const customerId = route.query.customerId || ''
+    const projectId = route.query.projectId || ''
     const entryMode = ref('qr')
     const currentStep = ref(1)
     const scanTimes = reactive({ start: '', end: '' })
@@ -373,11 +376,11 @@ export default defineComponent({
         icon: 'fas fa-check-circle',
         position: 'top',
       })
-      router.push('/field/projects')
+      router.push({ path: '/field/job-cards', query: { customerId, projectId } })
     }
 
     const goToProjectActions = () => {
-      router.push('/field/job-cards')
+      router.push({ path: '/field/job-cards', query: { customerId, projectId } })
     }
 
     const goToStep = (step) => {

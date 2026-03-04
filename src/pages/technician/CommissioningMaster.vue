@@ -622,7 +622,10 @@ export default defineComponent({
     }
 
     const goToProjectActions = () => {
-      router.push('/field/commissioning')
+      router.push({
+        path: '/field/commissioning',
+        query: { customerId: route.query.customerId || '', projectId: route.query.projectId || '' },
+      })
     }
 
     const goToAddAsset = (mode) => {

@@ -217,7 +217,9 @@ export default defineComponent({
     }
 
     const goToAdd = (mode) => {
-      router.push({ path: '/field/job-cards/add', query: { mode } })
+      const projectId = route.query.projectId || ''
+      const customerId = route.query.customerId || ''
+      router.push({ path: '/field/job-cards/add', query: { customerId, projectId, mode } })
     }
 
     return {

@@ -229,7 +229,11 @@ export default defineComponent({
     }
 
     const goToJobCards = () => {
-      router.push('/field/job-cards')
+      const targetProjectId = selectedProjectId.value || projectId.value
+      router.push({
+        path: '/field/job-cards',
+        query: { customerId: customerId.value, projectId: targetProjectId },
+      })
     }
 
     return {
