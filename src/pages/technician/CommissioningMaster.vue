@@ -43,7 +43,7 @@
                       bg-color="white"
                       @filter="filterAssets"
                     />
-                    <div class="row q-col-gutter-sm q-mt-sm">
+                    <!-- <div class="row q-col-gutter-sm q-mt-sm">
                       <div class="col-12 col-sm-6">
                         <q-btn
                           class="full-width"
@@ -64,7 +64,7 @@
                           @click="goToAddAsset('qr')"
                         />
                       </div>
-                    </div>
+                    </div> -->
                     <q-btn
                       class="full-width q-mt-md"
                       color="primary"
@@ -329,7 +329,7 @@
 
                     <q-separator />
 
-                    <div class="q-gutter-y-md">
+                    <!-- <div class="q-gutter-y-md">
                       <div class="text-subtitle1 text-weight-bold text-grey-9 row items-center">
                         <q-icon name="fas fa-signature" size="xs" class="q-mr-sm" />
                         Summary & Sign-off
@@ -345,7 +345,7 @@
                           <q-input v-model="form.comments" label="Outstanding Issues / Comments" type="textarea" outlined dense bg-color="white" />
                         </div>
                       </div>
-                    </div>
+                    </div> -->
 
                     <q-btn
                       class="full-width"

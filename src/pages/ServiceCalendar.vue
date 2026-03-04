@@ -53,91 +53,164 @@
           :class="isFieldView ? 'field-schedule-filters' : ''"
         >
           <div class="row q-col-gutter-md items-center">
-            <div :class="isFieldView ? 'col-12' : 'col-12 col-sm-3'">
-              <q-select
-                v-model="customerFilter"
-                :options="customerOptions"
-                label="Filter by Customer"
-                outlined
-                dense
-                clearable
-                emit-value
-                map-options
-                bg-color="white"
-              >
-                <template v-slot:prepend
-                  ><q-icon name="fas fa-business-time" size="xs" color="primary"
-                /></template>
-              </q-select>
-            </div>
-            <div :class="isFieldView ? 'col-12' : 'col-12 col-sm-3'">
-              <q-select
-                v-model="projectFilter"
-                :options="filterProjectOptions"
-                label="Filter by Project"
-                outlined
-                dense
-                clearable
-                emit-value
-                map-options
-                :disable="!customerFilter"
-                bg-color="white"
-              >
-                <template v-slot:prepend
-                  ><q-icon name="fas fa-location-dot" size="xs" color="primary"
-                /></template>
-              </q-select>
-            </div>
-          <div :class="isFieldView ? 'col-12' : 'col-12 col-sm-3'">
-              <q-select
-                v-model="teamFilter"
-                :options="teams"
-                option-label="name"
-                option-value="id"
-                label="Filter by Team"
-                outlined
-                dense
-                clearable
-                emit-value
-                map-options
-                bg-color="white"
-              >
-                <template v-slot:prepend
-                  ><q-icon name="fas fa-people-group" size="xs" color="primary"
-                /></template>
-                <template v-slot:option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section avatar>
-                      <div
-                        :style="{
-                          backgroundColor: scope.opt.color,
-                          width: '12px',
-                          height: '12px',
-                          borderRadius: '50%',
-                        }"
-                      ></div>
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>{{ scope.opt.name }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </div>
-          <div
-            :class="
-              isFieldView ? 'col-12 flex justify-end field-filter-reset' : 'col-12 col-sm-3 flex justify-end'
-            "
-          >
-              <q-btn
-                flat
-                color="grey-7"
-                icon="fas fa-filter-circle-xmark"
-                label="Reset"
-                @click="clearFilters"
-                v-if="customerFilter || projectFilter || teamFilter"
-              />
-            </div>
+            <!-- Field (technician) view: area, location, date filters -->
+            <template v-if="isFieldView">
+              <div class="col-12 col-sm-4">
+                <q-select
+                  v-model="areaFilter"
+                  :options="areaOptions"
+                  label="Filter by Area"
+                  outlined
+                  dense
+                  clearable
+                  emit-value
+                  map-options
+                  bg-color="white"
+                >
+                  <template v-slot:prepend
+                    ><q-icon name="fas fa-map" size="xs" color="primary"
+                  /></template>
+                </q-select>
+              </div>
+              <div class="col-12 col-sm-4">
+                <q-select
+                  v-model="locationFilter"
+                  :options="locationOptions"
+                  label="Filter by Location"
+                  outlined
+                  dense
+                  clearable
+                  emit-value
+                  map-options
+                  bg-color="white"
+                >
+                  <template v-slot:prepend
+                    ><q-icon name="fas fa-location-dot" size="xs" color="primary"
+                  /></template>
+                </q-select>
+              </div>
+              <div class="col-12 col-sm-4">
+                <q-input
+                  v-model="dateFilter"
+                  label="Filter by Date"
+                  outlined
+                  dense
+                  clearable
+                  mask="####/##/##"
+                  bg-color="white"
+                >
+                  <template v-slot:prepend
+                    ><q-icon name="fas fa-calendar-alt" size="xs" color="primary"
+                  /></template>
+                  <template v-slot:append>
+                    <q-icon name="fas fa-calendar-days" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-date v-model="dateFilter" mask="YYYY/MM/DD">
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Close" color="primary" flat />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12 flex justify-end">
+                <q-btn
+                  flat
+                  color="grey-7"
+                  icon="fas fa-filter-circle-xmark"
+                  label="Reset"
+                  @click="clearFilters"
+                  v-if="areaFilter || locationFilter || dateFilter"
+                />
+              </div>
+            </template>
+
+            <!-- Admin view: customer, project, team filters -->
+            <template v-else>
+              <div class="col-12 col-sm-3">
+                <q-select
+                  v-model="customerFilter"
+                  :options="customerOptions"
+                  label="Filter by Customer"
+                  outlined
+                  dense
+                  clearable
+                  emit-value
+                  map-options
+                  bg-color="white"
+                >
+                  <template v-slot:prepend
+                    ><q-icon name="fas fa-business-time" size="xs" color="primary"
+                  /></template>
+                </q-select>
+              </div>
+              <div class="col-12 col-sm-3">
+                <q-select
+                  v-model="projectFilter"
+                  :options="filterProjectOptions"
+                  label="Filter by Project"
+                  outlined
+                  dense
+                  clearable
+                  emit-value
+                  map-options
+                  :disable="!customerFilter"
+                  bg-color="white"
+                >
+                  <template v-slot:prepend
+                    ><q-icon name="fas fa-location-dot" size="xs" color="primary"
+                  /></template>
+                </q-select>
+              </div>
+              <div class="col-12 col-sm-3">
+                <q-select
+                  v-model="teamFilter"
+                  :options="teams"
+                  option-label="name"
+                  option-value="id"
+                  label="Filter by Team"
+                  outlined
+                  dense
+                  clearable
+                  emit-value
+                  map-options
+                  bg-color="white"
+                >
+                  <template v-slot:prepend
+                    ><q-icon name="fas fa-people-group" size="xs" color="primary"
+                  /></template>
+                  <template v-slot:option="scope">
+                    <q-item v-bind="scope.itemProps">
+                      <q-item-section avatar>
+                        <div
+                          :style="{
+                            backgroundColor: scope.opt.color,
+                            width: '12px',
+                            height: '12px',
+                            borderRadius: '50%',
+                          }"
+                        ></div>
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ scope.opt.name }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+              </div>
+              <div class="col-12 col-sm-3 flex justify-end">
+                <q-btn
+                  flat
+                  color="grey-7"
+                  icon="fas fa-filter-circle-xmark"
+                  label="Reset"
+                  @click="clearFilters"
+                  v-if="customerFilter || projectFilter || teamFilter"
+                />
+              </div>
+            </template>
           </div>
         </q-card>
       </div>
@@ -552,6 +625,9 @@ export default defineComponent({
     const customerFilter = ref(null)
     const projectFilter = ref(null)
     const teamFilter = ref(null)
+    const areaFilter = ref(null)
+    const locationFilter = ref(null)
+    const dateFilter = ref(null)
     const isFieldView = computed(() => route.path.startsWith('/field'))
     const projectName = computed(() => {
       const projectId = route.query.projectId ? String(route.query.projectId) : ''
@@ -613,31 +689,92 @@ export default defineComponent({
       return [...new Set(dates)] // Unique dates
     })
 
+    // Build an index of asset metadata (area, location) keyed by unitRef
+    const assetMetaIndex = computed(() => {
+      const map = new Map()
+      store.customers.forEach((customer) => {
+        customer.projects.forEach((project) => {
+          project.assets.forEach((asset) => {
+            map.set(asset.unitRef, {
+              area: asset.vendorArea || '',
+              location: asset.vendorLocation || project.siteAddress || '',
+            })
+          })
+        })
+      })
+      return map
+    })
+
+    const areaOptions = computed(() => {
+      const set = new Set()
+      store.services.forEach((s) => {
+        const meta = assetMetaIndex.value.get(s.unitRef)
+        if (meta?.area) set.add(meta.area)
+      })
+      return Array.from(set).map((v) => ({ label: v, value: v }))
+    })
+
+    const locationOptions = computed(() => {
+      const set = new Set()
+      store.services.forEach((s) => {
+        const meta = assetMetaIndex.value.get(s.unitRef)
+        if (meta?.location) set.add(meta.location)
+      })
+      return Array.from(set).map((v) => ({ label: v, value: v }))
+    })
+
     const filteredServices = computed(() => {
       return store.services.filter((s) => {
+        // --- Date matching ---
         let matchDate = false
-        if (s.endDate && s.endDate !== s.date) {
-          const selDate = new Date(selectedDate.value.replace(/\//g, '-')).setHours(0, 0, 0, 0)
-          const startDate = new Date(s.date.replace(/\//g, '-')).setHours(0, 0, 0, 0)
-          const endDate = new Date(s.endDate.replace(/\//g, '-')).setHours(0, 0, 0, 0)
-          matchDate = selDate >= startDate && selDate <= endDate
+        if (isFieldView.value) {
+          // In field view: if a date filter is set, match against it; otherwise show all
+          if (dateFilter.value) {
+            if (s.endDate && s.endDate !== s.date) {
+              const selDate = new Date(dateFilter.value.replace(/\//g, '-')).setHours(0, 0, 0, 0)
+              const startDate = new Date(s.date.replace(/\//g, '-')).setHours(0, 0, 0, 0)
+              const endDate = new Date(s.endDate.replace(/\//g, '-')).setHours(0, 0, 0, 0)
+              matchDate = selDate >= startDate && selDate <= endDate
+            } else {
+              matchDate = s.date === dateFilter.value
+            }
+          } else {
+            matchDate = true
+          }
         } else {
-          matchDate = s.date === selectedDate.value
+          // In admin view: filter by selected calendar date
+          if (s.endDate && s.endDate !== s.date) {
+            const selDate = new Date(selectedDate.value.replace(/\//g, '-')).setHours(0, 0, 0, 0)
+            const startDate = new Date(s.date.replace(/\//g, '-')).setHours(0, 0, 0, 0)
+            const endDate = new Date(s.endDate.replace(/\//g, '-')).setHours(0, 0, 0, 0)
+            matchDate = selDate >= startDate && selDate <= endDate
+          } else {
+            matchDate = s.date === selectedDate.value
+          }
         }
 
-        const customer = customerFilter.value
-          ? store.customers.find((c) => c.id === customerFilter.value)
-          : null
-        const matchCustomer = !customerFilter.value || s.customer === customer?.name
-
-        const project =
-          customer && projectFilter.value
-            ? customer.projects.find((p) => p.id === projectFilter.value)
+        if (isFieldView.value) {
+          // Field view: filter by area and location
+          const meta = assetMetaIndex.value.get(s.unitRef) || {}
+          const matchArea = !areaFilter.value || meta.area === areaFilter.value
+          const matchLocation = !locationFilter.value || meta.location === locationFilter.value
+          return matchDate && matchArea && matchLocation
+        } else {
+          // Admin view: filter by customer, project, team
+          const customer = customerFilter.value
+            ? store.customers.find((c) => c.id === customerFilter.value)
             : null
-        const matchProject = !projectFilter.value || s.project === project?.name
+          const matchCustomer = !customerFilter.value || s.customer === customer?.name
 
-        const matchTeam = !teamFilter.value || s.teamId === teamFilter.value
-        return matchDate && matchCustomer && matchProject && matchTeam
+          const project =
+            customer && projectFilter.value
+              ? customer.projects.find((p) => p.id === projectFilter.value)
+              : null
+          const matchProject = !projectFilter.value || s.project === project?.name
+
+          const matchTeam = !teamFilter.value || s.teamId === teamFilter.value
+          return matchDate && matchCustomer && matchProject && matchTeam
+        }
       })
     })
 
@@ -728,11 +865,14 @@ export default defineComponent({
     )
 
     const clearFilters = () => {
-      customerFilter.value = null
-      projectFilter.value = null
-      teamFilter.value = null
       if (isFieldView.value) {
-        applyRouteFilters()
+        areaFilter.value = null
+        locationFilter.value = null
+        dateFilter.value = null
+      } else {
+        customerFilter.value = null
+        projectFilter.value = null
+        teamFilter.value = null
       }
     }
 
@@ -951,6 +1091,11 @@ export default defineComponent({
       customerFilter,
       projectFilter,
       teamFilter,
+      areaFilter,
+      locationFilter,
+      dateFilter,
+      areaOptions,
+      locationOptions,
       teams,
       isFieldView,
       projectName,

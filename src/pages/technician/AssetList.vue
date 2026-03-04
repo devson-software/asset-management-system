@@ -33,7 +33,7 @@
                   <q-icon name="fas fa-qrcode" color="secondary" />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label class="text-weight-bold">QR Scan Add</q-item-label>
+                  <q-item-label class="text-weight-bold">Nameplate Scan Add</q-item-label>
                   <q-item-label caption>Scan asset QR code</q-item-label>
                 </q-item-section>
               </q-item>

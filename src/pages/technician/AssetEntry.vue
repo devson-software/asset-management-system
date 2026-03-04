@@ -18,36 +18,6 @@
 
           <q-card-section class="q-pa-lg">
             <q-form @submit="onSubmit" class="q-gutter-y-lg">
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6">
-                  <q-select
-                    v-model="selection.customerId"
-                    :options="customerOptions"
-                    label="Customer"
-                    outlined
-                    dense
-                    emit-value
-                    map-options
-                    required
-                    bg-color="white"
-                  />
-                </div>
-                <div class="col-12 col-md-6">
-                  <q-select
-                    v-model="selection.projectId"
-                    :options="projectOptions"
-                    label="Project"
-                    outlined
-                    dense
-                    emit-value
-                    map-options
-                    required
-                    :disable="!selection.customerId"
-                    bg-color="white"
-                  />
-                </div>
-              </div>
-
               <div v-if="isQrMode" class="bg-blue-1 text-primary q-pa-md rounded-borders">
                 <div class="row items-center justify-between">
                   <div class="text-subtitle2 text-weight-medium">Scan the asset QR to auto-fill details.</div>
@@ -137,7 +107,7 @@
                 </div>
               </div>
 
-              <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center">
+              <!-- <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center">
                 <q-icon name="fas fa-pen-fancy" size="xs" class="q-mr-sm" />
                 Signature
               </div>
@@ -178,7 +148,7 @@
                     class="full-width signature-checkbox q-mt-md"
                   />
                 </div>
-              </div>
+              </div> -->
 
               <q-btn
                 class="full-width"

@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <div class="col-12">
+      <!-- <div class="col-12">
         <q-card flat bordered class="rounded-borders bg-white q-pa-md">
           <div class="row q-col-gutter-md">
             <div class="col-12">
@@ -41,7 +41,7 @@
             </div>
           </div>
         </q-card>
-      </div>
+      </div> -->
 
       <div class="col-12">
         <div class="row q-col-gutter-md">
