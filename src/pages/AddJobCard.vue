@@ -121,6 +121,15 @@
                     /></template>
                   </q-select>
                 </div>
+                <div class="col-12">
+                  <q-input
+                    v-model="form.unitRef"
+                    label="Traveling Distance (km)"
+                    outlined
+                    dense
+                    bg-color="white"
+                  />
+                </div>
               </div>
 
               <q-separator />
@@ -173,17 +182,34 @@
                       placeholder="What did you do to fix it?"
                     />
                   </div>
+                  <div class="col-12 q-mt-sm">
+                    <q-file
+                      v-model="form.faultPictures"
+                      label="Fault photos (multiple)"
+                      outlined
+                      dense
+                      multiple
+                      accept="image/*"
+                      use-chips
+                      bg-color="white"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="fas fa-camera" />
+                      </template>
+                    </q-file>
+                  </div>
                 </template>
               </div>
 
               <q-separator />
 
               <!-- Section: Technical Readings -->
+               {{ form.workType }}
               <div class="text-subtitle1 text-weight-bold row items-center">
                 <q-icon name="fas fa-gauge-high" color="blue-9" class="q-mr-sm" />
                 Technical Performance Readings
               </div>
-              <div class="row q-col-gutter-sm bg-blue-50 q-pa-md rounded-borders">
+              <div v-if="form.workType != 'Repair'" class="row q-col-gutter-sm bg-blue-50 q-pa-md rounded-borders">
                 <div class="col-6 col-sm-2">
                   <q-input
                     v-model="form.readings.suctionPressure"
@@ -191,7 +217,7 @@
                     outlined
                     dense
                     bg-color="white"
-                    type="number"
+                    type=""
                   />
                 </div>
                 <div class="col-6 col-sm-2">
@@ -201,7 +227,7 @@
                     outlined
                     dense
                     bg-color="white"
-                    type="number"
+                    type=""
                   />
                 </div>
                 <div class="col-6 col-sm-2">
@@ -211,7 +237,7 @@
                     outlined
                     dense
                     bg-color="white"
-                    type="number"
+                    type=""
                   />
                 </div>
                 <div class="col-6 col-sm-2">
@@ -221,7 +247,7 @@
                     outlined
                     dense
                     bg-color="white"
-                    type="number"
+                    type=""
                   />
                 </div>
                 <div class="col-6 col-sm-2">
@@ -231,11 +257,22 @@
                     outlined
                     dense
                     bg-color="white"
-                    type="number"
+                    type=""
                   />
                 </div>
               </div>
-
+<!-- {{ form.workType }} -->
+                <div v-if="form.workType == 'Repair'"> 
+                  <div class="col-12">
+                    <q-input
+                      v-model="form.readings.amps"
+                      label=""
+                      outlined
+                      dense
+                      bg-color="white"
+                      type="number"
+                    />
+                  </div></div>
               <q-separator />
 
               <!-- Section: Materials & Parts -->
@@ -356,6 +393,7 @@ export default defineComponent({
       faultReported: '',
       rootCause: '',
       remedy: '',
+      faultPictures: [],
       comments: '',
       partsUsed: [],
       readings: {
@@ -367,7 +405,7 @@ export default defineComponent({
       },
     })
 
-    const workTypeOptions = ['Maintenance', 'Repair', 'Installation', 'Emergency Callout', 'Warranty']
+    const workTypeOptions = ['Maintenance/Service DX split unit', 'Repair DX split unit', 'Repair', 'Installation', 'Emergency Callout', 'Warranty']
     const newPart = reactive({ description: '', quantity: 1 })
 
     const addPart = () => {
@@ -482,6 +520,7 @@ export default defineComponent({
         faultReported: form.faultReported,
         rootCause: form.rootCause,
         remedy: form.remedy,
+        faultPictures: form.faultPictures,
         comments: form.comments,
         partsUsed: [...form.partsUsed],
         readings: { ...form.readings },
