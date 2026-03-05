@@ -151,6 +151,7 @@
                   </div>
                 </div>
 
+                <!-- Keep original top-level fault fields -->
                 <template v-if="form.faultFound">
                   <div class="col-12 col-md-4">
                     <q-input
@@ -182,23 +183,62 @@
                       placeholder="What did you do to fix it?"
                     />
                   </div>
-                  <div class="col-12 q-mt-sm">
-                    <q-file
-                      v-model="form.faultPictures"
-                      label="Fault photos (multiple)"
-                      outlined
-                      dense
-                      multiple
-                      accept="image/*"
-                      use-chips
-                      bg-color="white"
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="fas fa-camera" />
-                      </template>
-                    </q-file>
-                  </div>
                 </template>
+
+                <!-- Service-entry style multiple faults list -->
+                <transition appear enter-active-class="animated slideInDown">
+                  <div
+                    v-if="form.faultFound"
+                    class="col-12 q-mt-md q-gutter-y-sm bg-red-1 q-pa-md rounded-borders"
+                  >
+                    <div
+                      v-for="(fault, index) in form.faults"
+                      :key="`fault-${index}`"
+                      class="bg-white q-pa-sm rounded-borders"
+                    >
+                      <div class="row items-center justify-between q-mb-xs">
+                        <div class="text-caption text-grey-7">Fault {{ index + 1 }}</div>
+                        <q-btn
+                          v-if="form.faults.length > 1"
+                          flat
+                          dense
+                          icon="fas fa-trash-can"
+                          color="negative"
+                          @click="removeFault(index)"
+                        />
+                      </div>
+                      <!-- <q-input
+                        v-model="fault.details"
+                        label="Specify the fault details"
+                        type="textarea"
+                        outlined
+                        dense
+                        bg-color="white"
+                      /> -->
+                      <q-file
+                        v-model="fault.pictures"
+                        label="Capture / Upload Evidence"
+                        outlined
+                        dense
+                        multiple
+                        accept="image/*"
+                        use-chips
+                        bg-color="white"
+                        class="q-mt-sm"
+                      >
+                        <template v-slot:prepend><q-icon name="fas fa-camera" /></template>
+                      </q-file>
+                    </div>
+                    <q-btn
+                      class="full-width q-mt-sm"
+                      color="negative"
+                      unelevated
+                      icon="fas fa-plus"
+                      label="Add Another Fault"
+                      @click="addFault"
+                    />
+                  </div>
+                </transition>
               </div>
 
               <q-separator />
@@ -367,7 +407,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, computed, ref } from 'vue'
+import { defineComponent, reactive, computed, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { store } from '../store'
@@ -393,7 +433,7 @@ export default defineComponent({
       faultReported: '',
       rootCause: '',
       remedy: '',
-      faultPictures: [],
+      faults: [],
       comments: '',
       partsUsed: [],
       readings: {
@@ -407,6 +447,18 @@ export default defineComponent({
 
     const workTypeOptions = ['Maintenance/Service DX split unit', 'Repair DX split unit', 'Repair', 'Installation', 'Emergency Callout', 'Warranty']
     const newPart = reactive({ description: '', quantity: 1 })
+    const faultFile = ref(null)
+
+    const addFault = () => {
+      form.faults.push({
+        details: '',
+        pictures: [],
+      })
+    }
+
+    const removeFault = (index) => {
+      form.faults.splice(index, 1)
+    }
 
     const addPart = () => {
       if (newPart.description) {
@@ -483,6 +535,24 @@ export default defineComponent({
 
     const filteredAssets = ref(allAssetsOptions.value)
 
+    const openFaultFilePicker = () => {
+      if (faultFile.value) {
+        faultFile.value.pickFiles()
+      }
+    }
+
+    watch(
+      () => form.faultFound,
+      (val) => {
+        if (val && form.faults.length === 0) {
+          addFault()
+        }
+        if (!val) {
+          form.faults = []
+        }
+      },
+    )
+
     const filterAssets = (val, update) => {
       if (val === '') {
         update(() => {
@@ -508,6 +578,11 @@ export default defineComponent({
         return
       }
 
+      const primaryFault = form.faults[0] || {
+        details: '',
+        pictures: [],
+      }
+
       const jobData = {
         date: form.date.replace(/-/g, '/'),
         checkInTime: form.checkInTime,
@@ -517,10 +592,13 @@ export default defineComponent({
         tech: selectedTech.label,
         workType: form.workType,
         faultFound: form.faultFound,
-        faultReported: form.faultReported,
+        faultReported: primaryFault.details || form.faultReported,
         rootCause: form.rootCause,
         remedy: form.remedy,
-        faultPictures: form.faultPictures,
+        faults: form.faults.map((f) => ({
+          details: f.details || '',
+          pictures: f.pictures || [],
+        })),
         comments: form.comments,
         partsUsed: [...form.partsUsed],
         readings: { ...form.readings },
@@ -558,6 +636,10 @@ export default defineComponent({
       newPart,
       addPart,
       removePart,
+      faultFile,
+      openFaultFilePicker,
+      addFault,
+      removeFault,
     }
   },
 })
@@ -566,5 +648,17 @@ export default defineComponent({
 <style scoped>
 .rounded-borders {
   border-radius: 16px;
+}
+
+.fault-image-row {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.fault-image {
+  width: 100%;
+  max-width: 260px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 </style>
