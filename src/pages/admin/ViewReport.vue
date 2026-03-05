@@ -106,7 +106,7 @@ import { defineComponent, computed, ref } from 'vue'
 import { store } from '../../store'
 
 export default defineComponent({
-  name: 'Reports',
+  name: 'ViewReport',
   setup() {
     const selectedCustomerId = ref(null)
     const selectedProjectId = ref(null)

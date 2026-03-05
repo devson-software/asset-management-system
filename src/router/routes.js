@@ -48,7 +48,7 @@ const routes = [
       { path: 'job-cards', component: () => import('pages/admin/JobCardHistory.vue') },
       { path: 'job-cards/add', component: () => import('pages/AddJobCard.vue') },
       { path: 'job-cards/edit/:jobId', component: () => import('pages/AddJobCard.vue') },
-      { path: 'reports', component: () => import('pages/admin/Reports.vue') },
+      { path: 'reports', component: () => import('src/pages/admin/ViewReport.vue') },
 
       // Admin Routes
       { path: 'admin/users', component: () => import('pages/admin/AdminUserManagement.vue') },

@@ -201,7 +201,7 @@
                     </div>
                   </div>
 
-                  <div class="row q-col-gutter-md">
+                  <!-- <div class="row q-col-gutter-md">
                     <div class="col-12 col-sm-6">
                       <q-input
                         v-model="userForm.primaryDescription"
@@ -224,7 +224,7 @@
                         autogrow
                       />
                     </div>
-                  </div>
+                  </div> -->
                 </div>
 
                 <div class="col-12">
