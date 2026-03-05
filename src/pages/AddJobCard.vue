@@ -387,6 +387,44 @@
                 </q-input>
               </div>
 
+              <!-- Section: Invoice & Quotation Status -->
+              <div class="col-12 q-mt-md">
+                <div class="text-subtitle1 text-weight-bold row items-center q-mb-sm">
+                  <q-icon name="fas fa-file-invoice-dollar" color="orange-9" class="q-mr-sm" />
+                  Invoicing & Quotation
+                </div>
+                <div class="row q-col-gutter-md">
+                  <div class="col-12 col-sm-4">
+                    <q-toggle
+                      v-model="form.invoiced"
+                      label="Job Invoiced"
+                      color="primary"
+                      class="text-weight-bold"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-4">
+                    <q-input
+                      v-model="form.quotationNumber"
+                      label="Quotation Number"
+                      outlined
+                      dense
+                      bg-color="white"
+                      placeholder="e.g. Q-2026-001"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-4">
+                    <q-select
+                      v-model="form.quotationStatus"
+                      :options="['Not Required', 'Awaiting Approval', 'Approved', 'Rejected']"
+                      label="Quotation Status"
+                      outlined
+                      dense
+                      bg-color="white"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <!-- Section: Signature -->
               <div class="col-12 q-mt-md">
                 <div class="text-subtitle1 text-weight-bold row items-center q-mb-sm">
@@ -477,6 +515,9 @@ export default defineComponent({
       rootCause: '',
       remedy: '',
       faults: [],
+      invoiced: false,
+      quotationNumber: '',
+      quotationStatus: 'Not Required',
       signed: false,
       signedBy: 'technician',
       comments: '',
@@ -552,6 +593,9 @@ export default defineComponent({
         form.faultReported = existingJob.faultReported || ''
         form.rootCause = existingJob.rootCause || ''
         form.remedy = existingJob.remedy || ''
+        form.invoiced = !!existingJob.invoiced
+        form.quotationNumber = existingJob.quotationNumber || ''
+        form.quotationStatus = existingJob.quotationStatus || 'Not Required'
         form.comments = existingJob.comments || ''
         form.partsUsed = JSON.parse(JSON.stringify(existingJob.partsUsed || []))
         form.readings = JSON.parse(
@@ -645,6 +689,9 @@ export default defineComponent({
         faultReported: primaryFault.details || form.faultReported,
         rootCause: form.rootCause,
         remedy: form.remedy,
+        invoiced: form.invoiced,
+        quotationNumber: form.quotationNumber,
+        quotationStatus: form.quotationStatus,
         faults: form.faults.map((f) => ({
           details: f.details || '',
           pictures: f.pictures || [],

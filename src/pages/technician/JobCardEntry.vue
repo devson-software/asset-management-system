@@ -369,6 +369,10 @@ export default defineComponent({
         signedBy: form.signedBy,
         startScanTime: scanTimes.start,
         closingScanTime: scanTimes.end,
+        invoiced: false,
+        quotationNumber: '',
+        quotationStatus: 'Not Required',
+        faults: [],
       }
       store.addJobCard(jobData)
       $q.notify({

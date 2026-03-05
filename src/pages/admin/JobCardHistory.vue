@@ -157,16 +157,63 @@
 
             <template v-slot:body-cell-status="props">
               <q-td :props="props">
-                <q-chip
-                  :color="props.row.faultFound ? 'red-1' : 'green-1'"
-                  :text-color="props.row.faultFound ? 'red-9' : 'green-9'"
-                  :icon="
-                    props.row.faultFound ? 'fas fa-triangle-exclamation' : 'fas fa-circle-check'
-                  "
-                  label="Completed"
-                  dense
-                  class="text-weight-bold"
-                />
+                <div class="column q-gutter-xs">
+                  <q-chip
+                    color="green-1"
+                    text-color="green-9"
+                    icon="fas fa-circle-check"
+                    label="Completed"
+                    dense
+                    class="text-weight-bold"
+                  />
+                  <q-chip
+                    :color="props.row.faultFound ? 'red-1' : 'grey-2'"
+                    :text-color="props.row.faultFound ? 'red-9' : 'grey-8'"
+                    :icon="
+                      props.row.faultFound ? 'fas fa-triangle-exclamation' : 'fas fa-circle'
+                    "
+                    :label="props.row.faultFound ? 'Fault Reported' : 'No Fault'"
+                    dense
+                  />
+                  <q-chip
+                    :color="props.row.invoiced ? 'blue-1' : 'grey-2'"
+                    :text-color="props.row.invoiced ? 'blue-9' : 'grey-8'"
+                    icon="fas fa-file-invoice-dollar"
+                    :label="props.row.invoiced ? 'Invoiced' : 'Not Invoiced'"
+                    dense
+                  />
+                  <q-chip
+                    v-if="props.row.quotationStatus !== 'Not Required' || props.row.quotationNumber"
+                    :color="
+                      props.row.quotationStatus === 'Approved'
+                        ? 'green-1'
+                        : props.row.quotationStatus === 'Awaiting Approval'
+                          ? 'amber-1'
+                          : 'grey-2'
+                    "
+                    :text-color="
+                      props.row.quotationStatus === 'Approved'
+                        ? 'green-9'
+                        : props.row.quotationStatus === 'Awaiting Approval'
+                          ? 'amber-9'
+                          : 'grey-8'
+                    "
+                    icon="fas fa-file-signature"
+                    :label="
+                      (props.row.quotationNumber ? props.row.quotationNumber + ' · ' : '') +
+                      (props.row.quotationStatus || 'Quote')
+                    "
+                    dense
+                  />
+                </div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-quotationNumber="props">
+              <q-td :props="props">
+                <span class="text-weight-medium">
+                  {{ props.row.quotationNumber || '—' }}
+                </span>
               </q-td>
             </template>
 
@@ -260,15 +307,65 @@
 
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Status</div>
-              <q-chip
-                :color="selectedJobCard.faultFound ? 'red-1' : 'green-1'"
-                :text-color="selectedJobCard.faultFound ? 'red-9' : 'green-9'"
-                :icon="
-                  selectedJobCard.faultFound ? 'fas fa-triangle-exclamation' : 'fas fa-circle-check'
-                "
-                :label="selectedJobCard.faultFound ? 'Fault Reported' : 'System Clear'"
-                class="text-weight-bold"
-              />
+              <div class="row q-col-gutter-sm">
+                <div class="col-auto">
+                  <q-chip
+                    color="green-1"
+                    text-color="green-9"
+                    icon="fas fa-circle-check"
+                    label="Completed"
+                    class="text-weight-bold"
+                    dense
+                  />
+                </div>
+                <div class="col-auto">
+                  <q-chip
+                    :color="selectedJobCard.faultFound ? 'red-1' : 'grey-2'"
+                    :text-color="selectedJobCard.faultFound ? 'red-9' : 'grey-8'"
+                    :icon="
+                      selectedJobCard.faultFound
+                        ? 'fas fa-triangle-exclamation'
+                        : 'fas fa-circle'
+                    "
+                    :label="selectedJobCard.faultFound ? 'Fault Reported' : 'No Fault'"
+                    dense
+                  />
+                </div>
+                <div class="col-auto">
+                  <q-chip
+                    :color="selectedJobCard.invoiced ? 'blue-1' : 'grey-2'"
+                    :text-color="selectedJobCard.invoiced ? 'blue-9' : 'grey-8'"
+                    icon="fas fa-file-invoice-dollar"
+                    :label="selectedJobCard.invoiced ? 'Invoiced' : 'Not Invoiced'"
+                    dense
+                  />
+                </div>
+                <div class="col-auto" v-if="selectedJobCard.quotationNumber || selectedJobCard.quotationStatus">
+                  <q-chip
+                    :color="
+                      selectedJobCard.quotationStatus === 'Approved'
+                        ? 'green-1'
+                        : selectedJobCard.quotationStatus === 'Awaiting Approval'
+                          ? 'amber-1'
+                          : 'grey-2'
+                    "
+                    :text-color="
+                      selectedJobCard.quotationStatus === 'Approved'
+                        ? 'green-9'
+                        : selectedJobCard.quotationStatus === 'Awaiting Approval'
+                          ? 'amber-9'
+                          : 'grey-8'
+                    "
+                    icon="fas fa-file-signature"
+                    :label="
+                      (selectedJobCard.quotationNumber
+                        ? selectedJobCard.quotationNumber + ' · '
+                        : '') + (selectedJobCard.quotationStatus || 'Quote')
+                    "
+                    dense
+                  />
+                </div>
+              </div>
             </div>
 
             <div class="col-12">
@@ -313,6 +410,7 @@ export default defineComponent({
       tech: '',
       workType: '',
       status: '',
+      quotationNumber: '',
     })
 
     const columns = [
@@ -323,6 +421,13 @@ export default defineComponent({
       { name: 'workType', label: 'Job Type', align: 'left', field: 'workType', sortable: true },
       { name: 'tech', label: 'Technician', align: 'left', field: 'tech', sortable: true },
       { name: 'status', label: 'Status', align: 'center', field: 'status', sortable: true },
+      {
+        name: 'quotationNumber',
+        label: 'Quote #',
+        align: 'left',
+        field: 'quotationNumber',
+        sortable: true,
+      },
       { name: 'actions', label: '', align: 'right' },
     ]
 
@@ -331,6 +436,9 @@ export default defineComponent({
         ...job,
         workType: job.workType || job.jobType || job.type || '',
         status: job.faultFound ? 'Fault Found' : 'No Fault',
+        invoiceStatus: job.invoiced ? 'Invoiced' : 'Not Invoiced',
+        quotationStatus: job.quotationStatus || 'Not Required',
+        quotationNumber: job.quotationNumber || '',
       })),
     )
 
@@ -372,6 +480,9 @@ export default defineComponent({
         'Job Type': r.workType || '',
         Technician: r.tech,
         Status: r.status || '',
+        Invoiced: r.invoiced ? 'Yes' : 'No',
+        'Quotation #': r.quotationNumber || '',
+        'Quotation Status': r.quotationStatus || '',
         Comments: r.comments || '',
       }))
 
