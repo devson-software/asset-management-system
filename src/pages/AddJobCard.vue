@@ -166,7 +166,7 @@
                   <div class="col-12 col-md-4">
                     <q-input
                       v-model="form.rootCause"
-                      label="Root Cause Found"
+                      label="Fault Found"
                       outlined
                       dense
                       bg-color="white"
@@ -387,6 +387,48 @@
                 </q-input>
               </div>
 
+              <!-- Section: Signature -->
+              <div class="col-12 q-mt-md">
+                <div class="text-subtitle1 text-weight-bold row items-center q-mb-sm">
+                  <q-icon name="fas fa-pen-fancy" color="primary" class="q-mr-sm" />
+                  Signature
+                </div>
+                <div class="row q-col-gutter-sm">
+                  <div class="col-6">
+                    <q-btn
+                      class="full-width"
+                      label="Technician"
+                      color="primary"
+                      :outline="form.signedBy !== 'technician'"
+                      :text-color="form.signedBy === 'technician' ? 'white' : 'primary'"
+                      unelevated
+                      @click="form.signedBy = 'technician'"
+                    />
+                  </div>
+                  <div class="col-6">
+                    <q-btn
+                      class="full-width"
+                      label="Customer"
+                      color="secondary"
+                      :outline="form.signedBy !== 'customer'"
+                      :text-color="form.signedBy === 'customer' ? 'white' : 'secondary'"
+                      unelevated
+                      @click="form.signedBy = 'customer'"
+                    />
+                  </div>
+                </div>
+                <div class="signature-pad q-mt-md flex flex-center text-grey-6">
+                  Sign here
+                </div>
+                <q-checkbox
+                  v-model="form.signed"
+                  label="Signature Captured"
+                  color="positive"
+                  size="xl"
+                  class="full-width signature-checkbox q-mt-md"
+                />
+              </div>
+
               <div class="row justify-between q-mt-xl">
                 <q-btn label="Discard & Return" flat color="grey-7" @click="$router.back()" />
                 <q-btn
@@ -396,6 +438,7 @@
                   unelevated
                   class="q-px-lg"
                   icon="fas fa-cloud-arrow-up"
+                  :disable="!form.signed"
                 />
               </div>
             </q-form>
@@ -434,6 +477,8 @@ export default defineComponent({
       rootCause: '',
       remedy: '',
       faults: [],
+      signed: false,
+      signedBy: 'technician',
       comments: '',
       partsUsed: [],
       readings: {
@@ -578,6 +623,11 @@ export default defineComponent({
         return
       }
 
+      if (!form.signed) {
+        $q.notify({ color: 'negative', message: 'Please capture a signature before saving.' })
+        return
+      }
+
       const primaryFault = form.faults[0] || {
         details: '',
         pictures: [],
@@ -599,6 +649,8 @@ export default defineComponent({
           details: f.details || '',
           pictures: f.pictures || [],
         })),
+        signed: form.signed,
+        signedBy: form.signedBy,
         comments: form.comments,
         partsUsed: [...form.partsUsed],
         readings: { ...form.readings },
@@ -650,15 +702,17 @@ export default defineComponent({
   border-radius: 16px;
 }
 
-.fault-image-row {
-  border-radius: 12px;
-  overflow: hidden;
+.signature-pad {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  background: #fafafa;
+  min-height: 120px;
 }
-
-.fault-image {
-  width: 100%;
-  max-width: 260px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+.signature-checkbox {
+  padding: 10px 14px;
+  min-height: 56px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
 }
 </style>
