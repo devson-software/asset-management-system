@@ -106,6 +106,70 @@
                   <template v-slot:prepend><q-icon name="fas fa-location-dot" size="xs" /></template>
                 </q-input>
               </div>
+
+              <!-- Project Drawings (PDF) -->
+              <div class="col-12">
+                <div class="text-subtitle1 text-weight-bold row items-center q-mb-sm">
+                  <q-icon name="fas fa-file-pdf" color="red-7" class="q-mr-sm" />
+                  Project Drawings (PDF, A0–A3)
+                </div>
+                <div class="text-caption text-grey-7 q-mb-sm">
+                  Upload one or more project drawings so technicians can access them on their phones.
+                </div>
+                <div class="q-gutter-sm">
+                  <div
+                    v-for="(drawing, index) in project.drawings"
+                    :key="index"
+                    class="q-pa-sm bg-grey-1 rounded-borders row items-start q-col-gutter-sm"
+                  >
+                    <div class="col-12 col-md-5">
+                      <q-input
+                        v-model="drawing.title"
+                        label="Drawing Reference / Title"
+                        outlined
+                        dense
+                        bg-color="white"
+                        placeholder="e.g. A0 – Roof Plan, A1 – AHU Layout"
+                      />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <q-file
+                        v-model="drawing.file"
+                        label="Upload Drawing (PDF)"
+                        outlined
+                        dense
+                        accept="application/pdf"
+                        bg-color="white"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="fas fa-file-pdf" color="red-7" />
+                        </template>
+                      </q-file>
+                      <div v-if="drawing.fileName" class="text-caption text-grey-7 q-mt-xs">
+                        Saved as: {{ drawing.fileName }}
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <q-btn
+                        v-if="project.drawings.length > 1"
+                        flat
+                        dense
+                        round
+                        color="negative"
+                        icon="fas fa-trash-can"
+                        @click="removeDrawing(index)"
+                      />
+                    </div>
+                  </div>
+                  <q-btn
+                    color="secondary"
+                    outline
+                    icon="fas fa-plus"
+                    label="Add Drawing"
+                    @click="addDrawing"
+                  />
+                </div>
+              </div>
             </div>
 
             <div class="row q-gutter-sm justify-between q-mt-xl">
@@ -157,7 +221,8 @@ export default defineComponent({
       customerId: customerId || null,
       picture: null,
       pictureUrl: null,
-      timeAllocation: ''
+      timeAllocation: '',
+      drawings: [],
     })
 
     if (isEdit && customerId) {
@@ -166,6 +231,14 @@ export default defineComponent({
         const existingProject = targetCustomer.projects.find(p => p.id === projectId)
         if (existingProject) {
           Object.assign(project, existingProject)
+          // Normalise drawings so UI has fileName field even without File objects
+          if (existingProject.drawings && Array.isArray(existingProject.drawings)) {
+            project.drawings = existingProject.drawings.map((d) => ({
+              title: d.title || '',
+              file: null,
+              fileName: d.fileName || '',
+            }))
+          }
         }
       }
     }
@@ -174,6 +247,18 @@ export default defineComponent({
       if (file) {
         project.pictureUrl = URL.createObjectURL(file)
       }
+    }
+
+    const addDrawing = () => {
+      project.drawings.push({
+        title: '',
+        file: null,
+        fileName: '',
+      })
+    }
+
+    const removeDrawing = (index) => {
+      project.drawings.splice(index, 1)
     }
 
     const onSubmit = () => {
@@ -186,6 +271,11 @@ export default defineComponent({
 
       const savedData = { ...project }
       delete savedData.picture // Don't store the File object in our simple store for now
+      // Map drawings to a serializable format (reference + file name only)
+      savedData.drawings = (project.drawings || []).map((d) => ({
+        title: d.title || '',
+        fileName: d.file?.name || d.fileName || '',
+      }))
 
       if (isEdit) {
         store.updateProject(finalCustomerId, projectId, savedData)
@@ -205,7 +295,17 @@ export default defineComponent({
       router.push({ path: '/projects', query: { customerId: finalCustomerId } })
     }
 
-    return { project, customerName, onSubmit, isEdit, isStandaloneAdd, customerOptions, onFileChange }
+    return {
+      project,
+      customerName,
+      onSubmit,
+      isEdit,
+      isStandaloneAdd,
+      customerOptions,
+      onFileChange,
+      addDrawing,
+      removeDrawing,
+    }
   }
 })
 </script>

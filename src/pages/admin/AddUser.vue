@@ -72,19 +72,46 @@
                 </div>
 
                 <div class="col-12 col-sm-6">
-                  <q-select
-                    v-model="userForm.role"
-                    :options="roleOptions"
-                    label="System Role"
+                  <q-input
+                    v-model="userForm.mobile"
+                    label="Mobile Number"
                     outlined
                     dense
-                    required
                     bg-color="white"
+                    mask="+################"
                   >
-                    <template v-slot:prepend>
-                      <q-icon name="fas fa-user-shield" size="xs" color="secondary" />
-                    </template>
-                  </q-select>
+                    <template v-slot:prepend><q-icon name="fas fa-phone" size="xs" /></template>
+                  </q-input>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <div class="row q-col-gutter-sm items-center">
+                    <div class="col">
+                      <q-select
+                        v-model="userForm.role"
+                        :options="roleOptions"
+                        label="System Role"
+                        outlined
+                        dense
+                        required
+                        bg-color="white"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="fas fa-user-shield" size="xs" color="secondary" />
+                        </template>
+                      </q-select>
+                    </div>
+                    <div class="col-auto">
+                      <q-btn
+                        round
+                        dense
+                        color="primary"
+                        icon="fas fa-plus"
+                        @click="showRoleDialog = true"
+                        aria-label="Add new role"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div class="col-12 col-sm-6">
@@ -101,17 +128,6 @@
                 </div>
 
                 <div class="col-12 col-sm-6">
-                  <div
-                    class="q-pa-sm bg-blue-1 rounded-borders border-primary flex items-center full-height"
-                  >
-                    <q-icon name="fas fa-key" color="primary" class="q-mr-sm" />
-                    <div class="text-caption text-grey-9">
-                      Set the user's password during registration.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12">
                   <q-input
                     v-model="userForm.email"
                     label="Email Address"
@@ -123,6 +139,18 @@
                   >
                     <template v-slot:prepend><q-icon name="fas fa-envelope" size="xs" /></template>
                   </q-input>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <div
+                    class="q-pa-sm bg-blue-1 rounded-borders border-primary flex items-center full-height"
+                  >
+                    <q-icon name="fas fa-key" color="primary" class="q-mr-sm" />
+                    <div class="text-caption text-grey-9">
+                      Engineer and admin have access to admin functions only. Admins can manage
+                      technician passwords.
+                    </div>
+                  </div>
                 </div>
 
                 <div class="col-12 col-sm-6">
@@ -147,6 +175,56 @@
                       />
                     </template>
                   </q-input>
+                </div>
+
+                <!-- Access level descriptions -->
+                <div class="col-12">
+                  <div class="text-subtitle2 text-weight-bold q-mb-xs">Access Level</div>
+                  <div class="row q-col-gutter-sm q-mb-sm">
+                    <div class="col-12 col-sm-4">
+                      <q-radio v-model="userForm.accessLevel" val="primary" label="Primary" />
+                      <div class="text-caption text-grey-6">
+                        Primary – full access (e.g. administrator / engineer).
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                      <q-radio v-model="userForm.accessLevel" val="secondary" label="Secondary" />
+                      <div class="text-caption text-grey-6">
+                        Secondary – technician level access.
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                      <q-radio v-model="userForm.accessLevel" val="tertiary" label="Tertiary" />
+                      <div class="text-caption text-grey-6">
+                        Tertiary – team member (no admin access).
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row q-col-gutter-md">
+                    <div class="col-12 col-sm-6">
+                      <q-input
+                        v-model="userForm.primaryDescription"
+                        label="Primary Access Description"
+                        outlined
+                        dense
+                        type="textarea"
+                        bg-color="white"
+                        autogrow
+                      />
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <q-input
+                        v-model="userForm.secondaryDescription"
+                        label="Secondary Access Description"
+                        outlined
+                        dense
+                        type="textarea"
+                        bg-color="white"
+                        autogrow
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div class="col-12">
@@ -205,19 +283,22 @@ export default defineComponent({
       role: 'technician',
       password: '',
       active: true,
+      mobile: '',
+      accessLevel: 'secondary',
+      primaryDescription: '',
+      secondaryDescription: '',
       picture: null,
       pictureUrl: '',
     })
 
-    const roleOptions = [
-      'administrator',
+    const roleOptions = ref([
+      'Administrator',
       'Commissioning technician',
       'Engineer',
-      'Senior technician',
-      'Tier 1 Technician',
-      'Tier 2 Technician',
-      'customer',
-    ]
+      'Customer',
+    ])
+    const showRoleDialog = ref(false)
+    const newRoleName = ref('')
 
     const onFileChange = (file) => {
       if (file) {
@@ -230,6 +311,10 @@ export default defineComponent({
         const existingUser = store.users.find((u) => u.id === userId)
         if (existingUser) {
           Object.assign(userForm, { ...existingUser })
+          // If role is not already in list, add it so it shows in the dropdown
+          if (existingUser.role && !roleOptions.value.includes(existingUser.role)) {
+            roleOptions.value.push(existingUser.role)
+          }
         }
       }
     })
@@ -272,6 +357,10 @@ export default defineComponent({
         role: 'technician',
         password: '',
         active: true,
+        mobile: '',
+        accessLevel: 'secondary',
+        primaryDescription: '',
+        secondaryDescription: '',
         picture: null,
         pictureUrl: '',
       })
@@ -287,6 +376,8 @@ export default defineComponent({
       showPassword,
       onFileChange,
       fileInput,
+      showRoleDialog,
+      newRoleName,
     }
   },
 })

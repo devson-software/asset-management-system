@@ -149,7 +149,7 @@
             <q-btn
               color="primary"
               icon="fas fa-user-plus"
-              label="New Customer"
+              label="Customer"
               class="full-width action-btn"
               to="/customers/add"
               unelevated
@@ -157,7 +157,7 @@
             <q-btn
               color="teal-6"
               icon="fas fa-plus-circle"
-              label="Add New Project"
+              label="Projects"
               class="full-width action-btn"
               to="/projects/add"
               unelevated
@@ -169,15 +169,23 @@
             <q-btn
               color="indigo-6"
               icon="fas fa-clipboard-check"
-              label="Add New Commissioning Data"
+              label="Commissioning Data"
               class="full-width action-btn"
               to="/commissioning"
               unelevated
             />
-            <q-btn-dropdown
+            <q-btn
               color="blue-6"
               icon="fas fa-file-circle-plus"
-              label="Create New Job Card"
+              label="Job Card"
+              class="full-width action-btn"
+              to="/job-cards/add"
+              unelevated
+            />
+            <!-- <q-btn-dropdown
+              color="blue-6"
+              icon="fas fa-file-circle-plus"
+              label="Job Card"
               class="full-width action-btn"
               unelevated
             >
@@ -201,11 +209,11 @@
                   </q-item-section>
                 </q-item>
               </q-list>
-            </q-btn-dropdown>
+            </q-btn-dropdown> -->
             <q-btn
               color="orange-8"
               icon="fas fa-file-invoice-dollar"
-              label="Add Quotation"
+              label="Quotation"
               class="full-width action-btn"
               to="/quotations"
               unelevated

@@ -158,6 +158,21 @@
 
       <q-item
         clickable
+        to="/reports"
+        class="navigation-item"
+        active-class="navigation-item-active"
+      >
+        <q-item-section avatar>
+          <q-icon name="fas fa-chart-column" size="14px" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label class="text-weight-bold">Reports</q-item-label>
+          <q-item-label caption>Service History</q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item
+        clickable
         to="/technical-data"
         class="navigation-item"
         active-class="navigation-item-active"
