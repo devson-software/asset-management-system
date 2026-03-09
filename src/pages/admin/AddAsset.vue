@@ -222,7 +222,7 @@
                 </q-card>
               </div>
               <div
-                v-if="showOutdoorUnit"
+                v-if="showOutdoorUnit && asset.unitType && asset.plantCategory"
                 :class="showIndoorUnit ? 'col-12 col-md-6' : 'col-12'"
               >
                 <q-card flat bordered class="bg-grey-1">
