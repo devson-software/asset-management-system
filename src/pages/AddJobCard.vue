@@ -139,7 +139,7 @@
                 <q-icon name="fas fa-magnifying-glass-chart" color="orange-9" class="q-mr-sm" />
                 Fault Analysis & Diagnostics
               </div>
-              <div class="row q-col-gutter-md">
+              <div class="row q-col-gutter-md"> 
                 <div class="col-12">
                   <div class="q-pa-md bg-orange-1 rounded-borders border-dashed">
                     <q-toggle
@@ -244,7 +244,7 @@
               <q-separator />
 
               <!-- Section: Technical Readings -->
-               {{ form.workType }}
+               <!-- {{ form.workType }} -->
               <div class="text-subtitle1 text-weight-bold row items-center">
                 <q-icon name="fas fa-gauge-high" color="blue-9" class="q-mr-sm" />
                 Technical Performance Readings
@@ -391,18 +391,18 @@
               <div class="col-12 q-mt-md">
                 <div class="text-subtitle1 text-weight-bold row items-center q-mb-sm">
                   <q-icon name="fas fa-file-invoice-dollar" color="orange-9" class="q-mr-sm" />
-                  Invoicing & Quotation
+                  Quotation
                 </div>
                 <div class="row q-col-gutter-md">
                   <div class="col-12 col-sm-4">
                     <q-toggle
                       v-model="form.invoiced"
-                      label="Job Invoiced"
+                      label="Quotation"
                       color="primary"
                       class="text-weight-bold"
                     />
                   </div>
-                  <div class="col-12 col-sm-4">
+                  <!-- <div class="col-12 col-sm-4">
                     <q-input
                       v-model="form.quotationNumber"
                       label="Quotation Number"
@@ -421,7 +421,7 @@
                       dense
                       bg-color="white"
                     />
-                  </div>
+                  </div> -->
                 </div>
               </div>
 

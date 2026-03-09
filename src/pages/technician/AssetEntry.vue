@@ -195,7 +195,7 @@
                   :class="showIndoorUnit ? 'col-12 col-md-6' : 'col-12'"
                 >
                   <q-card flat bordered class="bg-grey-1">
-                    <q-card-section class="q-pa-sm text-overline">Outdoor Unit</q-card-section>
+                    <q-card-section class="q-pa-sm text-overline">{{ (asset.unitType === 'Heat recovery box' || asset.unitType === 'Hydronic control unit') ? asset.unitType : (asset.plantCategory || 'Outdoor Unit') }}</q-card-section>
                     <q-card-section class="q-pt-none q-gutter-y-sm">
                       <q-input v-model="asset.outdoorModel" label="Model Number" outlined dense bg-color="white" />
                       <q-input v-model="asset.outdoorSerial" label="Serial Number" outlined dense bg-color="white" />

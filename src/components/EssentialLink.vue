@@ -97,7 +97,7 @@
         </q-item-section>
       </q-item>
 
-      <q-item clickable to="/assets" class="navigation-item" active-class="navigation-item-active">
+      <!-- <q-item clickable to="/assets" class="navigation-item" active-class="navigation-item-active">
         <q-item-section avatar>
           <q-icon name="fas fa-boxes-stacked" size="14px" />
         </q-item-section>
@@ -105,7 +105,7 @@
           <q-item-label class="text-weight-bold">Assets</q-item-label>
           <q-item-label caption>HVAC Inventory</q-item-label>
         </q-item-section>
-      </q-item>
+      </q-item> -->
 
       <q-item
         clickable

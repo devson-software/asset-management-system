@@ -214,7 +214,7 @@
                 :class="showOutdoorUnit ? 'col-12 col-md-6' : 'col-12'"
               >
                 <q-card flat bordered class="bg-grey-1">
-                  <q-card-section class="q-pa-sm text-overline">Indoor Unit</q-card-section>
+                  <q-card-section class="q-pa-sm text-overline">{{ asset.plantCategory || 'Indoor Unit' }}</q-card-section>
                   <q-card-section class="q-pt-none q-gutter-y-sm">
                     <q-input v-model="asset.indoorModel" label="Model Number" outlined dense required bg-color="white" />
                     <q-input v-model="asset.serialNumber" label="Serial Number" outlined dense required bg-color="white" />
@@ -226,7 +226,7 @@
                 :class="showIndoorUnit ? 'col-12 col-md-6' : 'col-12'"
               >
                 <q-card flat bordered class="bg-grey-1">
-                  <q-card-section class="q-pa-sm text-overline">Outdoor Unit</q-card-section>
+                  <q-card-section class="q-pa-sm text-overline">{{ (asset.unitType === 'Heat recovery box' || asset.unitType === 'Hydronic control unit') ? asset.unitType : (asset.plantCategory || 'Outdoor Unit') }}</q-card-section>
                   <q-card-section class="q-pt-none q-gutter-y-sm">
                     <q-input v-model="asset.outdoorModel" label="Model Number" outlined dense bg-color="white" />
                     <q-input v-model="asset.outdoorSerial" label="Serial Number" outlined dense bg-color="white" />
@@ -415,16 +415,18 @@ export default defineComponent({
     })
 
     const showIndoorUnit = computed(() => {
-      return [
-        'Direct expansion split units',
-        'VRF Indoor units',
-        'Fan coil units',
-        'Air handling units',
-      ].includes(asset.plantCategory)
+      // return [
+      //   'Direct expansion split units',
+      //   'VRF Indoor units',
+      //   'Fan coil units',
+      //   'Air handling units',
+      // ].includes(asset.plantCategory)
+      return false
     })
 
     const showOutdoorUnit = computed(() => {
-      return ['VRF condensing units', 'Package plant', 'Chiller'].includes(asset.plantCategory)
+      // return ['VRF condensing units', 'Package plant', 'Chiller'].includes(asset.plantCategory)
+      return true
     })
 
     const showRefrigerant = computed(() => {

@@ -255,6 +255,36 @@
         </q-card>
       </div>
     </div>
+
+    <!-- Add system role dialog -->
+    <q-dialog v-model="showRoleDialog" persistent>
+      <q-card style="min-width: 360px">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Add System Role</div>
+          <q-space />
+          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="newRoleName"
+            label="Role Description"
+            outlined
+            dense
+            placeholder="e.g. Site Supervisor, Field Engineer"
+            autofocus
+            @keyup.enter="addNewRole"
+          >
+            <template v-slot:prepend>
+              <q-icon name="fas fa-user-shield" size="xs" color="secondary" />
+            </template>
+          </q-input>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="grey-7" v-close-popup @click="newRoleName = ''" />
+          <q-btn unelevated label="Add Role" color="primary" @click="addNewRole" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -299,6 +329,29 @@ export default defineComponent({
     ])
     const showRoleDialog = ref(false)
     const newRoleName = ref('')
+
+    const addNewRole = () => {
+      const name = (newRoleName.value || '').trim()
+      if (!name) {
+        $q.notify({
+          color: 'warning',
+          message: 'Enter a role description',
+          icon: 'fas fa-pen',
+        })
+        return
+      }
+      if (!roleOptions.value.includes(name)) {
+        roleOptions.value.push(name)
+      }
+      userForm.role = name
+      newRoleName.value = ''
+      showRoleDialog.value = false
+      $q.notify({
+        color: 'positive',
+        message: `Role "${name}" added and selected`,
+        icon: 'fas fa-check',
+      })
+    }
 
     const onFileChange = (file) => {
       if (file) {
@@ -378,6 +431,7 @@ export default defineComponent({
       fileInput,
       showRoleDialog,
       newRoleName,
+      addNewRole,
     }
   },
 })

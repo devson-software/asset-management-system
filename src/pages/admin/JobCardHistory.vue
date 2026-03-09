@@ -167,6 +167,7 @@
                     class="text-weight-bold"
                   />
                   <q-chip
+                    v-if="props.row.faultFound"
                     :color="props.row.faultFound ? 'red-1' : 'grey-2'"
                     :text-color="props.row.faultFound ? 'red-9' : 'grey-8'"
                     :icon="
