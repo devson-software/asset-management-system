@@ -301,18 +301,32 @@
                   />
                 </div>
               </div>
-<!-- {{ form.workType }} -->
-                <div v-if="form.workType == 'Repair'"> 
-                  <div class="col-12">
+
+              <!-- Performance verification (yellow items) - ASHRAE 180 -->
+              <div
+                v-if="isDxMaintenance"
+                class="q-mt-md q-pa-sm bg-amber-1 rounded-borders"
+              >
+                <div class="text-caption text-weight-bold q-mb-xs">
+                  Performance Verification (ASHRAE 180)
+                </div>
+                <div class="row q-col-gutter-sm">
+                  <div
+                    v-for="field in DX_INPUT_TEMPLATE"
+                    :key="field.id"
+                    class="col-12 col-sm-6"
+                  >
                     <q-input
-                      v-model="form.readings.amps"
-                      label=""
+                      v-model="form.maintenanceInputs[field.id]"
+                      :label="field.label"
                       outlined
                       dense
                       bg-color="white"
-                      type="number"
                     />
-                  </div></div>
+                  </div>
+                </div>
+              </div>
+
               <q-separator />
 
               <!-- Section: Materials & Parts -->
@@ -503,6 +517,50 @@ export default defineComponent({
     const jobId = route.params.jobId
     const isEdit = !!jobId
 
+    const DX_CHECKLIST_BASE = [
+      // Indoor unit – airside / hygiene
+      { id: 'indoor_inspect_air_filters', label: 'Inspect air filters', section: 'indoor', defaultFrequency: 'Monthly' },
+      { id: 'indoor_clean_replace_filters', label: 'Clean / replace filters', section: 'indoor', defaultFrequency: 'Quarterly' },
+      { id: 'indoor_inspect_evaporator_coil', label: 'Inspect evaporator coil', section: 'indoor', defaultFrequency: 'Quarterly' },
+      { id: 'indoor_clean_evaporator_coil', label: 'Clean evaporator coil', section: 'indoor', defaultFrequency: 'Annually' },
+      { id: 'indoor_inspect_condensate_tray', label: 'Inspect condensate tray', section: 'indoor', defaultFrequency: 'Quarterly' },
+      { id: 'indoor_flush_condensate_drain', label: 'Flush condensate drain', section: 'indoor', defaultFrequency: 'Quarterly' },
+      { id: 'indoor_inspect_fan_wheel', label: 'Inspect indoor fan & wheel', section: 'indoor', defaultFrequency: 'Annually' },
+      { id: 'indoor_check_controller', label: 'Check controller operation', section: 'indoor', defaultFrequency: 'Annually' },
+      // Outdoor unit – refrigeration / electrical
+      { id: 'outdoor_inspect_condenser_coil', label: 'Inspect condenser coil', section: 'outdoor', defaultFrequency: 'Quarterly' },
+      { id: 'outdoor_clean_condenser_coil', label: 'Clean condenser coil', section: 'outdoor', defaultFrequency: 'Annually' },
+      { id: 'outdoor_check_compressor_op', label: 'Check compressor operation', section: 'outdoor', defaultFrequency: 'Quarterly' },
+      { id: 'outdoor_record_running_amps', label: 'Record compressor running amps', section: 'outdoor', defaultFrequency: 'Quarterly' },
+      { id: 'outdoor_check_fan_operation', label: 'Check condenser fan operation', section: 'outdoor', defaultFrequency: 'Quarterly' },
+      { id: 'outdoor_inspect_refrigerant_pipework', label: 'Inspect refrigerant pipework', section: 'outdoor', defaultFrequency: 'Quarterly' },
+      { id: 'outdoor_leak_inspection', label: 'Leak inspection', section: 'outdoor', defaultFrequency: 'Annually' },
+      { id: 'outdoor_electrical_terminals', label: 'Check electrical terminals', section: 'outdoor', defaultFrequency: 'Annually' },
+    ]
+
+    const DX_HIDEAWAY_EXTRAS = [
+      { id: 'indoor_check_return_air_path', label: 'Check return air path and grilles (hide-away)', section: 'indoor', defaultFrequency: 'Quarterly' },
+      { id: 'indoor_check_ceiling_plenum', label: 'Inspect ceiling plenum access & seals', section: 'indoor', defaultFrequency: 'Annually' },
+    ]
+
+    const DX_INPUT_TEMPLATE = [
+      { id: 'recordedVoltage', label: 'Recorded voltage' },
+      { id: 'returnAirTemp', label: 'Return air temperature (°C)' },
+      { id: 'supplyAirTemp', label: 'Supply air temperature (°C)' },
+      { id: 'deltaT', label: 'Air ΔT across coil (°C)' },
+      { id: 'compressorCurrent', label: 'Compressor running current (A)' },
+      { id: 'unitOperation', label: 'Unit operation / alarms' },
+    ]
+
+    const frequencyOptions = [
+      { label: 'Monthly', value: 'Monthly' },
+      { label: 'Quarterly', value: 'Quarterly' },
+      { label: 'Bi-annual', value: 'Bi-annual' },
+      { label: 'Annual', value: 'Annual' },
+    ]
+
+    const dxChecklistTab = ref('indoor')
+
     const form = reactive({
       date: new Date().toISOString().substr(0, 10),
       checkInTime: '',
@@ -515,6 +573,8 @@ export default defineComponent({
       rootCause: '',
       remedy: '',
       faults: [],
+      maintenanceTasks: [],
+      maintenanceInputs: {},
       invoiced: false,
       quotationNumber: '',
       quotationStatus: 'Not Required',
@@ -531,7 +591,7 @@ export default defineComponent({
       },
     })
 
-    const workTypeOptions = ['Maintenance/Service DX split unit', 'Repair DX split unit', 'Repair', 'Installation', 'Emergency Callout', 'Warranty']
+    const workTypeOptions = ['Maintenance/Service DX split unit', 'DX split unit', 'General Job card', 'Installation', 'Emergency Callout', 'Warranty']
     const newPart = reactive({ description: '', quantity: 1 })
     const faultFile = ref(null)
 
@@ -580,6 +640,88 @@ export default defineComponent({
         .filter((u) => u.role === 'technician' && u.active)
         .map((u) => ({ label: u.fullName, value: u.id }))
     })
+
+    const isDxMaintenance = computed(
+      () => form.workType === 'Maintenance/Service DX split unit',
+    )
+
+    const indoorChecklist = computed(() =>
+      form.maintenanceTasks.filter((t) => t.section === 'indoor'),
+    )
+    const outdoorChecklist = computed(() =>
+      form.maintenanceTasks.filter((t) => t.section === 'outdoor' && !t.custom),
+    )
+    const clientTasks = computed(() =>
+      form.maintenanceTasks.filter((t) => t.custom),
+    )
+
+    const checklistInputs = computed(() =>
+      DX_INPUT_TEMPLATE.map((f) => ({
+        id: f.id,
+        label: f.label,
+        value: form.maintenanceInputs[f.id] ?? '',
+      })),
+    )
+
+    const initialiseDxTemplateForAsset = (asset) => {
+      // If we already have tasks populated, don't overwrite
+      if (form.maintenanceTasks && form.maintenanceTasks.length) return
+
+      const base = [...DX_CHECKLIST_BASE]
+      const unitType = (asset && asset.unitType) || ''
+      const isHideaway = /hide[- ]?away/i.test(unitType)
+      const combined = isHideaway ? base.concat(DX_HIDEAWAY_EXTRAS) : base
+
+      form.maintenanceTasks = combined.map((t) => ({
+        ...t,
+        frequency: t.defaultFrequency,
+        done: false,
+        required: true,
+        custom: false,
+      }))
+
+      const inputsState = {}
+      DX_INPUT_TEMPLATE.forEach((f) => {
+        inputsState[f.id] = ''
+      })
+      form.maintenanceInputs = inputsState
+    }
+
+    const tryLoadPreviousDxConfig = (unitRef) => {
+      if (!unitRef) return false
+      const previous = [...store.jobCards]
+        .slice()
+        .reverse()
+        .find(
+          (j) =>
+            j.unitRef === unitRef &&
+            j.workType === 'Maintenance/Service DX split unit' &&
+            Array.isArray(j.maintenanceTasks) &&
+            j.maintenanceTasks.length,
+        )
+      if (!previous) return false
+      form.maintenanceTasks = JSON.parse(JSON.stringify(previous.maintenanceTasks || []))
+      form.maintenanceInputs = JSON.parse(
+        JSON.stringify(previous.maintenanceInputs || {}),
+      )
+      return true
+    }
+
+    const addClientTask = () => {
+      form.maintenanceTasks.push({
+        id: `client_${Date.now()}`,
+        label: '',
+        section: 'outdoor',
+        frequency: 'Quarterly',
+        done: false,
+        required: true,
+        custom: true,
+      })
+    }
+
+    const removeClientTask = (id) => {
+      form.maintenanceTasks = form.maintenanceTasks.filter((t) => t.id !== id)
+    }
 
     // Pre-populate if in edit mode
     if (isEdit) {
@@ -642,6 +784,47 @@ export default defineComponent({
       },
     )
 
+    const resolveSelectedAsset = () => {
+      if (!form.assetId) return { asset: null, unitRef: null }
+      const selectedMeta = allAssetsOptions.value.find((a) => a.value === form.assetId)
+      if (!selectedMeta) return { asset: null, unitRef: null }
+      let found = null
+      store.customers.forEach((c) => {
+        c.projects.forEach((p) => {
+          const hit = p.assets.find((as) => as.id === selectedMeta.value)
+          if (hit) found = hit
+        })
+      })
+      return { asset: found, unitRef: selectedMeta.unitRef }
+    }
+
+    const ensureDxChecklistLoaded = () => {
+      if (!isDxMaintenance.value) return
+      if (form.maintenanceTasks && form.maintenanceTasks.length) return
+
+      const { asset, unitRef } = resolveSelectedAsset()
+      const loaded = unitRef ? tryLoadPreviousDxConfig(unitRef) : false
+      if (!loaded) {
+        initialiseDxTemplateForAsset(asset)
+      }
+    }
+
+    // When switching job type to DX maintenance, ensure checklist is present
+    watch(
+      () => form.workType,
+      () => {
+        ensureDxChecklistLoaded()
+      },
+    )
+
+    // When selecting an asset while already in DX maintenance, ensure checklist is present
+    watch(
+      () => form.assetId,
+      () => {
+        ensureDxChecklistLoaded()
+      },
+    )
+
     const filterAssets = (val, update) => {
       if (val === '') {
         update(() => {
@@ -696,6 +879,8 @@ export default defineComponent({
           details: f.details || '',
           pictures: f.pictures || [],
         })),
+        maintenanceTasks: isDxMaintenance.value ? [...form.maintenanceTasks] : [],
+        maintenanceInputs: isDxMaintenance.value ? { ...form.maintenanceInputs } : {},
         signed: form.signed,
         signedBy: form.signedBy,
         comments: form.comments,
@@ -732,6 +917,16 @@ export default defineComponent({
       filterAssets,
       onSubmit,
       workTypeOptions,
+      // DX maintenance helpers
+      isDxMaintenance,
+      dxChecklistTab,
+      frequencyOptions,
+      indoorChecklist,
+      outdoorChecklist,
+      clientTasks,
+      checklistInputs,
+      addClientTask,
+      removeClientTask,
       newPart,
       addPart,
       removePart,

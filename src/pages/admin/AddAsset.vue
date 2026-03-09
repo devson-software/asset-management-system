@@ -308,6 +308,165 @@
               </div>
             </div>
 
+            <!-- DX Split Maintenance Checklist configuration (per asset) -->
+            <div class="q-mt-md q-pa-md bg-green-50 rounded-borders border-green-3">
+              <div class="text-subtitle1 text-weight-bold row items-center q-mb-sm">
+                <q-icon name="fas fa-list-check" color="green-9" class="q-mr-sm" />
+                Cassette DX – Service Checklist (per asset)
+              </div>
+              <div class="text-caption text-grey-8 q-mb-sm">
+                Define which Cassette DX checklist tasks apply to this unit and their default
+                frequency. Technicians will follow this when servicing the asset.
+              </div>
+
+              <div class="q-mt-sm">
+                <q-tabs
+                  v-model="dxChecklistTabAsset"
+                  dense
+                  class="bg-grey-2 rounded-borders q-mb-sm"
+                  active-color="green-8"
+                  indicator-color="green-8"
+                  inline-label
+                >
+                  <q-tab
+                    name="indoor"
+                    icon="fas fa-fan"
+                    label="INDOOR UNIT – AIRSIDE / HYGIENE TASKS"
+                  />
+                  <q-tab
+                    name="outdoor"
+                    icon="fas fa-snowflake"
+                    label="OUTDOOR UNIT – REFRIGERATION / ELECTRICAL TASKS"
+                  />
+                </q-tabs>
+
+                <div v-if="dxChecklistTabAsset === 'indoor'">
+                  <q-list bordered class="bg-white rounded-borders">
+                    <q-item
+                      v-for="task in dxChecklistIndoor"
+                      :key="task.id"
+                      dense
+                      tag="label"
+                      clickable
+                    >
+                      <q-item-section avatar top>
+                        <q-checkbox v-model="task.enabled" color="green-7" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ task.label }}</q-item-label>
+                        <q-item-label caption>
+                          <q-select
+                            v-model="task.frequency"
+                            :options="dxFrequencyOptions"
+                            dense
+                            borderless
+                            emit-value
+                            map-options
+                            options-dense
+                            style="max-width: 140px"
+                          />
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+
+                <div v-else>
+                  <q-list bordered class="bg-white rounded-borders">
+                    <q-item
+                      v-for="task in dxChecklistOutdoor"
+                      :key="task.id"
+                      dense
+                      tag="label"
+                      clickable
+                    >
+                      <q-item-section avatar top>
+                        <q-checkbox v-model="task.enabled" color="green-7" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ task.label }}</q-item-label>
+                        <q-item-label caption>
+                          <q-select
+                            v-model="task.frequency"
+                            :options="dxFrequencyOptions"
+                            dense
+                            borderless
+                            emit-value
+                            map-options
+                            options-dense
+                            style="max-width: 140px"
+                          />
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+              </div>
+            </div>
+
+            <!-- Performance Verification (ASHRAE 180) configuration (per asset) -->
+            <div class="q-mt-md q-pa-sm bg-amber-1 rounded-borders">
+              <div class="text-caption text-weight-bold q-mb-xs">
+                Performance Verification (ASHRAE 180)
+              </div>
+              <div class="row q-col-gutter-sm">
+                <div class="col-12 col-sm-6">
+                  <q-input
+                    v-model="asset.dxPerformance.recordedVoltage"
+                    label="Recorded voltage"
+                    outlined
+                    dense
+                    bg-color="white"
+                  />
+                </div>
+                <div class="col-12 col-sm-6">
+                  <q-input
+                    v-model="asset.dxPerformance.returnAirTemp"
+                    label="Return air temperature (°C)"
+                    outlined
+                    dense
+                    bg-color="white"
+                  />
+                </div>
+                <div class="col-12 col-sm-6">
+                  <q-input
+                    v-model="asset.dxPerformance.supplyAirTemp"
+                    label="Supply air temperature (°C)"
+                    outlined
+                    dense
+                    bg-color="white"
+                  />
+                </div>
+                <div class="col-12 col-sm-6">
+                  <q-input
+                    v-model="asset.dxPerformance.deltaT"
+                    label="Air ΔT across coil (°C)"
+                    outlined
+                    dense
+                    bg-color="white"
+                  />
+                </div>
+                <div class="col-12 col-sm-6">
+                  <q-input
+                    v-model="asset.dxPerformance.compressorCurrent"
+                    label="Compressor running current (A)"
+                    outlined
+                    dense
+                    bg-color="white"
+                  />
+                </div>
+                <div class="col-12 col-sm-6">
+                  <q-input
+                    v-model="asset.dxPerformance.unitOperation"
+                    label="Unit operation / alarms"
+                    outlined
+                    dense
+                    bg-color="white"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-mt-md">
               <q-icon name="fas fa-location-crosshairs" size="xs" class="q-mr-sm" />
               Specific Location
@@ -396,8 +555,47 @@ export default defineComponent({
       vendorLocation: '',
       vendorArea: '',
       vendorAddress: '',
-      nameplatePhoto: null
+      nameplatePhoto: null,
+      dxPerformance: {
+        recordedVoltage: '',
+        returnAirTemp: '',
+        supplyAirTemp: '',
+        deltaT: '',
+        compressorCurrent: '',
+        unitOperation: '',
+      },
     })
+
+    const dxFrequencyOptions = [
+      { label: 'Monthly', value: 'Monthly' },
+      { label: 'Quarterly', value: 'Quarterly' },
+      { label: 'Bi-annual', value: 'Bi-annual' },
+      { label: 'Annual', value: 'Annual' },
+    ]
+
+    const dxChecklistTabAsset = ref('indoor')
+
+    const dxChecklistIndoor = ref([
+      { id: 'indoor_inspect_air_filters', label: 'Inspect air filters', enabled: true, frequency: 'Monthly' },
+      { id: 'indoor_clean_replace_filters', label: 'Clean / replace filters', enabled: true, frequency: 'Quarterly' },
+      { id: 'indoor_inspect_evaporator_coil', label: 'Inspect evaporator coil', enabled: true, frequency: 'Quarterly' },
+      { id: 'indoor_clean_evaporator_coil', label: 'Clean evaporator coil', enabled: true, frequency: 'Annually' },
+      { id: 'indoor_inspect_condensate_tray', label: 'Inspect condensate tray', enabled: true, frequency: 'Quarterly' },
+      { id: 'indoor_flush_condensate_drain', label: 'Flush condensate drain', enabled: true, frequency: 'Quarterly' },
+      { id: 'indoor_inspect_fan_wheel', label: 'Inspect indoor fan & wheel', enabled: true, frequency: 'Annually' },
+      { id: 'indoor_check_controller', label: 'Check controller operation', enabled: true, frequency: 'Annually' },
+    ])
+
+    const dxChecklistOutdoor = ref([
+      { id: 'outdoor_inspect_condenser_coil', label: 'Inspect condenser coil', enabled: true, frequency: 'Quarterly' },
+      { id: 'outdoor_clean_condenser_coil', label: 'Clean condenser coil', enabled: true, frequency: 'Annually' },
+      { id: 'outdoor_check_compressor_op', label: 'Check compressor operation', enabled: true, frequency: 'Quarterly' },
+      { id: 'outdoor_record_running_amps', label: 'Record compressor running amps', enabled: true, frequency: 'Quarterly' },
+      { id: 'outdoor_check_fan_operation', label: 'Check condenser fan operation', enabled: true, frequency: 'Quarterly' },
+      { id: 'outdoor_inspect_refrigerant_pipework', label: 'Inspect refrigerant pipework', enabled: true, frequency: 'Quarterly' },
+      { id: 'outdoor_leak_inspection', label: 'Leak inspection', enabled: true, frequency: 'Annually' },
+      { id: 'outdoor_electrical_terminals', label: 'Electrical terminals', enabled: true, frequency: 'Annually' },
+    ])
 
     const customerOptions = computed(() => {
       return store.customers.map(c => ({ label: c.name, value: c.id }))
@@ -568,7 +766,11 @@ export default defineComponent({
       createValue,
       nameplatePreview,
       onNameplateSelected,
-      startAutoFillScan
+      startAutoFillScan,
+      dxChecklistTabAsset,
+      dxChecklistIndoor,
+      dxChecklistOutdoor,
+      dxFrequencyOptions
     }
   }
 })

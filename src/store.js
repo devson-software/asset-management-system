@@ -486,6 +486,38 @@ export const store = reactive({
       ]
     }
   },
+  maintenanceTemplates: {
+    dxSplitCassette: {
+      jobType: 'Maintenance/Service DX split unit',
+      checklist: [
+        // Indoor unit – airside / hygiene
+        { id: 'indoor_inspect_air_filters', label: 'Inspect air filters', section: 'indoor', defaultFrequency: 'Monthly' },
+        { id: 'indoor_clean_replace_filters', label: 'Clean / replace filters', section: 'indoor', defaultFrequency: 'Quarterly' },
+        { id: 'indoor_inspect_evaporator_coil', label: 'Inspect evaporator coil', section: 'indoor', defaultFrequency: 'Quarterly' },
+        { id: 'indoor_clean_evaporator_coil', label: 'Clean evaporator coil', section: 'indoor', defaultFrequency: 'Annually' },
+        { id: 'indoor_inspect_condensate_tray', label: 'Inspect condensate tray', section: 'indoor', defaultFrequency: 'Quarterly' },
+        { id: 'indoor_flush_condensate_drain', label: 'Flush condensate drain', section: 'indoor', defaultFrequency: 'Quarterly' },
+        { id: 'indoor_inspect_fan_wheel', label: 'Inspect indoor fan & wheel', section: 'indoor', defaultFrequency: 'Annually' },
+        { id: 'indoor_check_controller', label: 'Check controller operation', section: 'indoor', defaultFrequency: 'Annually' },
+        // Outdoor – refrigeration / electrical
+        { id: 'outdoor_inspect_condenser_coil', label: 'Inspect condenser coil', section: 'outdoor', defaultFrequency: 'Quarterly' },
+        { id: 'outdoor_clean_condenser_coil', label: 'Clean condenser coil', section: 'outdoor', defaultFrequency: 'Annually' },
+        { id: 'outdoor_check_compressor_op', label: 'Check compressor operation', section: 'outdoor', defaultFrequency: 'Quarterly' },
+        { id: 'outdoor_record_running_amps', label: 'Record compressor running amps', section: 'outdoor', defaultFrequency: 'Quarterly' },
+        { id: 'outdoor_check_fan_operation', label: 'Check condenser fan operation', section: 'outdoor', defaultFrequency: 'Quarterly' },
+        { id: 'outdoor_inspect_refrigerant_pipework', label: 'Inspect refrigerant pipework', section: 'outdoor', defaultFrequency: 'Quarterly' },
+        { id: 'outdoor_leak_inspection', label: 'Leak inspection', section: 'outdoor', defaultFrequency: 'Annually' },
+        { id: 'outdoor_electrical_terminals', label: 'Check electrical terminals', section: 'outdoor', defaultFrequency: 'Annually' },
+      ],
+      inputs: [
+        { id: 'returnAirTemp', label: 'Return air temperature (°C)' },
+        { id: 'supplyAirTemp', label: 'Supply air temperature (°C)' },
+        { id: 'deltaT', label: 'Air ΔT across coil (°C)' },
+        { id: 'compressorCurrent', label: 'Compressor running current (A)' },
+        { id: 'unitOperation', label: 'Unit operation / alarms' },
+      ],
+    },
+  },
   plantHierachy: {
     'Direct expansion split units': [
       'Cassette',
