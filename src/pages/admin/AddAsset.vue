@@ -517,7 +517,7 @@
                       </div>
                     </div>
                   </div>
-                  <p class="text-caption text-grey-5 text-center q-mt-md q-mb-none">Default frequencies are indicated.</p>
+                  <!-- <p class="text-caption text-grey-5 text-center q-mt-md q-mb-none">Default frequencies are indicated.</p> -->
 
                   <!-- Custom tasks -->
                   <div class="frequency-custom-section q-mt-xl">
