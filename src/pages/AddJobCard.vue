@@ -249,7 +249,16 @@
                 <q-icon name="fas fa-gauge-high" color="blue-9" class="q-mr-sm" />
                 Technical Performance Readings
               </div>
-              <div v-if="form.workType != 'Repair'" class="row q-col-gutter-sm bg-blue-50 q-pa-md rounded-borders">
+              <div v-if="form.workType == 'General Job card'">
+                <q-input
+                  v-model="form.readings.generalJobCard"
+                  label=""
+                  outlined
+                  dense
+                  bg-color="white"
+                />
+              </div>
+              <div v-if="form.workType != 'General Job card'" class="row q-col-gutter-sm bg-blue-50 q-pa-md rounded-borders">
                 <div class="col-6 col-sm-2">
                   <q-input
                     v-model="form.readings.suctionPressure"
