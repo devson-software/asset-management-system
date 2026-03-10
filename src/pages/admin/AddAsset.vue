@@ -394,6 +394,42 @@
                               <div v-if="task.defaultFrequency" class="frequency-default-badge">Default</div>
                             </div>
                           </div>
+                          <!-- Custom indoor tasks -->
+                          <div
+                            v-for="task in dxCustomTasks.filter(t => t.group === 'indoor')"
+                            :key="task.id"
+                            class="frequency-task-row frequency-task-row--custom"
+                            :class="{ 'frequency-task-row--disabled': !task.enabled }"
+                          >
+                            <q-toggle v-model="task.enabled" color="teal-7" dense class="frequency-task-toggle" />
+                            <div class="frequency-task-content">
+                              <div class="frequency-task-label">
+                                {{ task.label || 'Custom indoor task' }}
+                                <span class="text-caption text-grey-5 q-ml-xs">(Custom)</span>
+                              </div>
+                              <div class="frequency-chips">
+                                <button
+                                  type="button"
+                                  v-for="opt in dxFrequencyButtons"
+                                  :key="opt.value"
+                                  class="frequency-chip"
+                                  :class="{ 'frequency-chip--active': task.frequency === opt.value }"
+                                  @click="task.frequency = opt.value"
+                                >
+                                  {{ opt.label }}
+                                </button>
+                              </div>
+                            </div>
+                            <q-btn
+                              flat
+                              round
+                              dense
+                              icon="fas fa-trash"
+                              color="grey-7"
+                              size="sm"
+                              @click="removeDxCustomTaskById(task.id)"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -430,6 +466,42 @@
                               </div>
                               <div v-if="task.defaultFrequency" class="frequency-default-badge">Default</div>
                             </div>
+                          </div>
+                          <!-- Custom outdoor tasks -->
+                          <div
+                            v-for="task in dxCustomTasks.filter(t => t.group === 'outdoor')"
+                            :key="task.id"
+                            class="frequency-task-row frequency-task-row--custom"
+                            :class="{ 'frequency-task-row--disabled': !task.enabled }"
+                          >
+                            <q-toggle v-model="task.enabled" color="teal-7" dense class="frequency-task-toggle" />
+                            <div class="frequency-task-content">
+                              <div class="frequency-task-label">
+                                {{ task.label || 'Custom outdoor task' }}
+                                <span class="text-caption text-grey-5 q-ml-xs">(Custom)</span>
+                              </div>
+                              <div class="frequency-chips">
+                                <button
+                                  type="button"
+                                  v-for="opt in dxFrequencyButtons"
+                                  :key="opt.value"
+                                  class="frequency-chip"
+                                  :class="{ 'frequency-chip--active': task.frequency === opt.value }"
+                                  @click="task.frequency = opt.value"
+                                >
+                                  {{ opt.label }}
+                                </button>
+                              </div>
+                            </div>
+                            <q-btn
+                              flat
+                              round
+                              dense
+                              icon="fas fa-trash"
+                              color="grey-7"
+                              size="sm"
+                              @click="removeDxCustomTaskById(task.id)"
+                            />
                           </div>
                         </div>
                       </div>
@@ -474,6 +546,24 @@
                           class="frequency-custom-input"
                           hide-bottom-space
                         />
+                        <div class="frequency-custom-group-toggle">
+                          <button
+                            type="button"
+                            class="frequency-chip"
+                            :class="{ 'frequency-chip--active': task.group === 'indoor' }"
+                            @click="task.group = 'indoor'"
+                          >
+                            Indoor
+                          </button>
+                          <button
+                            type="button"
+                            class="frequency-chip"
+                            :class="{ 'frequency-chip--active': task.group === 'outdoor' }"
+                            @click="task.group = 'outdoor'"
+                          >
+                            Outdoor
+                          </button>
+                        </div>
                         <div class="frequency-chips frequency-chips--compact">
                           <button
                             type="button"
@@ -711,10 +801,17 @@ export default defineComponent({
         label: '',
         enabled: true,
         frequency: 'Monthly',
+        group: dxTaskFilter.value === 'outdoor' ? 'outdoor' : 'indoor',
       })
     }
     function removeDxCustomTask(index) {
       dxCustomTasks.value.splice(index, 1)
+    }
+    function removeDxCustomTaskById(id) {
+      const idx = dxCustomTasks.value.findIndex(t => t.id === id)
+      if (idx !== -1) {
+        dxCustomTasks.value.splice(idx, 1)
+      }
     }
 
     const customerOptions = computed(() => {
@@ -895,6 +992,7 @@ export default defineComponent({
       dxCustomTasks,
       addDxCustomTask,
       removeDxCustomTask,
+      removeDxCustomTaskById,
       showDxFrequencyDialog,
     }
   }
@@ -1095,6 +1193,12 @@ export default defineComponent({
 .frequency-custom-input {
   flex: 1;
   min-width: 140px;
+}
+
+.frequency-custom-group-toggle {
+  display: flex;
+  gap: 6px;
+  margin: 0 10px;
 }
 </style>
 
