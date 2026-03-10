@@ -332,7 +332,7 @@
                       <div class="text-caption text-grey-6">Set how often each task should be done</div>
                     </div>
                   </div>
-                  <q-btn icon="close" flat round dense size="sm" v-close-popup class="frequency-dashboard-close" />
+                  <!-- <q-btn icon="close" flat round dense size="sm" v-close-popup class="frequency-dashboard-close" /> -->
                 </q-card-section>
 
                 <q-card-section class="q-pt-none frequency-dashboard-body">
@@ -893,7 +893,7 @@ export default defineComponent({
 /* Service Frequency Dashboard popup */
 .frequency-dashboard-card {
   width: 100%;
-  max-width: 720px;
+  max-width: 1080px;
   max-height: 90vh;
   border-radius: 16px;
   overflow: hidden;
