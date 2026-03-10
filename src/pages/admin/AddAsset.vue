@@ -308,104 +308,191 @@
               </div>
             </div>
 
-            <!-- DX Split Maintenance Checklist configuration (per asset) -->
-            <div class="q-mt-md q-pa-md bg-green-50 rounded-borders border-green-3">
-              <div class="text-subtitle1 text-weight-bold row items-center q-mb-sm">
-                <q-icon name="fas fa-list-check" color="green-9" class="q-mr-sm" />
-                Cassette DX – Service Checklist (per asset)
-              </div>
-              <div class="text-caption text-grey-8 q-mb-sm">
-                Define which Cassette DX checklist tasks apply to this unit and their default
-                frequency. Technicians will follow this when servicing the asset.
-              </div>
-
-              <div class="q-mt-sm">
-                <q-tabs
-                  v-model="dxChecklistTabAsset"
-                  dense
-                  class="bg-grey-2 rounded-borders q-mb-sm"
-                  active-color="green-8"
-                  indicator-color="green-8"
-                  inline-label
-                >
-                  <q-tab
-                    name="indoor"
-                    icon="fas fa-fan"
-                    label="INDOOR UNIT – AIRSIDE / HYGIENE TASKS"
-                  />
-                  <q-tab
-                    name="outdoor"
-                    icon="fas fa-snowflake"
-                    label="OUTDOOR UNIT – REFRIGERATION / ELECTRICAL TASKS"
-                  />
-                </q-tabs>
-
-                <div v-if="dxChecklistTabAsset === 'indoor'">
-                  <q-list bordered class="bg-white rounded-borders">
-                    <q-item
-                      v-for="task in dxChecklistIndoor"
-                      :key="task.id"
-                      dense
-                      tag="label"
-                      clickable
-                    >
-                      <q-item-section avatar top>
-                        <q-checkbox v-model="task.enabled" color="green-7" />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ task.label }}</q-item-label>
-                        <q-item-label caption>
-                          <q-select
-                            v-model="task.frequency"
-                            :options="dxFrequencyOptions"
-                            dense
-                            borderless
-                            emit-value
-                            map-options
-                            options-dense
-                            style="max-width: 140px"
-                          />
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </div>
-
-                <div v-else>
-                  <q-list bordered class="bg-white rounded-borders">
-                    <q-item
-                      v-for="task in dxChecklistOutdoor"
-                      :key="task.id"
-                      dense
-                      tag="label"
-                      clickable
-                    >
-                      <q-item-section avatar top>
-                        <q-checkbox v-model="task.enabled" color="green-7" />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ task.label }}</q-item-label>
-                        <q-item-label caption>
-                          <q-select
-                            v-model="task.frequency"
-                            :options="dxFrequencyOptions"
-                            dense
-                            borderless
-                            emit-value
-                            map-options
-                            options-dense
-                            style="max-width: 140px"
-                          />
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </div>
-              </div>
+            <!-- Button to open Service Frequency Dashboard popup -->
+            <div class="q-mt-md">
+              <q-btn
+                outline
+                color="green-7"
+                icon="fas fa-list-check"
+                label="Service Frequency Dashboard"
+                @click="showDxFrequencyDialog = true"
+              />
             </div>
 
+            <!-- Service Frequency Dashboard popup -->
+            <q-dialog v-model="showDxFrequencyDialog" position="standard" transition-show="scale" transition-hide="scale">
+              <q-card class="frequency-dashboard-card">
+                <q-card-section class="frequency-dashboard-header">
+                  <div class="row items-center no-wrap">
+                    <div class="frequency-dashboard-header-icon">
+                      <q-icon name="fas fa-sliders" size="20px" />
+                    </div>
+                    <div>
+                      <div class="text-h6 text-weight-medium q-mb-none">Service Frequency</div>
+                      <div class="text-caption text-grey-6">Set how often each task should be done</div>
+                    </div>
+                  </div>
+                  <q-btn icon="close" flat round dense size="sm" v-close-popup class="frequency-dashboard-close" />
+                </q-card-section>
+
+                <q-card-section class="q-pt-none frequency-dashboard-body">
+                  <!-- Filter pills -->
+                  <div class="frequency-filter-pills q-mb-lg">
+                    <button
+                      type="button"
+                      v-for="f in ['all', 'indoor', 'outdoor']"
+                      :key="f"
+                      class="frequency-pill"
+                      :class="{ 'frequency-pill--active': dxTaskFilter === f }"
+                      @click="dxTaskFilter = f"
+                    >
+                      {{ f === 'all' ? 'All Tasks' : f === 'indoor' ? 'Indoor Unit' : 'Outdoor Unit' }}
+                    </button>
+                  </div>
+
+                  <!-- Task sections -->
+                  <div class="row q-col-gutter-lg">
+                    <div
+                      :class="dxTaskFilter === 'all' ? 'col-12 col-md-6' : 'col-12'"
+                      v-show="dxTaskFilter === 'all' || dxTaskFilter === 'indoor'"
+                    >
+                      <div class="frequency-section">
+                        <div class="frequency-section-title">
+                          <q-icon name="fas fa-fan" size="14px" class="q-mr-xs" />
+                          Indoor – Airside / Hygiene
+                        </div>
+                        <div class="frequency-task-list">
+                          <div
+                            v-for="task in dxChecklistIndoor"
+                            :key="task.id"
+                            class="frequency-task-row"
+                            :class="{ 'frequency-task-row--disabled': !task.enabled }"
+                          >
+                            <q-toggle v-model="task.enabled" color="teal-7" dense class="frequency-task-toggle" />
+                            <div class="frequency-task-content">
+                              <div class="frequency-task-label">{{ task.label }}</div>
+                              <div class="frequency-chips">
+                                <button
+                                  type="button"
+                                  v-for="opt in dxFrequencyButtons"
+                                  :key="opt.value"
+                                  class="frequency-chip"
+                                  :class="{ 'frequency-chip--active': task.frequency === opt.value }"
+                                  @click="task.frequency = opt.value"
+                                >
+                                  {{ opt.label }}
+                                </button>
+                              </div>
+                              <div v-if="task.defaultFrequency" class="frequency-default-badge">Default</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      :class="dxTaskFilter === 'all' ? 'col-12 col-md-6' : 'col-12'"
+                      v-show="dxTaskFilter === 'all' || dxTaskFilter === 'outdoor'"
+                    >
+                      <div class="frequency-section">
+                        <div class="frequency-section-title">
+                          <q-icon name="fas fa-snowflake" size="14px" class="q-mr-xs" />
+                          Outdoor – Refrigeration / Electrical
+                        </div>
+                        <div class="frequency-task-list">
+                          <div
+                            v-for="task in dxChecklistOutdoor"
+                            :key="task.id"
+                            class="frequency-task-row"
+                            :class="{ 'frequency-task-row--disabled': !task.enabled }"
+                          >
+                            <q-toggle v-model="task.enabled" color="teal-7" dense class="frequency-task-toggle" />
+                            <div class="frequency-task-content">
+                              <div class="frequency-task-label">{{ task.label }}</div>
+                              <div class="frequency-chips">
+                                <button
+                                  type="button"
+                                  v-for="opt in dxFrequencyButtons"
+                                  :key="opt.value"
+                                  class="frequency-chip"
+                                  :class="{ 'frequency-chip--active': task.frequency === opt.value }"
+                                  @click="task.frequency = opt.value"
+                                >
+                                  {{ opt.label }}
+                                </button>
+                              </div>
+                              <div v-if="task.defaultFrequency" class="frequency-default-badge">Default</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="text-caption text-grey-5 text-center q-mt-md q-mb-none">Default frequencies are indicated.</p>
+
+                  <!-- Custom tasks -->
+                  <div class="frequency-custom-section q-mt-xl">
+                    <div class="frequency-section-title frequency-section-title--custom">
+                      <q-icon name="add_circle_outline" size="16px" class="q-mr-xs" />
+                      Custom tasks
+                    </div>
+                    <p class="text-caption text-grey-6 q-mb-md">
+                      Add your own tasks to the service plan for this asset.
+                    </p>
+                    <div class="row items-center q-mb-md">
+                      <q-toggle v-model="dxCustomTasksEnabled" color="teal-7" dense class="q-mr-sm" />
+                      <span class="text-body2 text-grey-8">Enable custom tasks</span>
+                    </div>
+                    <q-btn
+                      unelevated
+                      color="teal-7"
+                      icon="add"
+                      label="Add task"
+                      size="sm"
+                      class="q-mb-md"
+                      @click="addDxCustomTask"
+                    />
+                    <div class="frequency-task-list" v-if="dxCustomTasks.length">
+                      <div
+                        v-for="(task, idx) in dxCustomTasks"
+                        :key="task.id"
+                        class="frequency-task-row frequency-task-row--custom"
+                      >
+                        <q-toggle v-model="task.enabled" color="teal-7" dense class="frequency-task-toggle" />
+                        <q-input
+                          v-model="task.label"
+                          dense
+                          outlined
+                          placeholder="Task description"
+                          class="frequency-custom-input"
+                          hide-bottom-space
+                        />
+                        <div class="frequency-chips frequency-chips--compact">
+                          <button
+                            type="button"
+                            v-for="opt in dxFrequencyButtons"
+                            :key="opt.value"
+                            class="frequency-chip"
+                            :class="{ 'frequency-chip--active': task.frequency === opt.value }"
+                            @click="task.frequency = opt.value"
+                          >
+                            {{ opt.label }}
+                          </button>
+                        </div>
+                        <q-btn flat round dense icon="delete_outline" color="grey-7" size="sm" @click="removeDxCustomTask(idx)" />
+                      </div>
+                    </div>
+                  </div>
+                </q-card-section>
+
+                <q-separator />
+                <q-card-actions align="right" class="q-pa-md">
+                  <q-btn unelevated color="teal-7" label="Done" no-caps v-close-popup />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+
             <!-- Performance Verification (ASHRAE 180) configuration (per asset) -->
-            <div class="q-mt-md q-pa-sm bg-amber-1 rounded-borders">
+            <!-- <div class="q-mt-md q-pa-sm bg-amber-1 rounded-borders">
               <div class="text-caption text-weight-bold q-mb-xs">
                 Performance Verification (ASHRAE 180)
               </div>
@@ -465,7 +552,7 @@
                   />
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-mt-md">
               <q-icon name="fas fa-location-crosshairs" size="xs" class="q-mr-sm" />
@@ -566,36 +653,52 @@ export default defineComponent({
       },
     })
 
-    const dxFrequencyOptions = [
+    const dxFrequencyButtons = [
       { label: 'Monthly', value: 'Monthly' },
       { label: 'Quarterly', value: 'Quarterly' },
-      { label: 'Bi-annual', value: 'Bi-annual' },
-      { label: 'Annual', value: 'Annual' },
+      { label: 'Bi-Annual', value: 'Bi-Annual' },
+      { label: 'Annually', value: 'Annually' },
     ]
 
-    const dxChecklistTabAsset = ref('indoor')
+    const dxTaskFilter = ref('all')
+    const showDxFrequencyDialog = ref(false)
 
     const dxChecklistIndoor = ref([
-      { id: 'indoor_inspect_air_filters', label: 'Inspect air filters', enabled: true, frequency: 'Monthly' },
-      { id: 'indoor_clean_replace_filters', label: 'Clean / replace filters', enabled: true, frequency: 'Quarterly' },
-      { id: 'indoor_inspect_evaporator_coil', label: 'Inspect evaporator coil', enabled: true, frequency: 'Quarterly' },
-      { id: 'indoor_clean_evaporator_coil', label: 'Clean evaporator coil', enabled: true, frequency: 'Annually' },
-      { id: 'indoor_inspect_condensate_tray', label: 'Inspect condensate tray', enabled: true, frequency: 'Quarterly' },
-      { id: 'indoor_flush_condensate_drain', label: 'Flush condensate drain', enabled: true, frequency: 'Quarterly' },
-      { id: 'indoor_inspect_fan_wheel', label: 'Inspect indoor fan & wheel', enabled: true, frequency: 'Annually' },
-      { id: 'indoor_check_controller', label: 'Check controller operation', enabled: true, frequency: 'Annually' },
+      { id: 'indoor_inspect_air_filters', label: 'Inspect air filters', enabled: true, frequency: 'Monthly', defaultFrequency: true },
+      { id: 'indoor_clean_replace_filters', label: 'Clean / replace filters', enabled: true, frequency: 'Quarterly', defaultFrequency: true },
+      { id: 'indoor_inspect_evaporator_coil', label: 'Inspect evaporator coil', enabled: true, frequency: 'Quarterly', defaultFrequency: true },
+      { id: 'indoor_clean_evaporator_coil', label: 'Clean evaporator coil', enabled: true, frequency: 'Annually', defaultFrequency: false },
+      { id: 'indoor_inspect_condensate_tray', label: 'Inspect condensate tray', enabled: true, frequency: 'Quarterly', defaultFrequency: true },
+      { id: 'indoor_flush_condensate_drain', label: 'Flush condensate drain', enabled: true, frequency: 'Quarterly', defaultFrequency: false },
+      { id: 'indoor_inspect_fan_wheel', label: 'Inspect indoor fan & wheel', enabled: true, frequency: 'Annually', defaultFrequency: false },
+      { id: 'indoor_check_controller', label: 'Check controller operation', enabled: true, frequency: 'Annually', defaultFrequency: true },
     ])
 
     const dxChecklistOutdoor = ref([
-      { id: 'outdoor_inspect_condenser_coil', label: 'Inspect condenser coil', enabled: true, frequency: 'Quarterly' },
-      { id: 'outdoor_clean_condenser_coil', label: 'Clean condenser coil', enabled: true, frequency: 'Annually' },
-      { id: 'outdoor_check_compressor_op', label: 'Check compressor operation', enabled: true, frequency: 'Quarterly' },
-      { id: 'outdoor_record_running_amps', label: 'Record compressor running amps', enabled: true, frequency: 'Quarterly' },
-      { id: 'outdoor_check_fan_operation', label: 'Check condenser fan operation', enabled: true, frequency: 'Quarterly' },
-      { id: 'outdoor_inspect_refrigerant_pipework', label: 'Inspect refrigerant pipework', enabled: true, frequency: 'Quarterly' },
-      { id: 'outdoor_leak_inspection', label: 'Leak inspection', enabled: true, frequency: 'Annually' },
-      { id: 'outdoor_electrical_terminals', label: 'Electrical terminals', enabled: true, frequency: 'Annually' },
+      { id: 'outdoor_inspect_condenser_coil', label: 'Inspect condenser coil', enabled: true, frequency: 'Quarterly', defaultFrequency: true },
+      { id: 'outdoor_clean_condenser_coil', label: 'Clean condenser coil', enabled: true, frequency: 'Annually', defaultFrequency: false },
+      { id: 'outdoor_check_compressor_op', label: 'Check compressor operation', enabled: true, frequency: 'Quarterly', defaultFrequency: true },
+      { id: 'outdoor_record_running_amps', label: 'Record compressor running amps', enabled: true, frequency: 'Quarterly', defaultFrequency: true },
+      { id: 'outdoor_check_fan_operation', label: 'Check condenser fan operation', enabled: true, frequency: 'Quarterly', defaultFrequency: false },
+      { id: 'outdoor_inspect_refrigerant_pipework', label: 'Inspect refrigerant pipework', enabled: true, frequency: 'Quarterly', defaultFrequency: false },
+      { id: 'outdoor_leak_inspection', label: 'Leak inspection', enabled: true, frequency: 'Annually', defaultFrequency: true },
+      { id: 'outdoor_electrical_terminals', label: 'Electrical terminals', enabled: true, frequency: 'Annually', defaultFrequency: false },
     ])
+
+    const dxCustomTasksEnabled = ref(false)
+    const dxCustomTasks = ref([])
+    let dxCustomTaskId = 0
+    function addDxCustomTask() {
+      dxCustomTasks.value.push({
+        id: `custom_${++dxCustomTaskId}`,
+        label: '',
+        enabled: true,
+        frequency: 'Monthly',
+      })
+    }
+    function removeDxCustomTask(index) {
+      dxCustomTasks.value.splice(index, 1)
+    }
 
     const customerOptions = computed(() => {
       return store.customers.map(c => ({ label: c.name, value: c.id }))
@@ -767,10 +870,15 @@ export default defineComponent({
       nameplatePreview,
       onNameplateSelected,
       startAutoFillScan,
-      dxChecklistTabAsset,
+      dxTaskFilter,
+      dxFrequencyButtons,
       dxChecklistIndoor,
       dxChecklistOutdoor,
-      dxFrequencyOptions
+      dxCustomTasksEnabled,
+      dxCustomTasks,
+      addDxCustomTask,
+      removeDxCustomTask,
+      showDxFrequencyDialog,
     }
   }
 })
@@ -780,6 +888,196 @@ export default defineComponent({
 .form-card {
   max-width: 800px;
   margin: 0 auto;
+}
+
+/* Service Frequency Dashboard popup */
+.frequency-dashboard-card {
+  width: 100%;
+  max-width: 720px;
+  max-height: 90vh;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.frequency-dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  background: linear-gradient(135deg, #f0f7f4 0%, #e8f0ed 100%);
+}
+
+.frequency-dashboard-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(0, 150, 136, 0.12);
+  color: #00897b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+}
+
+.frequency-dashboard-close {
+  margin: -8px -8px 0 0;
+}
+
+.frequency-dashboard-body {
+  padding: 20px 24px 24px;
+  max-height: calc(90vh - 180px);
+  overflow-y: auto;
+}
+
+.frequency-filter-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.frequency-pill {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #616161;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.frequency-pill:hover {
+  background: #f5f5f5;
+  border-color: #bdbdbd;
+}
+
+.frequency-pill--active {
+  background: #00897b;
+  border-color: #00897b;
+  color: #fff;
+}
+
+.frequency-section {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid #eeeeee;
+}
+
+.frequency-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #546e7a;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.frequency-section-title--custom {
+  margin-bottom: 4px;
+}
+
+.frequency-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.frequency-task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #eeeeee;
+  transition: background 0.2s ease;
+}
+
+.frequency-task-row:hover {
+  background: #fafafa;
+}
+
+.frequency-task-row--disabled {
+  opacity: 0.7;
+}
+
+.frequency-task-row--custom {
+  align-items: center;
+}
+
+.frequency-task-toggle {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.frequency-task-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.frequency-task-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #37474f;
+  margin-bottom: 8px;
+}
+
+.frequency-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.frequency-chips--compact {
+  flex-shrink: 0;
+}
+
+.frequency-chip {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #757575;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.frequency-chip:hover {
+  background: #f5f5f5;
+  border-color: #bdbdbd;
+}
+
+.frequency-chip--active {
+  background: #00897b;
+  border-color: #00897b;
+  color: #fff;
+}
+
+.frequency-default-badge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9e9e9e;
+}
+
+.frequency-custom-section {
+  padding-top: 20px;
+  border-top: 1px solid #eeeeee;
+}
+
+.frequency-custom-input {
+  flex: 1;
+  min-width: 140px;
 }
 </style>
 

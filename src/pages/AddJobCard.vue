@@ -311,14 +311,55 @@
                   Performance Verification (ASHRAE 180)
                 </div>
                 <div class="row q-col-gutter-sm">
-                  <div
-                    v-for="field in DX_INPUT_TEMPLATE"
-                    :key="field.id"
-                    class="col-12 col-sm-6"
-                  >
+                  <div class="col-12 col-sm-6">
                     <q-input
-                      v-model="form.maintenanceInputs[field.id]"
-                      :label="field.label"
+                      v-model="form.maintenanceInputs.recordedVoltage"
+                      label="Recorded voltage"
+                      outlined
+                      dense
+                      bg-color="white"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="form.maintenanceInputs.returnAirTemp"
+                      label="Return air temperature (°C)"
+                      outlined
+                      dense
+                      bg-color="white"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="form.maintenanceInputs.supplyAirTemp"
+                      label="Supply air temperature (°C)"
+                      outlined
+                      dense
+                      bg-color="white"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="form.maintenanceInputs.deltaT"
+                      label="Air ΔT across coil (°C)"
+                      outlined
+                      dense
+                      bg-color="white"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="form.maintenanceInputs.compressorCurrent"
+                      label="Compressor running current (A)"
+                      outlined
+                      dense
+                      bg-color="white"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="form.maintenanceInputs.unitOperation"
+                      label="Unit operation / alarms"
                       outlined
                       dense
                       bg-color="white"
