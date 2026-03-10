@@ -655,6 +655,7 @@ export default defineComponent({
 
     const dxFrequencyButtons = [
       { label: 'Monthly', value: 'Monthly' },
+      { label: 'Bi-monthly', value: 'Bi-monthly' },
       { label: 'Quarterly', value: 'Quarterly' },
       { label: 'Bi-Annual', value: 'Bi-Annual' },
       { label: 'Annually', value: 'Annually' },
@@ -893,7 +894,7 @@ export default defineComponent({
 /* Service Frequency Dashboard popup */
 .frequency-dashboard-card {
   width: 100%;
-  max-width: 1080px;
+  max-width: 1180px;
   max-height: 90vh;
   border-radius: 16px;
   overflow: hidden;
