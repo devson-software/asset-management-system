@@ -378,7 +378,7 @@ export default defineComponent({
     })
 
     const showIndoorUnit = computed(() =>
-      ['Direct expansion split units', 'VRF Indoor units', 'Fan coil units', 'Air handling units'].includes(
+      ['DX split unit', 'VRF Indoor units', 'Fan coil units', 'Air handling units'].includes(
         asset.plantCategory,
       ),
     )
@@ -388,7 +388,7 @@ export default defineComponent({
     )
 
     const showRefrigerant = computed(() =>
-      ['Direct expansion split units', 'VRF condensing units', 'Package plant', 'Chiller'].includes(
+      ['DX split unit', 'VRF condensing units', 'Package plant', 'Chiller'].includes(
         asset.plantCategory,
       ),
     )

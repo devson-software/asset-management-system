@@ -519,7 +519,7 @@ export const store = reactive({
     },
   },
   plantHierachy: {
-    'Direct expansion split units': [
+    'DX split unit': [
       'Cassette',
       'Hide-away units',
       'Midwall units',
