@@ -332,7 +332,15 @@
                       <div class="text-caption text-grey-6">Set how often each task should be done</div>
                     </div>
                   </div>
-                  <!-- <q-btn icon="close" flat round dense size="sm" v-close-popup class="frequency-dashboard-close" /> -->
+                  <q-btn
+                    icon="fas fa-times"
+                    flat
+                    round
+                    dense
+                    size="sm"
+                    v-close-popup
+                    class="frequency-dashboard-close"
+                  />
                 </q-card-section>
 
                 <q-card-section class="q-pt-none frequency-dashboard-body">
@@ -432,7 +440,7 @@
                   <!-- Custom tasks -->
                   <div class="frequency-custom-section q-mt-xl">
                     <div class="frequency-section-title frequency-section-title--custom">
-                      <q-icon name="add_circle_outline" size="16px" class="q-mr-xs" />
+                      <q-icon name="fas fa-plus-circle" size="16px" class="q-mr-xs" />
                       Custom tasks
                     </div>
                     <p class="text-caption text-grey-6 q-mb-md">
@@ -445,7 +453,7 @@
                     <q-btn
                       unelevated
                       color="teal-7"
-                      icon="add"
+                      icon="fas fa-plus"
                       label="Add task"
                       size="sm"
                       class="q-mb-md"
@@ -478,7 +486,15 @@
                             {{ opt.label }}
                           </button>
                         </div>
-                        <q-btn flat round dense icon="delete_outline" color="grey-7" size="sm" @click="removeDxCustomTask(idx)" />
+                        <q-btn
+                          flat
+                          round
+                          dense
+                          icon="fas fa-trash"
+                          color="grey-7"
+                          size="sm"
+                          @click="removeDxCustomTask(idx)"
+                        />
                       </div>
                     </div>
                   </div>
