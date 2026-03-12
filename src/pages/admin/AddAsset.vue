@@ -519,7 +519,6 @@
                   </div>
                   <!-- <p class="text-caption text-grey-5 text-center q-mt-md q-mb-none">Default frequencies are indicated.</p> -->
 
-                  <!-- Custom tasks -->
                   <div class="frequency-custom-section q-mt-xl">
                     <div class="frequency-section-title frequency-section-title--custom">
                       <q-icon name="fas fa-plus-circle" size="16px" class="q-mr-xs" />
